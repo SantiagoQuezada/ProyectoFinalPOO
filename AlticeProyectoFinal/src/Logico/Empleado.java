@@ -1,4 +1,4 @@
-package logico;
+package Logico;
 
 public class Empleado {
     private String idEmpleado;

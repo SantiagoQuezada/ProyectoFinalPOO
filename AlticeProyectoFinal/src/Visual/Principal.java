@@ -1,4 +1,4 @@
-package visual;
+package Visual;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
