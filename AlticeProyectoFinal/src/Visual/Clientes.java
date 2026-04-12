@@ -32,7 +32,7 @@ public class Clientes extends JFrame {
 
 	public Clientes() {
 		setTitle("Sistema de Gestión - Módulo de Clientes");
-		setSize(1000, 700);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
@@ -98,7 +98,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Plan Contratado"};
+		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Dirección", "Plan Contratado"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaClientes = new JTable(modeloTabla);
 		tablaClientes.setRowHeight(30);
@@ -179,12 +179,13 @@ public class Clientes extends JFrame {
 			if (c.getPlan() != null) {
 				nombrePlan = c.getPlan().getNombre();
 			}
-			Object[] fila = new Object[5];
+			Object[] fila = new Object[6];
 			fila[0] = c.getIdCliente();
 			fila[1] = c.getCedula();
 			fila[2] = c.getNombre();
 			fila[3] = c.getTelefono();
-			fila[4] = nombrePlan;
+			fila[4] = c.getDireccion();
+			fila[5] = nombrePlan;
 			modeloTabla.addRow(fila);
 		}
 	}
