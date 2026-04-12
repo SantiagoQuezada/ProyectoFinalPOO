@@ -32,9 +32,18 @@ public class RegEmpleado extends JDialog {
 	private JTextField txtUsername;
 	private JTextField txtPassword;
 	private JComboBox<Rol> cbxRol;
+	private Empleado empleadoActual;
 
-	public RegEmpleado() {
-		setTitle("Registrar Nuevo Empleado");
+	public RegEmpleado(Empleado empleado, boolean soloLectura) {
+		this.empleadoActual = empleado;
+		if (empleadoActual == null) {
+			setTitle("Registrar Nuevo Empleado");
+		} else if (soloLectura) {
+			setTitle("Detalles del Empleado");
+		} else {
+			setTitle("Modificar Empleado");
+		}
+		
 		setModal(true);
 		setResizable(false);
 		setBounds(100, 100, 500, 600);
@@ -49,7 +58,11 @@ public class RegEmpleado extends JDialog {
 		contentPanel.add(lblIdEmpleado);
 
 		txtIdEmpleado = new JTextField();
-		txtIdEmpleado.setText("E-" + (Altice.getInstance().getEmpleados().size() + 1001));
+		if (empleadoActual == null) {
+			txtIdEmpleado.setText(Altice.getInstance().generarIdEmpleado());
+		} else {
+			txtIdEmpleado.setText(empleadoActual.getIdEmpleado());
+		}
 		txtIdEmpleado.setEditable(false);
 		txtIdEmpleado.setBounds(150, 30, 290, 25);
 		contentPanel.add(txtIdEmpleado);
@@ -161,48 +174,86 @@ public class RegEmpleado extends JDialog {
 		cbxRol.setBounds(150, 480, 290, 25);
 		contentPanel.add(cbxRol);
 
+		if (empleadoActual != null) {
+			txtCedula.setText(empleadoActual.getCedula());
+			txtNombre.setText(empleadoActual.getNombre());
+			txtTelefono.setText(empleadoActual.getTelefono());
+			txtDireccion.setText(empleadoActual.getDireccion());
+			cbxDepartamento.setSelectedItem(empleadoActual.getDepartamento());
+			txtSalario.setText(String.valueOf(empleadoActual.getSalario()));
+			txtUsername.setText(empleadoActual.getUsuario().getUsername());
+			txtPassword.setText(empleadoActual.getUsuario().getPassword());
+			cbxRol.setSelectedItem(empleadoActual.getUsuario().getRol());
+		}
+
+		if (soloLectura) {
+			txtCedula.setEditable(false);
+			txtNombre.setEditable(false);
+			txtTelefono.setEditable(false);
+			txtDireccion.setEditable(false);
+			cbxDepartamento.setEnabled(false);
+			txtSalario.setEditable(false);
+			txtUsername.setEditable(false);
+			txtPassword.setEditable(false);
+			cbxRol.setEnabled(false);
+		}
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		JButton btnRegistrar = new JButton("Registrar Empleado");
-		btnRegistrar.setMnemonic(KeyEvent.VK_R);
-		btnRegistrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtSalario.getText().isEmpty() || txtUsername.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
+		if (!soloLectura) {
+			JButton btnRegistrar = new JButton(empleadoActual == null ? "Registrar Empleado" : "Guardar Cambios");
+			btnRegistrar.setMnemonic(KeyEvent.VK_R);
+			btnRegistrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtSalario.getText().isEmpty() || txtUsername.getText().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					try {
+						String id = txtIdEmpleado.getText();
+						String cedula = txtCedula.getText();
+						String nombre = txtNombre.getText();
+						String telefono = txtTelefono.getText();
+						String direccion = txtDireccion.getText();
+						String departamento = cbxDepartamento.getSelectedItem().toString();
+						float salario = Float.parseFloat(txtSalario.getText());
+						
+						String username = txtUsername.getText();
+						String password = txtPassword.getText();
+						Rol rol = (Rol) cbxRol.getSelectedItem();
+
+						if (empleadoActual == null) {
+							Usuario nuevoUsuario = new Usuario(username, password, rol);
+							Empleado nuevoEmpleado = new Empleado(cedula, nombre, telefono, direccion, id, departamento, salario, nuevoUsuario);
+							Altice.getInstance().registrarEmpleado(nuevoEmpleado);
+							JOptionPane.showMessageDialog(null, "Empleado registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							empleadoActual.setCedula(cedula);
+							empleadoActual.setNombre(nombre);
+							empleadoActual.setTelefono(telefono);
+							empleadoActual.setDireccion(direccion);
+							empleadoActual.setDepartamento(departamento);
+							empleadoActual.setSalario(salario);
+							empleadoActual.getUsuario().setUsername(username);
+							empleadoActual.getUsuario().setPassword(password);
+							empleadoActual.getUsuario().setRol(rol);
+							JOptionPane.showMessageDialog(null, "Empleado actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						}
+						
+						dispose();
+					} catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(null, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
+			});
+			buttonPane.add(btnRegistrar);
+			getRootPane().setDefaultButton(btnRegistrar);
+		}
 
-				try {
-					String id = txtIdEmpleado.getText();
-					String cedula = txtCedula.getText();
-					String nombre = txtNombre.getText();
-					String telefono = txtTelefono.getText();
-					String direccion = txtDireccion.getText();
-					String departamento = cbxDepartamento.getSelectedItem().toString();
-					float salario = Float.parseFloat(txtSalario.getText());
-					
-					String username = txtUsername.getText();
-					String password = txtPassword.getText();
-					Rol rol = (Rol) cbxRol.getSelectedItem();
-
-					Usuario nuevoUsuario = new Usuario(username, password, rol);
-					Empleado nuevoEmpleado = new Empleado(cedula, nombre, telefono, direccion, id, departamento, salario, nuevoUsuario);
-					
-					Altice.getInstance().registrarEmpleado(nuevoEmpleado);
-
-					JOptionPane.showMessageDialog(null, "Empleado registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-					dispose();
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(null, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-		buttonPane.add(btnRegistrar);
-		getRootPane().setDefaultButton(btnRegistrar);
-
-		JButton btnCancelar = new JButton("Cancelar");
+		JButton btnCancelar = new JButton(soloLectura ? "Cerrar" : "Cancelar");
 		btnCancelar.setMnemonic(KeyEvent.VK_C);
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -213,7 +264,9 @@ public class RegEmpleado extends JDialog {
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowOpened(java.awt.event.WindowEvent e) {
-				txtCedula.requestFocus();
+				if(!soloLectura) {
+					txtCedula.requestFocus();
+				}
 			}
 		});
 	}

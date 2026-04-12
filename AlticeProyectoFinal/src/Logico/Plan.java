@@ -2,7 +2,7 @@ package Logico;
 
 public class Plan {
     private String idPlan;
-    private String categoria; // Combinado, Hogar, Móvil
+    private String categoria;
     private String nombre;
 
     public Plan(String idPlan, String categoria, String nombre) {
@@ -11,7 +11,27 @@ public class Plan {
         this.nombre = nombre;
     }
 
-    public String getIdPlan() { return idPlan; }
-    public String getCategoria() { return categoria; }
-    public String getNombre() { return nombre; }
+    public String getIdPlan() { 
+        return idPlan; 
+    }
+    
+    public void setIdPlan(String idPlan) {
+        this.idPlan = idPlan;
+    }
+    
+    public String getCategoria() { 
+        return categoria; 
+    }
+    
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+    
+    public String getNombre() { 
+        return nombre; 
+    }
+    
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }

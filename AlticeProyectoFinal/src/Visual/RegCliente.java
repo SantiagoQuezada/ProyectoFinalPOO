@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import Logico.Cliente;
+import Logico.Plan;
 import Logico.Altice;
 
 public class RegCliente extends JDialog {
@@ -27,9 +28,18 @@ public class RegCliente extends JDialog {
 	private JTextField txtDireccion;
 	private JComboBox<String> cbxEstado;
 	private JComboBox<String> cbxPlanes;
+	private Cliente clienteActual;
 
-	public RegCliente() {
-		setTitle("Registrar Nuevo Cliente");
+	public RegCliente(Cliente cliente, boolean soloLectura) {
+		this.clienteActual = cliente;
+		if (clienteActual == null) {
+			setTitle("Registrar Nuevo Cliente");
+		} else if (soloLectura) {
+			setTitle("Detalles del Cliente");
+		} else {
+			setTitle("Modificar Cliente");
+		}
+		
 		setModal(true);
 		setResizable(false);
 		setBounds(100, 100, 480, 500);
@@ -44,7 +54,11 @@ public class RegCliente extends JDialog {
 		contentPanel.add(lblIdCliente);
 
 		txtIdCliente = new JTextField();
-		txtIdCliente.setText(Altice.getInstance().generarIdCliente());
+		if (clienteActual == null) {
+			txtIdCliente.setText(Altice.getInstance().generarIdCliente());
+		} else {
+			txtIdCliente.setText(clienteActual.getIdCliente());
+		}
 		txtIdCliente.setEditable(false);
 		txtIdCliente.setBounds(150, 30, 270, 25);
 		contentPanel.add(txtIdCliente);
@@ -138,39 +152,72 @@ public class RegCliente extends JDialog {
 		cargarPlanes();
 		contentPanel.add(cbxPlanes);
 
+		if (clienteActual != null) {
+			txtCedula.setText(clienteActual.getCedula());
+			txtNombre.setText(clienteActual.getNombre());
+			txtTelefono.setText(clienteActual.getTelefono());
+			txtDireccion.setText(clienteActual.getDireccion());
+			cbxEstado.setSelectedItem(clienteActual.getEstado());
+			
+			if (clienteActual.getPlan() != null) {
+				cbxPlanes.setSelectedItem(clienteActual.getPlan().getNombre());
+			}
+		}
+
+		if (soloLectura) {
+			txtCedula.setEditable(false);
+			txtNombre.setEditable(false);
+			txtTelefono.setEditable(false);
+			txtDireccion.setEditable(false);
+			cbxEstado.setEnabled(false);
+			cbxPlanes.setEnabled(false);
+		}
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		JButton btnRegistrar = new JButton("Registrar");
-		btnRegistrar.setMnemonic(KeyEvent.VK_R);
-		btnRegistrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty() || txtDireccion.getText().isEmpty() || cbxPlanes.getSelectedIndex() == 0) {
-					JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
+		if (!soloLectura) {
+			JButton btnRegistrar = new JButton(clienteActual == null ? "Registrar" : "Guardar Cambios");
+			btnRegistrar.setMnemonic(KeyEvent.VK_R);
+			btnRegistrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty() || txtDireccion.getText().isEmpty() || cbxPlanes.getSelectedIndex() == 0) {
+						JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					String id = txtIdCliente.getText();
+					String cedula = txtCedula.getText();
+					String nombre = txtNombre.getText();
+					String telefono = txtTelefono.getText();
+					String direccion = txtDireccion.getText();
+					String estado = cbxEstado.getSelectedItem().toString();
+					String nombrePlan = cbxPlanes.getSelectedItem().toString();
+
+					if (clienteActual == null) {
+						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, null);
+						Altice.getInstance().registrarCliente(nuevoCliente);
+						Altice.getInstance().asignarPlanACliente(id, nombrePlan);
+						JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						clienteActual.setCedula(cedula);
+						clienteActual.setNombre(nombre);
+						clienteActual.setTelefono(telefono);
+						clienteActual.setDireccion(direccion);
+						clienteActual.setEstado(estado);
+						Altice.getInstance().asignarPlanACliente(id, nombrePlan);
+						JOptionPane.showMessageDialog(null, "Cliente actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					}
+					
+					dispose();
 				}
+			});
+			buttonPane.add(btnRegistrar);
+			getRootPane().setDefaultButton(btnRegistrar);
+		}
 
-				String id = txtIdCliente.getText();
-				String cedula = txtCedula.getText();
-				String nombre = txtNombre.getText();
-				String telefono = txtTelefono.getText();
-				String direccion = txtDireccion.getText();
-				String estado = cbxEstado.getSelectedItem().toString();
-				String nombrePlan = cbxPlanes.getSelectedItem().toString();
-
-				Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, null);
-				Altice.getInstance().registrarCliente(nuevoCliente);
-				Altice.getInstance().asignarPlanACliente(id, nombrePlan);
-
-				JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-				dispose();
-			}
-		});
-		buttonPane.add(btnRegistrar);
-		getRootPane().setDefaultButton(btnRegistrar);
-
-		JButton btnCancelar = new JButton("Cancelar");
+		JButton btnCancelar = new JButton(soloLectura ? "Cerrar" : "Cancelar");
 		btnCancelar.setMnemonic(KeyEvent.VK_C);
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -181,7 +228,9 @@ public class RegCliente extends JDialog {
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowOpened(java.awt.event.WindowEvent e) {
-				txtCedula.requestFocus();
+				if(!soloLectura) {
+					txtCedula.requestFocus();
+				}
 			}
 		});
 	}

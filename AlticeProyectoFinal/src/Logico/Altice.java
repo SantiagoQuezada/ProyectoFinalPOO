@@ -14,6 +14,7 @@ public class Altice {
     private int contadorEmpleados;
     private int contadorContratos;
     private int contadorPagos;
+    private int contadorPlanes;
 
     private Altice() {
         misEmpleados = new ArrayList<>();
@@ -26,6 +27,7 @@ public class Altice {
         contadorEmpleados = 1001;
         contadorContratos = 1;
         contadorPagos = 1;
+        contadorPlanes = 7;
         cargarDatosPrueba();
     }
 
@@ -48,7 +50,7 @@ public class Altice {
         Usuario u2 = new Usuario("lgomez", "1234", Rol.SOPORTE_TECNICO);
         
         misEmpleados.add(new Empleado("001-0000000-1", "Ana Martínez", "809-555-0001", "Ensanche Naco", generarIdEmpleado(), "Ventas", 50000.0f, u1));
-        misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte", 35000.0f, u2));
+        misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte Técnico", 35000.0f, u2));
 
         Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0));
         misClientes.add(c1);
@@ -79,6 +81,39 @@ public class Altice {
         String id = "PAG-" + contadorPagos;
         contadorPagos++;
         return id;
+    }
+
+    public String generarIdPlan() {
+        String id = "P-0" + contadorPlanes;
+        contadorPlanes++;
+        return id;
+    }
+
+    public Empleado getEmpleadoById(String id) {
+        for (Empleado e : misEmpleados) {
+            if (e.getIdEmpleado().equals(id)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public Cliente getClienteById(String id) {
+        for (Cliente c : misClientes) {
+            if (c.getIdCliente().equals(id)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public Plan getPlanById(String id) {
+        for (Plan p : misPlanes) {
+            if (p.getIdPlan().equals(id)) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Empleado> getEmpleados() {

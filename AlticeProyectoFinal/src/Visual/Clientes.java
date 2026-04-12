@@ -127,15 +127,42 @@ public class Clientes extends JFrame {
 		JButton btnCrear = crearBotonCRUD("Registrar Cliente", true);
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegCliente modalReg = new RegCliente();
+				RegCliente modalReg = new RegCliente(null, false);
 				modalReg.setVisible(true);
 				cargarClientes();
 			}
 		});
 
-		JButton btnLeer = crearBotonCRUD("Ver Facturación", false);
+		JButton btnLeer = crearBotonCRUD("Ver Detalles", false);
+		btnLeer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int filaSeleccionada = tablaClientes.getSelectedRow();
+				if (filaSeleccionada >= 0) {
+					String idCliente = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					Cliente cliente = Altice.getInstance().getClienteById(idCliente);
+					RegCliente modalReg = new RegCliente(cliente, true);
+					modalReg.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 
-		JButton btnActualizar = crearBotonCRUD("Modificar Plan", false);
+		JButton btnActualizar = crearBotonCRUD("Editar Seleccionado", false);
+		btnActualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int filaSeleccionada = tablaClientes.getSelectedRow();
+				if (filaSeleccionada >= 0) {
+					String idCliente = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					Cliente cliente = Altice.getInstance().getClienteById(idCliente);
+					RegCliente modalReg = new RegCliente(cliente, false);
+					modalReg.setVisible(true);
+					cargarClientes();
+				} else {
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 
 		JButton btnEliminar = crearBotonCRUD("Dar de Baja", false);
 		btnEliminar.addActionListener(new ActionListener() {

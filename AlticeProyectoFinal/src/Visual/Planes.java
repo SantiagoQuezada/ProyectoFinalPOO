@@ -91,7 +91,25 @@ public class Planes extends JFrame {
 		lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		centerPanel.add(lblSubtitulo);
 
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 60)));
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+		
+		JButton btnCatalogo = new JButton("\u2699 Administrar Catálogo de Planes");
+		btnCatalogo.setAlignmentX(Component.CENTER_ALIGNMENT);
+		btnCatalogo.setBackground(new Color(40, 40, 40));
+		btnCatalogo.setForeground(Color.WHITE);
+		btnCatalogo.setFocusPainted(false);
+		btnCatalogo.setFont(new Font("Arial", Font.BOLD, 14));
+		btnCatalogo.setPreferredSize(new Dimension(280, 45));
+		btnCatalogo.setMaximumSize(new Dimension(280, 45));
+		btnCatalogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnCatalogo.addActionListener(e -> {
+			CatalogoPlanes cat = new CatalogoPlanes();
+			cat.setVisible(true);
+			dispose();
+		});
+		centerPanel.add(btnCatalogo);
+
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 40)));
 
 		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
 		cardsPanel.setOpaque(false);

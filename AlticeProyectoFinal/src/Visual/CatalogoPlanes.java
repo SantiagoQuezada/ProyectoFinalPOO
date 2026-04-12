@@ -22,16 +22,16 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import Logico.Empleado;
+import Logico.Plan;
 import Logico.Altice;
 
-public class Empleados extends JFrame {
+public class CatalogoPlanes extends JFrame {
 
 	private DefaultTableModel modeloTabla;
-	private JTable tablaEmpleados;
+	private JTable tablaPlanes;
 
-	public Empleados() {
-		setTitle("Sistema de Gestión - Módulo de Empleados");
+	public CatalogoPlanes() {
+		setTitle("Sistema de Gestión - Catálogo de Planes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -46,7 +46,7 @@ public class Empleados extends JFrame {
 		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 		leftHeaderPanel.setOpaque(false);
 
-		JButton btnVolver = new JButton("\u25C0 Volver al Inicio");
+		JButton btnVolver = new JButton("\u25C0 Volver a Planes");
 		btnVolver.setBackground(new Color(40, 40, 40));
 		btnVolver.setForeground(Color.WHITE);
 		btnVolver.setFocusPainted(false);
@@ -55,8 +55,8 @@ public class Empleados extends JFrame {
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Principal principal = new Principal();
-				principal.setVisible(true);
+				Planes planes = new Planes();
+				planes.setVisible(true);
 				dispose();
 			}
 		});
@@ -84,12 +84,12 @@ public class Empleados extends JFrame {
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
 		panelTitulo.setBackground(Color.WHITE);
 
-		JLabel lblTituloPrincipal = new JLabel("\uD83D\uDC65 Nómina de Empleados");
+		JLabel lblTituloPrincipal = new JLabel("\uD83D\uDCDA Catálogo de Planes");
 		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 32));
 		lblTituloPrincipal.setForeground(new Color(30, 30, 30));
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		JLabel lblSubtitulo = new JLabel("Gestión del personal y sus cargos dentro de la empresa.");
+		JLabel lblSubtitulo = new JLabel("Administración de los planes comerciales disponibles en el sistema.");
 		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblSubtitulo.setForeground(new Color(100, 100, 100));
 		lblSubtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -101,82 +101,82 @@ public class Empleados extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID Empleado", "Nombre Completo", "Departamento"};
+		String[] columnas = {"ID Plan", "Categoría", "Nombre del Plan"};
 		modeloTabla = new DefaultTableModel(null, columnas);
-		tablaEmpleados = new JTable(modeloTabla);
-		tablaEmpleados.setRowHeight(35);
-		tablaEmpleados.setFont(new Font("Arial", Font.PLAIN, 15));
-		tablaEmpleados.setForeground(Color.BLACK);
-		tablaEmpleados.setGridColor(new Color(230, 230, 230));
-		tablaEmpleados.setSelectionBackground(new Color(220, 235, 255));
-		tablaEmpleados.setSelectionForeground(Color.BLACK);
+		tablaPlanes = new JTable(modeloTabla);
+		tablaPlanes.setRowHeight(35);
+		tablaPlanes.setFont(new Font("Arial", Font.PLAIN, 15));
+		tablaPlanes.setForeground(Color.BLACK);
+		tablaPlanes.setGridColor(new Color(230, 230, 230));
+		tablaPlanes.setSelectionBackground(new Color(220, 235, 255));
+		tablaPlanes.setSelectionForeground(Color.BLACK);
 
-		JTableHeader header = tablaEmpleados.getTableHeader();
+		JTableHeader header = tablaPlanes.getTableHeader();
 		header.setFont(new Font("Arial", Font.BOLD, 15));
 		header.setBackground(new Color(245, 247, 250));
 		header.setForeground(new Color(50, 50, 50));
 		header.setPreferredSize(new Dimension(100, 40));
 
-		JScrollPane scrollPane = new JScrollPane(tablaEmpleados);
+		JScrollPane scrollPane = new JScrollPane(tablaPlanes);
 		scrollPane.setBorder(new LineBorder(new Color(220, 220, 220), 1));
 		centerPanel.add(scrollPane, BorderLayout.CENTER);
 
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 20));
 		crudPanel.setBackground(Color.WHITE);
 
-		JButton btnCrear = crearBotonCRUD("Agregar Nuevo", true);
+		JButton btnCrear = crearBotonCRUD("Registrar Plan", true);
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegEmpleado modalReg = new RegEmpleado(null, false);
+				RegPlan modalReg = new RegPlan(null, false);
 				modalReg.setVisible(true);
-				cargarEmpleados();
+				cargarPlanes();
 			}
 		});
-		
+
 		JButton btnLeer = crearBotonCRUD("Ver Detalles", false);
 		btnLeer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int filaSeleccionada = tablaEmpleados.getSelectedRow();
+				int filaSeleccionada = tablaPlanes.getSelectedRow();
 				if (filaSeleccionada >= 0) {
-					String idEmpleado = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
-					Empleado empleado = Altice.getInstance().getEmpleadoById(idEmpleado);
-					RegEmpleado modalReg = new RegEmpleado(empleado, true);
+					String idPlan = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					Plan plan = Altice.getInstance().getPlanById(idPlan);
+					RegPlan modalReg = new RegPlan(plan, true);
 					modalReg.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
-		
-		JButton btnActualizar = crearBotonCRUD("Editar Seleccionado", false);
+
+		JButton btnActualizar = crearBotonCRUD("Editar Plan", false);
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int filaSeleccionada = tablaEmpleados.getSelectedRow();
+				int filaSeleccionada = tablaPlanes.getSelectedRow();
 				if (filaSeleccionada >= 0) {
-					String idEmpleado = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
-					Empleado empleado = Altice.getInstance().getEmpleadoById(idEmpleado);
-					RegEmpleado modalReg = new RegEmpleado(empleado, false);
+					String idPlan = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					Plan plan = Altice.getInstance().getPlanById(idPlan);
+					RegPlan modalReg = new RegPlan(plan, false);
 					modalReg.setVisible(true);
-					cargarEmpleados();
+					cargarPlanes();
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
-		
-		JButton btnEliminar = crearBotonCRUD("Eliminar Empleado", false);
+
+		JButton btnEliminar = crearBotonCRUD("Eliminar Plan", false);
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int filaSeleccionada = tablaEmpleados.getSelectedRow();
+				int filaSeleccionada = tablaPlanes.getSelectedRow();
 				if (filaSeleccionada >= 0) {
-					String idEmpleado = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
-					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea eliminar al empleado " + idEmpleado + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+					String idPlan = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea eliminar el plan " + idPlan + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
-						Altice.getInstance().eliminarEmpleado(idEmpleado);
-						cargarEmpleados();
+						Altice.getInstance().eliminarPlan(idPlan);
+						cargarPlanes();
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -193,23 +193,23 @@ public class Empleados extends JFrame {
 		JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		footerPanel.setBackground(new Color(245, 247, 250));
 		footerPanel.setBorder(new EmptyBorder(15, 0, 15, 0));
-		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Empleados");
+		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Catálogo de Planes");
 		lblFooter.setFont(new Font("Arial", Font.PLAIN, 13));
 		lblFooter.setForeground(new Color(150, 150, 150));
 		footerPanel.add(lblFooter);
 
 		add(footerPanel, BorderLayout.SOUTH);
 
-		cargarEmpleados();
+		cargarPlanes();
 	}
 
-	private void cargarEmpleados() {
+	private void cargarPlanes() {
 		modeloTabla.setRowCount(0);
-		for (Empleado e : Altice.getInstance().getEmpleados()) {
+		for (Plan p : Altice.getInstance().getPlanes()) {
 			Object[] fila = new Object[3];
-			fila[0] = e.getIdEmpleado();
-			fila[1] = e.getNombre();
-			fila[2] = e.getDepartamento();
+			fila[0] = p.getIdPlan();
+			fila[1] = p.getCategoria();
+			fila[2] = p.getNombre();
 			modeloTabla.addRow(fila);
 		}
 	}
