@@ -9,6 +9,7 @@ import javax.swing.Box;
 import javax.swing.BorderFactory;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,12 +22,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import Logico.Empleado;
 
 public class Principal extends JFrame {
-	
 
-	private static Empleado empleadoLogueado;
+	private Empleado empleadoLogueado;
+	private JLabel lblReloj;
 
 	public Principal(Empleado empleado) {
 		this.empleadoLogueado = empleado;
@@ -47,8 +50,9 @@ public class Principal extends JFrame {
 		lblLogo.setForeground(Color.WHITE);
 		headerPanel.add(lblLogo, BorderLayout.WEST);
 
-		String rolStr = empleado.getUsuario() != null ? empleado.getUsuario().getRol().toString() : "SIN ROL";
-		JLabel lblUser = new JLabel("Hola, " + empleado.getNombre() + " | " + rolStr + "   \u2699   \u23FB");
+		String rolStr = empleado != null && empleado.getUsuario() != null ? empleado.getUsuario().getRol().toString() : "SIN ROL";
+		String nombreStr = empleado != null ? empleado.getNombre() : "Usuario";
+		JLabel lblUser = new JLabel("Hola, " + nombreStr + " | " + rolStr + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -94,15 +98,49 @@ public class Principal extends JFrame {
 
 		add(wrapperPanel, BorderLayout.CENTER);
 
-		JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel footerPanel = new JPanel(new BorderLayout());
 		footerPanel.setBackground(new Color(245, 247, 250));
-		footerPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
+		footerPanel.setBorder(new EmptyBorder(15, 30, 15, 30));
+		
 		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Sistema de Gestión Interna | Términos y Condiciones");
 		lblFooter.setFont(new Font("Arial", Font.PLAIN, 13));
 		lblFooter.setForeground(new Color(150, 150, 150));
-		footerPanel.add(lblFooter);
+		lblFooter.setHorizontalAlignment(JLabel.CENTER);
+		footerPanel.add(lblFooter, BorderLayout.CENTER);
+		
+		lblReloj = new JLabel("");
+		lblReloj.setFont(new Font("Arial", Font.BOLD, 14));
+		lblReloj.setForeground(new Color(100, 100, 100));
+		footerPanel.add(lblReloj, BorderLayout.EAST);
 
 		add(footerPanel, BorderLayout.SOUTH);
+
+		iniciarHiloReloj();
+	}
+
+	private void iniciarHiloReloj() {
+		Runnable tareaReloj = new Runnable() {
+			@Override
+			public void run() {
+				SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				while (true) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
+					String fechaHoraActual = formato.format(new Date());
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							lblReloj.setText("Hora del Sistema: " + fechaHoraActual);
+						}
+					});
+				}
+			}
+		};
+		Thread hiloReloj = new Thread(tareaReloj);
+		hiloReloj.setDaemon(true);
+		hiloReloj.start();
 	}
 
 	private JPanel crearTarjeta(String icono, String titulo, String descripcion, String textoBoton) {

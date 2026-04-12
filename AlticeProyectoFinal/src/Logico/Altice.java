@@ -55,10 +55,12 @@ public class Altice {
 
         Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0));
         c1.setFechaAsignacionPlan(new Date());
+        c1.setMesesContrato(12);
         misClientes.add(c1);
         
         Cliente c2 = new Cliente("031-9876543-2", "María Gómez", "829-555-9876", "Los Jardines, Santiago", generarIdCliente(), "Activo", misPlanes.get(3));
         c2.setFechaAsignacionPlan(new Date());
+        c2.setMesesContrato(16);
         misClientes.add(c2);
     }
 
@@ -200,6 +202,10 @@ public class Altice {
     }
 
     public void asignarPlanACliente(String idCliente, String nombrePlan) {
+        asignarPlanACliente(idCliente, nombrePlan, 12);
+    }
+
+    public void asignarPlanACliente(String idCliente, String nombrePlan, int meses) {
         Plan planAsignar = null;
         for (Plan p : misPlanes) {
             if (p.getNombre().equals(nombrePlan)) {
@@ -212,6 +218,7 @@ public class Altice {
                 if (c.getIdCliente().equals(idCliente)) {
                     c.setPlan(planAsignar);
                     c.setFechaAsignacionPlan(new Date());
+                    c.setMesesContrato(meses);
                     break;
                 }
             }

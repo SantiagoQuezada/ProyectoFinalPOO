@@ -39,6 +39,8 @@ public class CatalogoPlanes extends JFrame {
 	private JTable tablaClientes;
 	private Empleado empleadoLogueado;
 	private JComboBox<String> cbPlanesDisponibles;
+	private JTextField txtMeses;
+	private JTextField txtBuscarCliente;
 
 	public CatalogoPlanes(Empleado empleado) {
 		this.empleadoLogueado = empleado;
@@ -241,13 +243,45 @@ public class CatalogoPlanes extends JFrame {
 		cbPlanesDisponibles = new JComboBox<String>();
 		cbPlanesDisponibles.setPreferredSize(new Dimension(250, 30));
 		cbPlanesDisponibles.setFont(new Font("Arial", Font.PLAIN, 14));
-		actualizarPlanesDisponibles();
-
+		
 		panelSelectorPlan.add(lblSeleccionarPlan);
 		panelSelectorPlan.add(cbPlanesDisponibles);
 
 		panelTituloClientes.add(Box.createRigidArea(new Dimension(0, 10)));
 		panelTituloClientes.add(panelSelectorPlan);
+
+		JPanel panelMeses = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		panelMeses.setBackground(Color.WHITE);
+		panelMeses.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		JLabel lblMeses = new JLabel("Meses de Contrato: ");
+		lblMeses.setFont(new Font("Arial", Font.BOLD, 14));
+		
+		txtMeses = new JTextField("12", 10);
+		txtMeses.setFont(new Font("Arial", Font.PLAIN, 14));
+		
+		panelMeses.add(lblMeses);
+		panelMeses.add(txtMeses);
+		
+		panelTituloClientes.add(Box.createRigidArea(new Dimension(0, 10)));
+		panelTituloClientes.add(panelMeses);
+
+		cbPlanesDisponibles.addActionListener(e -> {
+			if (cbPlanesDisponibles.getSelectedIndex() > 0) {
+				String selectedStr = (String) cbPlanesDisponibles.getSelectedItem();
+				String nombrePlan = selectedStr.split(" - \\$")[0];
+				for (Plan p : Altice.getInstance().getPlanes()) {
+					if (p.getNombre().equals(nombrePlan)) {
+						if (p.getCategoria().equalsIgnoreCase("Hogar")) {
+							txtMeses.setText("16");
+						} else {
+							txtMeses.setText("12");
+						}
+						break;
+					}
+				}
+			}
+		});
 
 		JPanel panelBuscador = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		panelBuscador.setBackground(Color.WHITE);
@@ -256,7 +290,7 @@ public class CatalogoPlanes extends JFrame {
 		JLabel lblBuscar = new JLabel("Buscar Cliente: ");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		
-		JTextField txtBuscarCliente = new JTextField(20);
+		txtBuscarCliente = new JTextField(20);
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtBuscarCliente.addKeyListener(new KeyAdapter() {
 			@Override
@@ -275,7 +309,13 @@ public class CatalogoPlanes extends JFrame {
 		rightPanel.add(panelTituloClientes, BorderLayout.NORTH);
 
 		String[] columnasClientes = {"ID", "Cédula/Nombre"};
-		modeloTablaClientes = new DefaultTableModel(null, columnasClientes);
+		modeloTablaClientes = new DefaultTableModel(null, columnasClientes) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		
 		tablaClientes = new JTable(modeloTablaClientes);
 		tablaClientes.setRowHeight(35);
 		tablaClientes.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -320,14 +360,33 @@ public class CatalogoPlanes extends JFrame {
 					return;
 				}
 				
-				String nombrePlan = ((String) cbPlanesDisponibles.getSelectedItem()).split(" - ")[0];
+				String nombrePlan = ((String) cbPlanesDisponibles.getSelectedItem()).split(" - \\$")[0];
 				String idCliente = (String) modeloTablaClientes.getValueAt(filaCliente, 0);
 				
-				int confirm = JOptionPane.showConfirmDialog(null, "¿Confirmar la asignación del plan '" + nombrePlan + "' al cliente " + idCliente + "?", "Confirmar Asignación", JOptionPane.YES_NO_OPTION);
-				
-				if (confirm == JOptionPane.YES_OPTION) {
-					Altice.getInstance().asignarPlanACliente(idCliente, nombrePlan);
-					JOptionPane.showMessageDialog(null, "Plan asignado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+				int minimoMeses = 12;
+				for (Plan p : Altice.getInstance().getPlanes()) {
+					if (p.getNombre().equals(nombrePlan)) {
+						if (p.getCategoria().equalsIgnoreCase("Hogar")) minimoMeses = 16;
+						break;
+					}
+				}
+
+				try {
+					int meses = Integer.parseInt(txtMeses.getText());
+					if (meses < minimoMeses) {
+						JOptionPane.showMessageDialog(null, "El mínimo de meses para este plan es " + minimoMeses + ".", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					int confirm = JOptionPane.showConfirmDialog(null, "¿Confirmar la asignación del plan '" + nombrePlan + "' al cliente " + idCliente + " por " + meses + " meses?", "Confirmar Asignación", JOptionPane.YES_NO_OPTION);
+					
+					if (confirm == JOptionPane.YES_OPTION) {
+						Altice.getInstance().asignarPlanACliente(idCliente, nombrePlan, meses);
+						JOptionPane.showMessageDialog(null, "Plan asignado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+						cargarClientesFiltrados(txtBuscarCliente.getText());
+					}
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Ingrese un número válido para los meses de contrato.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -353,6 +412,7 @@ public class CatalogoPlanes extends JFrame {
 		add(footerPanel, BorderLayout.SOUTH);
 
 		cargarPlanes();
+		actualizarPlanesDisponibles();
 		cargarClientesFiltrados("");
 	}
 

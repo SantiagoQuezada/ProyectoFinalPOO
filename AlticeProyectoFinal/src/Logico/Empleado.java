@@ -14,6 +14,12 @@ public class Empleado extends Persona {
         this.usuario = usuario;
     }
 
+    @Override
+    public String mostrarDetalles() {
+        String rol = (usuario != null) ? usuario.getRol().toString() : "Sin Rol";
+        return "Empleado [ID=" + idEmpleado + ", Nombre=" + nombre + ", Departamento=" + departamento + ", Rol=" + rol + "]";
+    }
+
     public String getIdEmpleado() {
         return idEmpleado;
     }

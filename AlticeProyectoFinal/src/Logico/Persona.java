@@ -13,6 +13,8 @@ public abstract class Persona {
         this.direccion = direccion;
     }
 
+    public abstract String mostrarDetalles();
+
     public String getCedula() {
         return cedula;
     }
