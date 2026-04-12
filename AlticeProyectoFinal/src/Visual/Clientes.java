@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.BoxLayout;
 import javax.swing.Box;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.border.EmptyBorder;
@@ -44,7 +45,7 @@ public class Clientes extends JFrame {
 
 		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
 		leftHeaderPanel.setOpaque(false);
-		
+
 		JButton btnVolver = new JButton("\u25C0 Volver");
 		btnVolver.setBackground(Color.LIGHT_GRAY);
 		btnVolver.setForeground(Color.BLACK);
@@ -59,8 +60,8 @@ public class Clientes extends JFrame {
 		});
 
 		JLabel lblLogo = new JLabel("<html><span style='font-size:16px;'><b>\u221E Altice</b></span></html>");
-		lblLogo.setForeground(Color.WHITE); 
-		
+		lblLogo.setForeground(Color.WHITE);
+
 		leftHeaderPanel.add(btnVolver);
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
@@ -79,17 +80,17 @@ public class Clientes extends JFrame {
 		JPanel panelTitulo = new JPanel();
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
 		panelTitulo.setBackground(Color.WHITE);
-		
+
 		JLabel lblTituloPrincipal = new JLabel("Listado de Clientes Activos");
 		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 28));
 		lblTituloPrincipal.setForeground(Color.BLACK);
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
+
 		JLabel lblSubtitulo = new JLabel("Consulta y gestión de clientes y sus planes contratados.");
 		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblSubtitulo.setForeground(Color.BLACK);
 		lblSubtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
+
 		panelTitulo.add(lblTituloPrincipal);
 		panelTitulo.add(Box.createRigidArea(new Dimension(0, 5)));
 		panelTitulo.add(lblSubtitulo);
@@ -97,7 +98,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID Cliente", "Nombre Completo", "Plan Contratado"};
+		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Plan Contratado"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaClientes = new JTable(modeloTabla);
 		tablaClientes.setRowHeight(30);
@@ -129,10 +130,25 @@ public class Clientes extends JFrame {
 		});
 
 		JButton btnLeer = crearBotonCRUD("Ver Facturación");
-		
+
 		JButton btnActualizar = crearBotonCRUD("Modificar Plan");
-		
+
 		JButton btnEliminar = crearBotonCRUD("Dar de Baja");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int filaSeleccionada = tablaClientes.getSelectedRow();
+				if (filaSeleccionada >= 0) {
+					String idCliente = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea dar de baja al cliente " + idCliente + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+					if (confirm == JOptionPane.YES_OPTION) {
+						Empresa.getInstance().eliminarCliente(idCliente);
+						cargarClientes();
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
@@ -163,10 +179,12 @@ public class Clientes extends JFrame {
 			if (c.getPlan() != null) {
 				nombrePlan = c.getPlan().getNombre();
 			}
-			Object[] fila = new Object[3];
+			Object[] fila = new Object[5];
 			fila[0] = c.getIdCliente();
-			fila[1] = c.getNombre();
-			fila[2] = nombrePlan;
+			fila[1] = c.getCedula();
+			fila[2] = c.getNombre();
+			fila[3] = c.getTelefono();
+			fila[4] = nombrePlan;
 			modeloTabla.addRow(fila);
 		}
 	}
