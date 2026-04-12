@@ -1,10 +1,17 @@
 package Logico;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Altice {
+public class Altice implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static Altice instance;
+    
     private ArrayList<Empleado> misEmpleados;
     private ArrayList<Cliente> misClientes;
     private ArrayList<Plan> misPlanes;
@@ -34,9 +41,40 @@ public class Altice {
 
     public static Altice getInstance() {
         if (instance == null) {
-            instance = new Altice();
+            try {
+                // Intenta cargar el archivo guardado
+                FileInputStream fileIn = new FileInputStream("AlticeData.dat");
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                instance = (Altice) in.readObject();
+                in.close();
+                fileIn.close();
+            } catch (Exception e) {
+                // Si falla (ej. primera vez que se abre), crea uno nuevo con datos quemados
+                instance = new Altice();
+            }
+
+            // Gancho de apagado por si acaso
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Altice.guardarDatos();
+                }
+            }));
         }
         return instance;
+    }
+
+    public static void guardarDatos() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("AlticeData.dat");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(instance);
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            System.err.println("Error guardando los datos del sistema:");
+            e.printStackTrace();
+        }
     }
 
     private void cargarDatosPrueba() {
@@ -67,30 +105,35 @@ public class Altice {
     public String generarIdCliente() {
         String id = "C-00" + contadorClientes;
         contadorClientes++;
+        guardarDatos(); // Autoguardar estado del contador
         return id;
     }
 
     public String generarIdEmpleado() {
         String id = "E-" + contadorEmpleados;
         contadorEmpleados++;
+        guardarDatos();
         return id;
     }
 
     public String generarIdContrato() {
         String id = "CTR-" + contadorContratos;
         contadorContratos++;
+        guardarDatos();
         return id;
     }
 
     public String generarIdPago() {
         String id = "PAG-" + contadorPagos;
         contadorPagos++;
+        guardarDatos();
         return id;
     }
 
     public String generarIdPlan() {
         String id = "P-0" + contadorPlanes;
         contadorPlanes++;
+        guardarDatos();
         return id;
     }
 
@@ -127,10 +170,12 @@ public class Altice {
 
     public void registrarEmpleado(Empleado e) {
         misEmpleados.add(e);
+        guardarDatos(); // Autoguardado
     }
 
     public void eliminarEmpleado(String id) {
         misEmpleados.removeIf(e -> e.getIdEmpleado().equals(id));
+        guardarDatos(); // Autoguardado
     }
 
     public ArrayList<Cliente> getClientes() {
@@ -139,10 +184,12 @@ public class Altice {
 
     public void registrarCliente(Cliente c) {
         misClientes.add(c);
+        guardarDatos(); // Autoguardado
     }
 
     public void eliminarCliente(String id) {
         misClientes.removeIf(c -> c.getIdCliente().equals(id));
+        guardarDatos(); // Autoguardado
     }
 
     public ArrayList<Plan> getPlanes() {
@@ -151,10 +198,12 @@ public class Altice {
 
     public void registrarPlan(Plan p) {
         misPlanes.add(p);
+        guardarDatos(); // Autoguardado
     }
 
     public void eliminarPlan(String idPlan) {
         misPlanes.removeIf(p -> p.getIdPlan().equals(idPlan));
+        guardarDatos(); // Autoguardado
     }
 
     public ArrayList<Servicio> getServicios() {
@@ -163,6 +212,7 @@ public class Altice {
 
     public void registrarServicio(Servicio s) {
         misServicios.add(s);
+        guardarDatos();
     }
 
     public ArrayList<Contrato> getContratos() {
@@ -171,6 +221,7 @@ public class Altice {
 
     public void registrarContrato(Contrato c) {
         misContratos.add(c);
+        guardarDatos();
     }
 
     public ArrayList<Pagos> getPagos() {
@@ -179,6 +230,7 @@ public class Altice {
 
     public void registrarPago(Pagos p) {
         misPagos.add(p);
+        guardarDatos();
     }
 
     public String[] obtenerNombresPlanesPorCategoria(String categoria) {
@@ -219,6 +271,7 @@ public class Altice {
                     c.setPlan(planAsignar);
                     c.setFechaAsignacionPlan(new Date());
                     c.setMesesContrato(meses);
+                    guardarDatos(); // Autoguardado
                     break;
                 }
             }

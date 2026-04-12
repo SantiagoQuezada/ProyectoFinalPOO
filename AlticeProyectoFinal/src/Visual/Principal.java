@@ -9,6 +9,7 @@ import javax.swing.Box;
 import javax.swing.BorderFactory;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import Logico.Empleado;
+import Logico.Altice;
 
 public class Principal extends JFrame {
 
@@ -50,13 +52,39 @@ public class Principal extends JFrame {
 		lblLogo.setForeground(Color.WHITE);
 		headerPanel.add(lblLogo, BorderLayout.WEST);
 
+		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 5));
+		rightHeaderPanel.setOpaque(false);
+
 		String rolStr = empleado != null && empleado.getUsuario() != null ? empleado.getUsuario().getRol().toString() : "SIN ROL";
 		String nombreStr = empleado != null ? empleado.getNombre() : "Usuario";
-		JLabel lblUser = new JLabel("Hola, " + nombreStr + " | " + rolStr + "   \u2699   \u23FB");
+		JLabel lblUser = new JLabel("Hola, " + nombreStr + " | " + rolStr);
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
-		headerPanel.add(lblUser, BorderLayout.EAST);
+		
+		JButton btnSalir = new JButton("Salir \u23FB");
+		btnSalir.setBackground(new Color(200, 50, 50));
+		btnSalir.setForeground(Color.WHITE);
+		btnSalir.setFocusPainted(false);
+		btnSalir.setFont(new Font("Arial", Font.BOLD, 12));
+		btnSalir.setBorder(new EmptyBorder(8, 15, 8, 15));
+		btnSalir.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		// EVENTO DE SALIR MODIFICADO PARA VISUALIZAR EL GUARDADO
+		btnSalir.addActionListener(e -> {
+			try {
+				Altice.guardarDatos();
+				JOptionPane.showMessageDialog(this, "Datos guardados correctamente en AlticeData.dat.\nEl sistema se cerrará ahora.", "Apagado Seguro", JOptionPane.INFORMATION_MESSAGE);
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(this, "Hubo un error al guardar los datos. Revisa la consola.", "Error", JOptionPane.ERROR_MESSAGE);
+			} finally {
+				System.exit(0);
+			}
+		});
 
+		rightHeaderPanel.add(lblUser);
+		rightHeaderPanel.add(btnSalir);
+
+		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
 		JPanel wrapperPanel = new JPanel(new GridBagLayout());
