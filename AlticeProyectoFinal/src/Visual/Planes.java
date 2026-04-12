@@ -1,241 +1,257 @@
 package Visual;
 
-import Logico.*;
-import javax.swing.*;
+import Logico.Empresa;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
+import javax.swing.BorderFactory;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import javax.swing.JDialog;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Planes extends JFrame {
 
-    public Planes() {
-        // Configuración básica
-        setTitle("Sistema de Gestión - Módulo de Planes");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-        getContentPane().setBackground(Color.WHITE);
+	public Planes() {
+		setTitle("Sistema de Gestión - Módulo de Planes");
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setLayout(new BorderLayout());
+		getContentPane().setBackground(new Color(245, 247, 250));
 
-        // 1. Header (Igual a la principal, pero con botón de Volver)
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(new Color(15, 15, 15));
-        headerPanel.setPreferredSize(new Dimension(1000, 60));
-        headerPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+		JPanel headerPanel = new JPanel(new BorderLayout());
+		headerPanel.setBackground(new Color(15, 15, 15));
+		headerPanel.setPreferredSize(new Dimension(1000, 70));
+		headerPanel.setBorder(new EmptyBorder(10, 30, 10, 30));
 
-        // Panel izquierdo del header (Botón volver + Logo)
-        JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
-        leftHeaderPanel.setOpaque(false);
-        
-        JButton btnVolver = new JButton("\u25C0 Volver"); // Símbolo de flecha
-        btnVolver.setBackground(Color.LIGHT_GRAY);
-        btnVolver.setForeground(Color.BLACK); // Texto negro solicitado
-        btnVolver.setFocusPainted(false);
-        btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnVolver.addActionListener(e -> {
-            Principal principal = new Principal();
-            principal.setVisible(true);
-            dispose(); // Cierra esta ventana y vuelve al menú principal
-        });
+		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
+		leftHeaderPanel.setOpaque(false);
 
-        JLabel lblLogo = new JLabel("<html><span style='font-size:16px;'><b>\u221E Altice</b></span></html>");
-        lblLogo.setForeground(Color.WHITE);
-        
-        leftHeaderPanel.add(btnVolver);
-        leftHeaderPanel.add(lblLogo);
-        headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
+		JButton btnVolver = new JButton("\u25C0 Volver al Inicio");
+		btnVolver.setBackground(new Color(40, 40, 40));
+		btnVolver.setForeground(Color.WHITE);
+		btnVolver.setFocusPainted(false);
+		btnVolver.setBorder(new EmptyBorder(8, 15, 8, 15));
+		btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
+		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnVolver.addActionListener(e -> {
+			Principal principal = new Principal();
+			principal.setVisible(true);
+			dispose();
+		});
 
-        // Usuario a la derecha
-        JLabel lblUser = new JLabel("Hola, Juan Pérez | Admin   \u2699   \u23FB");
-        lblUser.setForeground(Color.LIGHT_GRAY);
-        headerPanel.add(lblUser, BorderLayout.EAST);
+		JLabel lblLogo = new JLabel("<html><span style='font-size:20px; font-family: Arial;'><b>\u221E Altice</b></span></html>");
+		lblLogo.setForeground(Color.WHITE);
 
-        add(headerPanel, BorderLayout.NORTH);
+		leftHeaderPanel.add(btnVolver);
+		leftHeaderPanel.add(lblLogo);
+		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-        // 2. Panel Central
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setBackground(Color.WHITE);
-        
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 40)));
+		JLabel lblUser = new JLabel("Hola, Juan Pérez | Administrador   \u2699   \u23FB");
+		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblUser.setForeground(new Color(200, 200, 200));
+		headerPanel.add(lblUser, BorderLayout.EAST);
 
-        JLabel lblTituloPrincipal = new JLabel("Gestión de Planes y Servicios");
-        lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 28));
-        lblTituloPrincipal.setForeground(Color.BLACK); // Asegurando color negro
-        lblTituloPrincipal.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerPanel.add(lblTituloPrincipal);
+		add(headerPanel, BorderLayout.NORTH);
 
-        JLabel lblSubtitulo = new JLabel("Selecciona una categoría para asignar un plan a un cliente.");
-        lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblSubtitulo.setForeground(Color.BLACK); // Asegurando color negro
-        lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        centerPanel.add(lblSubtitulo);
+		JPanel wrapperPanel = new JPanel(new GridBagLayout());
+		wrapperPanel.setBackground(new Color(245, 247, 250));
 
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 50)));
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+		centerPanel.setOpaque(false);
 
-        // Tarjetas
-        JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
-        cardsPanel.setBackground(Color.WHITE);
+		JLabel lblTituloPrincipal = new JLabel("Gestión de Planes y Servicios");
+		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 36));
+		lblTituloPrincipal.setForeground(new Color(30, 30, 30));
+		lblTituloPrincipal.setAlignmentX(Component.CENTER_ALIGNMENT);
+		centerPanel.add(lblTituloPrincipal);
 
-        // Llenar Arrays leyendo dinámicamente desde el Sistema (Logico)
-        String[] planesTripleplay = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Combinado");
-        String[] planesHogar = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Hogar");
-        String[] planesMoviles = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Móvil");
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        JPanel cardCombinados = crearTarjetaPlan("\uD83D\uDCFA", "PLANES<br>COMBINADOS", "Tripleplay", planesTripleplay);
-        JPanel cardHogar = crearTarjetaPlan("\uD83C\uDFE0", "PLANES<br>HOGAR", "Internet Fibra", planesHogar);
-        JPanel cardMoviles = crearTarjetaPlan("\uD83D\uDCF1", "PLANES<br>MÓVILES", "Pospago", planesMoviles);
+		JLabel lblSubtitulo = new JLabel("Selecciona una categoría para asignar un plan a un cliente de forma rápida.");
+		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
+		lblSubtitulo.setForeground(new Color(100, 100, 100));
+		lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+		centerPanel.add(lblSubtitulo);
 
-        cardsPanel.add(cardCombinados);
-        cardsPanel.add(cardHogar);
-        cardsPanel.add(cardMoviles);
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 60)));
 
-        centerPanel.add(cardsPanel);
-        add(centerPanel, BorderLayout.CENTER);
+		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+		cardsPanel.setOpaque(false);
 
-        // 3. Footer
-        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        footerPanel.setBackground(Color.WHITE);
-        footerPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
-        JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Planes");
-        lblFooter.setFont(new Font("Arial", Font.PLAIN, 12));
-        lblFooter.setForeground(Color.BLACK); // Asegurando color negro
-        footerPanel.add(lblFooter);
+		String[] planesTripleplay = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Combinado");
+		String[] planesHogar = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Hogar");
+		String[] planesMoviles = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Móvil");
 
-        add(footerPanel, BorderLayout.SOUTH);
-    }
+		JPanel cardCombinados = crearTarjetaPlan("\uD83D\uDCFA", "COMBINADOS", "Tripleplay (TV + Internet + Voz)", planesTripleplay);
+		JPanel cardHogar = crearTarjetaPlan("\uD83C\uDFE0", "HOGAR", "Internet Fibra Óptica", planesHogar);
+		JPanel cardMoviles = crearTarjetaPlan("\uD83D\uDCF1", "MÓVILES", "Pospago e Ilimitados", planesMoviles);
 
-    private JPanel crearTarjetaPlan(String icono, String titulo, String subtitulo, String[] planesDisponibles) {
-        JPanel tarjeta = new JPanel();
-        tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
-        tarjeta.setPreferredSize(new Dimension(280, 320));
-        tarjeta.setBackground(Color.WHITE);
-        
-        tarjeta.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(200, 200, 200), 2, true),
-                new EmptyBorder(20, 20, 20, 20)
-        ));
+		cardsPanel.add(cardCombinados);
+		cardsPanel.add(cardHogar);
+		cardsPanel.add(cardMoviles);
 
-        JLabel lblIcono = new JLabel(icono);
-        lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 70));
-        lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JLabel lblTitulo = new JLabel("<html><div style='text-align: center; color: black;'>" + titulo + "</div></html>");
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JLabel lblDesc = new JLabel(subtitulo);
-        lblDesc.setFont(new Font("Arial", Font.PLAIN, 14));
-        lblDesc.setForeground(Color.BLACK); // Asegurando color negro
-        lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        JButton boton = new JButton("ASIGNAR PLAN");
-        boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        boton.setBackground(new Color(230, 230, 230)); // Fondo gris claro
-        boton.setForeground(Color.BLACK); // Texto negro
-        boton.setFocusPainted(false);
-        boton.setFont(new Font("Arial", Font.BOLD, 12));
-        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        boton.setPreferredSize(new Dimension(150, 40));
-        boton.setMaximumSize(new Dimension(180, 40));
-        boton.setBorder(new LineBorder(Color.GRAY, 1));
+		centerPanel.add(cardsPanel);
+		wrapperPanel.add(centerPanel);
 
-        // Evento para abrir el menú (ComboBox)
-        boton.addActionListener(e -> mostrarMenuAsignacion(subtitulo, planesDisponibles));
+		add(wrapperPanel, BorderLayout.CENTER);
 
-        tarjeta.add(Box.createVerticalGlue());
-        tarjeta.add(lblIcono);
-        tarjeta.add(Box.createRigidArea(new Dimension(0, 15)));
-        tarjeta.add(lblTitulo);
-        tarjeta.add(Box.createRigidArea(new Dimension(0, 10)));
-        tarjeta.add(lblDesc);
-        tarjeta.add(Box.createRigidArea(new Dimension(0, 25)));
-        tarjeta.add(boton);
-        tarjeta.add(Box.createVerticalGlue());
+		JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		footerPanel.setBackground(new Color(245, 247, 250));
+		footerPanel.setBorder(new EmptyBorder(20, 0, 20, 0));
+		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Planes");
+		lblFooter.setFont(new Font("Arial", Font.PLAIN, 13));
+		lblFooter.setForeground(new Color(150, 150, 150));
+		footerPanel.add(lblFooter);
 
-        return tarjeta;
-    }
+		add(footerPanel, BorderLayout.SOUTH);
+	}
 
-    /**
-     * Muestra una ventana emergente (Dialog) con los ComboBox para elegir el Cliente y el Plan
-     */
-    private void mostrarMenuAsignacion(String categoria, String[] planesDisponibles) {
-        JDialog dialog = new JDialog(this, "Asignar - " + categoria, true); // true hace que sea modal (bloquea el fondo)
-        dialog.setSize(450, 300);
-        dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout());
-        dialog.getContentPane().setBackground(Color.WHITE);
+	private JPanel crearTarjetaPlan(String icono, String titulo, String subtitulo, String[] planesDisponibles) {
+		JPanel tarjeta = new JPanel();
+		tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
+		tarjeta.setPreferredSize(new Dimension(300, 360));
+		tarjeta.setBackground(Color.WHITE);
 
-        // Panel del formulario
-        JPanel panelFormulario = new JPanel(new GridLayout(4, 1, 10, 10));
-        panelFormulario.setBackground(Color.WHITE);
-        panelFormulario.setBorder(new EmptyBorder(20, 40, 20, 40));
+		tarjeta.setBorder(BorderFactory.createCompoundBorder(
+				new LineBorder(new Color(220, 220, 220), 1, true),
+				new EmptyBorder(30, 25, 30, 25)
+		));
 
-        // Obtener la lista real de clientes de la base lógica
-        String[] clientesRegistrados = Empresa.getInstance().obtenerNombresClientes();
+		JLabel lblIcono = new JLabel(icono);
+		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
+		lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JComboBox<String> cbClientes = new JComboBox<>(clientesRegistrados);
-        JComboBox<String> cbPlanes = new JComboBox<>(planesDisponibles);
+		JLabel lblTitulo = new JLabel("<html><div style='text-align: center; color: #1a1a1a;'>" + titulo + "</div></html>");
+		lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
+		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Estilizar un poco los ComboBox
-        cbClientes.setBackground(Color.WHITE);
-        cbClientes.setForeground(Color.BLACK);
-        cbPlanes.setBackground(Color.WHITE);
-        cbPlanes.setForeground(Color.BLACK);
+		JLabel lblDesc = new JLabel(subtitulo);
+		lblDesc.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblDesc.setForeground(new Color(100, 100, 100));
+		lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblSelCliente = new JLabel("1. Seleccionar Cliente:");
-        lblSelCliente.setForeground(Color.BLACK);
-        JLabel lblSelPlan = new JLabel("2. Seleccionar Plan " + categoria + ":");
-        lblSelPlan.setForeground(Color.BLACK);
+		JButton boton = new JButton("ASIGNAR PLAN");
+		boton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		boton.setBackground(new Color(240, 240, 240));
+		boton.setForeground(new Color(30, 30, 30));
+		boton.setFocusPainted(false);
+		boton.setFont(new Font("Arial", Font.BOLD, 13));
+		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		boton.setPreferredSize(new Dimension(180, 45));
+		boton.setMaximumSize(new Dimension(200, 45));
+		boton.setBorder(new LineBorder(new Color(200, 200, 200), 1));
 
-        panelFormulario.add(lblSelCliente);
-        panelFormulario.add(cbClientes);
-        panelFormulario.add(lblSelPlan);
-        panelFormulario.add(cbPlanes);
+		boton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(new Color(220, 220, 220));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(new Color(240, 240, 240));
+			}
+		});
 
-        dialog.add(panelFormulario, BorderLayout.CENTER);
+		boton.addActionListener(e -> mostrarMenuAsignacion(subtitulo, planesDisponibles));
 
-        // Panel para el botón de guardar
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelBotones.setBackground(new Color(245, 245, 245));
-        panelBotones.setBorder(new EmptyBorder(10, 20, 10, 20));
+		tarjeta.add(Box.createVerticalGlue());
+		tarjeta.add(lblIcono);
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 20)));
+		tarjeta.add(lblTitulo);
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 10)));
+		tarjeta.add(lblDesc);
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 30)));
+		tarjeta.add(boton);
+		tarjeta.add(Box.createVerticalGlue());
 
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBackground(Color.WHITE);
-        btnCancelar.setForeground(Color.BLACK);
-        btnCancelar.setFocusPainted(false);
-        btnCancelar.addActionListener(e -> dialog.dispose());
+		return tarjeta;
+	}
 
-        JButton btnGuardar = new JButton("Confirmar Asignación");
-        btnGuardar.setBackground(new Color(230, 230, 230)); // Gris claro para coincidir
-        btnGuardar.setForeground(Color.BLACK); // Texto estrictamente negro
-        btnGuardar.setFocusPainted(false);
-        btnGuardar.setBorder(new LineBorder(Color.GRAY, 1));
-        
-        btnGuardar.addActionListener(e -> {
-            // Lógica de validación
-            if(cbClientes.getSelectedIndex() == 0 || cbPlanes.getSelectedIndex() == 0) {
-                JOptionPane.showMessageDialog(dialog, "Por favor, seleccione un cliente y un plan.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            } else {
-                String clienteSelec = (String) cbClientes.getSelectedItem();
-                String planSelec = (String) cbPlanes.getSelectedItem();
-                
-                // Extraer el ID ("C-0010 - Juan Pérez" -> "C-0010") y asignar
-                String idCliente = clienteSelec.split(" - ")[0];
-                Empresa.getInstance().asignarPlanACliente(idCliente, planSelec);
+	private void mostrarMenuAsignacion(String categoria, String[] planesDisponibles) {
+		JDialog dialog = new JDialog(this, "Asignar Plan - " + categoria, true);
+		dialog.setSize(500, 320);
+		dialog.setLocationRelativeTo(this);
+		dialog.setLayout(new BorderLayout());
+		dialog.getContentPane().setBackground(Color.WHITE);
 
-                JOptionPane.showMessageDialog(dialog, "El plan ha sido asignado exitosamente al cliente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                dialog.dispose(); // Cerrar el diálogo
-            }
-        });
+		JPanel panelFormulario = new JPanel(new GridLayout(4, 1, 10, 10));
+		panelFormulario.setBackground(Color.WHITE);
+		panelFormulario.setBorder(new EmptyBorder(25, 40, 25, 40));
 
-        panelBotones.add(btnCancelar);
-        panelBotones.add(btnGuardar);
+		String[] clientesRegistrados = Empresa.getInstance().obtenerNombresClientes();
 
-        dialog.add(panelBotones, BorderLayout.SOUTH);
+		JComboBox<String> cbClientes = new JComboBox<>(clientesRegistrados);
+		JComboBox<String> cbPlanes = new JComboBox<>(planesDisponibles);
 
-        // Mostrar el diálogo
-        dialog.setVisible(true);
-    }
+		cbClientes.setBackground(Color.WHITE);
+		cbClientes.setFont(new Font("Arial", Font.PLAIN, 14));
+		cbPlanes.setBackground(Color.WHITE);
+		cbPlanes.setFont(new Font("Arial", Font.PLAIN, 14));
+
+		JLabel lblSelCliente = new JLabel("1. Seleccionar Cliente de la base de datos:");
+		lblSelCliente.setFont(new Font("Arial", Font.BOLD, 13));
+		JLabel lblSelPlan = new JLabel("2. Seleccionar el nuevo Plan a aplicar:");
+		lblSelPlan.setFont(new Font("Arial", Font.BOLD, 13));
+
+		panelFormulario.add(lblSelCliente);
+		panelFormulario.add(cbClientes);
+		panelFormulario.add(lblSelPlan);
+		panelFormulario.add(cbPlanes);
+
+		dialog.add(panelFormulario, BorderLayout.CENTER);
+
+		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+		panelBotones.setBackground(new Color(245, 247, 250));
+
+		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.setBackground(Color.WHITE);
+		btnCancelar.setFont(new Font("Arial", Font.BOLD, 12));
+		btnCancelar.setFocusPainted(false);
+		btnCancelar.addActionListener(e -> dialog.dispose());
+
+		JButton btnGuardar = new JButton("Confirmar Asignación");
+		btnGuardar.setBackground(new Color(15, 15, 15));
+		btnGuardar.setForeground(Color.WHITE);
+		btnGuardar.setFont(new Font("Arial", Font.BOLD, 12));
+		btnGuardar.setFocusPainted(false);
+
+		btnGuardar.addActionListener(e -> {
+			if(cbClientes.getSelectedIndex() == 0 || cbPlanes.getSelectedIndex() == 0) {
+				JOptionPane.showMessageDialog(dialog, "Por favor, seleccione un cliente y un plan.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+			} else {
+				String clienteSelec = (String) cbClientes.getSelectedItem();
+				String planSelec = (String) cbPlanes.getSelectedItem();
+
+				String idCliente = clienteSelec.split(" - ")[0];
+				Empresa.getInstance().asignarPlanACliente(idCliente, planSelec);
+
+				JOptionPane.showMessageDialog(dialog, "El plan ha sido asignado exitosamente al cliente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+				dialog.dispose();
+			}
+		});
+
+		panelBotones.add(btnCancelar);
+		panelBotones.add(btnGuardar);
+
+		dialog.add(panelBotones, BorderLayout.SOUTH);
+		dialog.setVisible(true);
+	}
 }
