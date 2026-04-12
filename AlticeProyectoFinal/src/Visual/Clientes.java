@@ -23,7 +23,7 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import Logico.Cliente;
-import Logico.Empresa;
+import Logico.Altice;
 
 public class Clientes extends JFrame {
 
@@ -40,16 +40,18 @@ public class Clientes extends JFrame {
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(15, 15, 15));
-		headerPanel.setPreferredSize(new Dimension(1000, 60));
-		headerPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+		headerPanel.setPreferredSize(new Dimension(1000, 70));
+		headerPanel.setBorder(new EmptyBorder(10, 30, 10, 30));
 
-		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 		leftHeaderPanel.setOpaque(false);
 
-		JButton btnVolver = new JButton("\u25C0 Volver");
-		btnVolver.setBackground(Color.LIGHT_GRAY);
-		btnVolver.setForeground(Color.BLACK);
+		JButton btnVolver = new JButton("\u25C0 Volver al Inicio");
+		btnVolver.setBackground(new Color(40, 40, 40));
+		btnVolver.setForeground(Color.WHITE);
 		btnVolver.setFocusPainted(false);
+		btnVolver.setBorder(new EmptyBorder(8, 15, 8, 15));
+		btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -59,15 +61,16 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		JLabel lblLogo = new JLabel("<html><span style='font-size:16px;'><b>\u221E Altice</b></span></html>");
+		JLabel lblLogo = new JLabel("<html><span style='font-size:20px; font-family: Arial;'><b>\u221E Altice</b></span></html>");
 		lblLogo.setForeground(Color.WHITE);
 
 		leftHeaderPanel.add(btnVolver);
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		JLabel lblUser = new JLabel("Hola, Juan Pérez | Admin   \u2699   \u23FB");
-		lblUser.setForeground(Color.LIGHT_GRAY);
+		JLabel lblUser = new JLabel("Hola, Juan Pérez | Administrador   \u2699   \u23FB");
+		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
 
 		add(headerPanel, BorderLayout.NORTH);
@@ -75,52 +78,53 @@ public class Clientes extends JFrame {
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout());
 		centerPanel.setBackground(Color.WHITE);
-		centerPanel.setBorder(new EmptyBorder(30, 50, 30, 50));
+		centerPanel.setBorder(new EmptyBorder(40, 60, 40, 60));
 
 		JPanel panelTitulo = new JPanel();
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
 		panelTitulo.setBackground(Color.WHITE);
 
-		JLabel lblTituloPrincipal = new JLabel("Listado de Clientes Activos");
-		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 28));
-		lblTituloPrincipal.setForeground(Color.BLACK);
+		JLabel lblTituloPrincipal = new JLabel("\uD83D\uDCC1 Listado de Clientes Activos");
+		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 32));
+		lblTituloPrincipal.setForeground(new Color(30, 30, 30));
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		JLabel lblSubtitulo = new JLabel("Consulta y gestión de clientes y sus planes contratados.");
-		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblSubtitulo.setForeground(Color.BLACK);
+		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
+		lblSubtitulo.setForeground(new Color(100, 100, 100));
 		lblSubtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		panelTitulo.add(lblTituloPrincipal);
-		panelTitulo.add(Box.createRigidArea(new Dimension(0, 5)));
+		panelTitulo.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTitulo.add(lblSubtitulo);
-		panelTitulo.add(Box.createRigidArea(new Dimension(0, 20)));
+		panelTitulo.add(Box.createRigidArea(new Dimension(0, 30)));
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
 		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Dirección", "Plan Contratado"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaClientes = new JTable(modeloTabla);
-		tablaClientes.setRowHeight(30);
-		tablaClientes.setFont(new Font("Arial", Font.PLAIN, 14));
+		tablaClientes.setRowHeight(35);
+		tablaClientes.setFont(new Font("Arial", Font.PLAIN, 15));
 		tablaClientes.setForeground(Color.BLACK);
-		tablaClientes.setGridColor(Color.LIGHT_GRAY);
-		tablaClientes.setSelectionBackground(new Color(220, 220, 220));
+		tablaClientes.setGridColor(new Color(230, 230, 230));
+		tablaClientes.setSelectionBackground(new Color(220, 235, 255));
 		tablaClientes.setSelectionForeground(Color.BLACK);
 
 		JTableHeader header = tablaClientes.getTableHeader();
-		header.setFont(new Font("Arial", Font.BOLD, 14));
-		header.setBackground(new Color(240, 240, 240));
-		header.setForeground(Color.BLACK);
+		header.setFont(new Font("Arial", Font.BOLD, 15));
+		header.setBackground(new Color(245, 247, 250));
+		header.setForeground(new Color(50, 50, 50));
+		header.setPreferredSize(new Dimension(100, 40));
 
 		JScrollPane scrollPane = new JScrollPane(tablaClientes);
-		scrollPane.setBorder(new LineBorder(Color.LIGHT_GRAY, 1));
+		scrollPane.setBorder(new LineBorder(new Color(220, 220, 220), 1));
 		centerPanel.add(scrollPane, BorderLayout.CENTER);
 
-		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 20));
 		crudPanel.setBackground(Color.WHITE);
 
-		JButton btnCrear = crearBotonCRUD("Registrar Cliente");
+		JButton btnCrear = crearBotonCRUD("Registrar Cliente", true);
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				RegCliente modalReg = new RegCliente();
@@ -129,11 +133,11 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		JButton btnLeer = crearBotonCRUD("Ver Facturación");
+		JButton btnLeer = crearBotonCRUD("Ver Facturación", false);
 
-		JButton btnActualizar = crearBotonCRUD("Modificar Plan");
+		JButton btnActualizar = crearBotonCRUD("Modificar Plan", false);
 
-		JButton btnEliminar = crearBotonCRUD("Dar de Baja");
+		JButton btnEliminar = crearBotonCRUD("Dar de Baja", false);
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaClientes.getSelectedRow();
@@ -141,7 +145,7 @@ public class Clientes extends JFrame {
 					String idCliente = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
 					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea dar de baja al cliente " + idCliente + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
-						Empresa.getInstance().eliminarCliente(idCliente);
+						Altice.getInstance().eliminarCliente(idCliente);
 						cargarClientes();
 					}
 				} else {
@@ -160,11 +164,11 @@ public class Clientes extends JFrame {
 		add(centerPanel, BorderLayout.CENTER);
 
 		JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		footerPanel.setBackground(Color.WHITE);
-		footerPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+		footerPanel.setBackground(new Color(245, 247, 250));
+		footerPanel.setBorder(new EmptyBorder(15, 0, 15, 0));
 		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Clientes");
-		lblFooter.setFont(new Font("Arial", Font.PLAIN, 12));
-		lblFooter.setForeground(Color.BLACK);
+		lblFooter.setFont(new Font("Arial", Font.PLAIN, 13));
+		lblFooter.setForeground(new Color(150, 150, 150));
 		footerPanel.add(lblFooter);
 
 		add(footerPanel, BorderLayout.SOUTH);
@@ -174,7 +178,7 @@ public class Clientes extends JFrame {
 
 	private void cargarClientes() {
 		modeloTabla.setRowCount(0);
-		for (Cliente c : Empresa.getInstance().getClientes()) {
+		for (Cliente c : Altice.getInstance().getClientes()) {
 			String nombrePlan = "Sin Plan";
 			if (c.getPlan() != null) {
 				nombrePlan = c.getPlan().getNombre();
@@ -190,15 +194,21 @@ public class Clientes extends JFrame {
 		}
 	}
 
-	private JButton crearBotonCRUD(String texto) {
+	private JButton crearBotonCRUD(String texto, boolean esPrincipal) {
 		JButton boton = new JButton(texto);
-		boton.setBackground(new Color(230, 230, 230));
-		boton.setForeground(Color.BLACK);
+		if (esPrincipal) {
+			boton.setBackground(new Color(15, 15, 15));
+			boton.setForeground(Color.WHITE);
+		} else {
+			boton.setBackground(new Color(240, 240, 240));
+			boton.setForeground(new Color(30, 30, 30));
+			boton.setBorder(new LineBorder(new Color(200, 200, 200), 1));
+		}
+		
 		boton.setFont(new Font("Arial", Font.BOLD, 13));
 		boton.setFocusPainted(false);
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setPreferredSize(new Dimension(160, 40));
-		boton.setBorder(new LineBorder(Color.GRAY, 1));
+		boton.setPreferredSize(new Dimension(170, 45));
 		return boton;
 	}
 }

@@ -15,8 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import Logico.Cliente;
-import Logico.Empresa;
-import Logico.Plan;
+import Logico.Altice;
 
 public class RegCliente extends JDialog {
 
@@ -26,13 +25,14 @@ public class RegCliente extends JDialog {
 	private JTextField txtNombre;
 	private JTextField txtTelefono;
 	private JTextField txtDireccion;
+	private JComboBox<String> cbxEstado;
 	private JComboBox<String> cbxPlanes;
 
 	public RegCliente() {
 		setTitle("Registrar Nuevo Cliente");
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 480, 450);
+		setBounds(100, 100, 480, 500);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -44,11 +44,10 @@ public class RegCliente extends JDialog {
 		contentPanel.add(lblIdCliente);
 
 		txtIdCliente = new JTextField();
-		txtIdCliente.setText(Empresa.getInstance().generarIdCliente());
+		txtIdCliente.setText(Altice.getInstance().generarIdCliente());
 		txtIdCliente.setEditable(false);
 		txtIdCliente.setBounds(150, 30, 270, 25);
 		contentPanel.add(txtIdCliente);
-		txtIdCliente.setColumns(10);
 
 		JLabel lblCedula = new JLabel("Cédula:");
 		lblCedula.setBounds(30, 80, 110, 20);
@@ -57,7 +56,6 @@ public class RegCliente extends JDialog {
 		txtCedula = new JTextField();
 		txtCedula.setBounds(150, 80, 270, 25);
 		contentPanel.add(txtCedula);
-		txtCedula.setColumns(10);
 
 		txtCedula.addKeyListener(new KeyAdapter() {
 			@Override
@@ -75,7 +73,6 @@ public class RegCliente extends JDialog {
 		txtNombre = new JTextField();
 		txtNombre.setBounds(150, 130, 270, 25);
 		contentPanel.add(txtNombre);
-		txtNombre.setColumns(10);
 
 		txtNombre.addKeyListener(new KeyAdapter() {
 			@Override
@@ -93,7 +90,6 @@ public class RegCliente extends JDialog {
 		txtTelefono = new JTextField();
 		txtTelefono.setBounds(150, 180, 270, 25);
 		contentPanel.add(txtTelefono);
-		txtTelefono.setColumns(10);
 
 		txtTelefono.addKeyListener(new KeyAdapter() {
 			@Override
@@ -111,24 +107,34 @@ public class RegCliente extends JDialog {
 		txtDireccion = new JTextField();
 		txtDireccion.setBounds(150, 230, 270, 25);
 		contentPanel.add(txtDireccion);
-		txtDireccion.setColumns(10);
 
 		txtDireccion.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					cbxPlanes.requestFocus();
-					cbxPlanes.showPopup();
+					cbxEstado.requestFocus();
+					cbxEstado.showPopup();
 				}
 			}
 		});
 
+		JLabel lblEstado = new JLabel("Estado:");
+		lblEstado.setBounds(30, 280, 100, 20);
+		contentPanel.add(lblEstado);
+
+		cbxEstado = new JComboBox<String>();
+		cbxEstado.addItem("Activo");
+		cbxEstado.addItem("Inactivo");
+		cbxEstado.addItem("Suspendido");
+		cbxEstado.setBounds(150, 280, 270, 25);
+		contentPanel.add(cbxEstado);
+
 		JLabel lblPlan = new JLabel("Plan Inicial:");
-		lblPlan.setBounds(30, 280, 100, 20);
+		lblPlan.setBounds(30, 330, 100, 20);
 		contentPanel.add(lblPlan);
 
 		cbxPlanes = new JComboBox<String>();
-		cbxPlanes.setBounds(150, 280, 270, 25);
+		cbxPlanes.setBounds(150, 330, 270, 25);
 		cargarPlanes();
 		contentPanel.add(cbxPlanes);
 
@@ -150,11 +156,12 @@ public class RegCliente extends JDialog {
 				String nombre = txtNombre.getText();
 				String telefono = txtTelefono.getText();
 				String direccion = txtDireccion.getText();
+				String estado = cbxEstado.getSelectedItem().toString();
 				String nombrePlan = cbxPlanes.getSelectedItem().toString();
 
-				Cliente nuevoCliente = new Cliente(id, cedula, nombre, telefono, direccion, null);
-				Empresa.getInstance().registrarCliente(nuevoCliente);
-				Empresa.getInstance().asignarPlanACliente(id, nombrePlan);
+				Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, null);
+				Altice.getInstance().registrarCliente(nuevoCliente);
+				Altice.getInstance().asignarPlanACliente(id, nombrePlan);
 
 				JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 				dispose();
@@ -182,19 +189,19 @@ public class RegCliente extends JDialog {
 	private void cargarPlanes() {
 		cbxPlanes.addItem("<Seleccione un plan>");
 
-		for (String plan : Empresa.getInstance().obtenerNombresPlanesPorCategoria("Combinado")) {
+		for (String plan : Altice.getInstance().obtenerNombresPlanesPorCategoria("Combinado")) {
 			if (!plan.equals("Seleccione un plan...")) {
 				cbxPlanes.addItem(plan);
 			}
 		}
 
-		for (String plan : Empresa.getInstance().obtenerNombresPlanesPorCategoria("Hogar")) {
+		for (String plan : Altice.getInstance().obtenerNombresPlanesPorCategoria("Hogar")) {
 			if (!plan.equals("Seleccione un plan...")) {
 				cbxPlanes.addItem(plan);
 			}
 		}
 
-		for (String plan : Empresa.getInstance().obtenerNombresPlanesPorCategoria("Móvil")) {
+		for (String plan : Altice.getInstance().obtenerNombresPlanesPorCategoria("Móvil")) {
 			if (!plan.equals("Seleccione un plan...")) {
 				cbxPlanes.addItem(plan);
 			}

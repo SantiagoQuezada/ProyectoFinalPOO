@@ -1,63 +1,38 @@
 package Logico;
 
-public class Cliente {
-	private String idCliente;
-	private String cedula;
-	private String nombre;
-	private String telefono;
-	private String direccion;
-	private Plan plan;
+public class Cliente extends Persona {
+    private String idCliente;
+    private String estado;
+    private Plan plan;
 
-	public Cliente(String idCliente, String cedula, String nombre, String telefono, String direccion, Plan plan) {
-		this.idCliente = idCliente;
-		this.cedula = cedula;
-		this.nombre = nombre;
-		this.telefono = telefono;
-		this.direccion = direccion;
-		this.plan = plan;
-	}
+    public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado, Plan plan) {
+        super(cedula, nombre, telefono, direccion);
+        this.idCliente = idCliente;
+        this.estado = estado;
+        this.plan = plan;
+    }
 
-	public String getIdCliente() {
-		return idCliente;
-	}
+    public String getIdCliente() {
+        return idCliente;
+    }
 
-	public String getCedula() {
-		return cedula;
-	}
+    public void setIdCliente(String idCliente) {
+        this.idCliente = idCliente;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public String getEstado() {
+        return estado;
+    }
 
-	public String getTelefono() {
-		return telefono;
-	}
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
-	public String getDireccion() {
-		return direccion;
-	}
+    public Plan getPlan() {
+        return plan;
+    }
 
-	public Plan getPlan() {
-		return plan;
-	}
-
-	public void setCedula(String cedula) {
-		this.cedula = cedula;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
-
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
-	}
-
-	public void setPlan(Plan plan) {
-		this.plan = plan;
-	}
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
 }

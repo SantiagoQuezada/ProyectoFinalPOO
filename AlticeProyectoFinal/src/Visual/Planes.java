@@ -1,6 +1,6 @@
 package Visual;
 
-import Logico.Empresa;
+import Logico.Altice;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -96,9 +96,9 @@ public class Planes extends JFrame {
 		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
 		cardsPanel.setOpaque(false);
 
-		String[] planesTripleplay = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Combinado");
-		String[] planesHogar = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Hogar");
-		String[] planesMoviles = Empresa.getInstance().obtenerNombresPlanesPorCategoria("Móvil");
+		String[] planesTripleplay = Altice.getInstance().obtenerNombresPlanesPorCategoria("Combinado");
+		String[] planesHogar = Altice.getInstance().obtenerNombresPlanesPorCategoria("Hogar");
+		String[] planesMoviles = Altice.getInstance().obtenerNombresPlanesPorCategoria("Móvil");
 
 		JPanel cardCombinados = crearTarjetaPlan("\uD83D\uDCFA", "COMBINADOS", "Tripleplay (TV + Internet + Voz)", planesTripleplay);
 		JPanel cardHogar = crearTarjetaPlan("\uD83C\uDFE0", "HOGAR", "Internet Fibra Óptica", planesHogar);
@@ -196,7 +196,7 @@ public class Planes extends JFrame {
 		panelFormulario.setBackground(Color.WHITE);
 		panelFormulario.setBorder(new EmptyBorder(25, 40, 25, 40));
 
-		String[] clientesRegistrados = Empresa.getInstance().obtenerNombresClientes();
+		String[] clientesRegistrados = Altice.getInstance().obtenerNombresClientes();
 
 		JComboBox<String> cbClientes = new JComboBox<>(clientesRegistrados);
 		JComboBox<String> cbPlanes = new JComboBox<>(planesDisponibles);
@@ -241,7 +241,7 @@ public class Planes extends JFrame {
 				String planSelec = (String) cbPlanes.getSelectedItem();
 
 				String idCliente = clienteSelec.split(" - ")[0];
-				Empresa.getInstance().asignarPlanACliente(idCliente, planSelec);
+				Altice.getInstance().asignarPlanACliente(idCliente, planSelec);
 
 				JOptionPane.showMessageDialog(dialog, "El plan ha sido asignado exitosamente al cliente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 				dialog.dispose();

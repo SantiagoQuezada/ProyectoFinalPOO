@@ -23,7 +23,7 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import Logico.Empleado;
-import Logico.Empresa;
+import Logico.Altice;
 
 public class Empleados extends JFrame {
 
@@ -101,7 +101,7 @@ public class Empleados extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID Empleado", "Nombre Completo", "Cargo / Posición"};
+		String[] columnas = {"ID Empleado", "Nombre Completo", "Departamento"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaEmpleados = new JTable(modeloTabla);
 		tablaEmpleados.setRowHeight(35);
@@ -125,6 +125,13 @@ public class Empleados extends JFrame {
 		crudPanel.setBackground(Color.WHITE);
 
 		JButton btnCrear = crearBotonCRUD("Agregar Nuevo", true);
+		btnCrear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegEmpleado modalReg = new RegEmpleado();
+				modalReg.setVisible(true);
+				cargarEmpleados();
+			}
+		});
 		
 		JButton btnLeer = crearBotonCRUD("Ver Detalles", false);
 		
@@ -138,7 +145,7 @@ public class Empleados extends JFrame {
 					String idEmpleado = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
 					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea eliminar al empleado " + idEmpleado + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
-						Empresa.getInstance().eliminarEmpleado(idEmpleado);
+						Altice.getInstance().eliminarEmpleado(idEmpleado);
 						cargarEmpleados();
 					}
 				} else {
@@ -171,11 +178,11 @@ public class Empleados extends JFrame {
 
 	private void cargarEmpleados() {
 		modeloTabla.setRowCount(0);
-		for (Empleado e : Empresa.getInstance().getEmpleados()) {
+		for (Empleado e : Altice.getInstance().getEmpleados()) {
 			Object[] fila = new Object[3];
 			fila[0] = e.getIdEmpleado();
 			fila[1] = e.getNombre();
-			fila[2] = e.getCargo();
+			fila[2] = e.getDepartamento();
 			modeloTabla.addRow(fila);
 		}
 	}
