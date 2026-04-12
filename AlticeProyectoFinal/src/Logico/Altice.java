@@ -1,6 +1,7 @@
 package Logico;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Altice {
     private static Altice instance;
@@ -53,9 +54,11 @@ public class Altice {
         misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte Técnico", 35000.0f, u2));
 
         Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0));
+        c1.setFechaAsignacionPlan(new Date());
         misClientes.add(c1);
         
         Cliente c2 = new Cliente("031-9876543-2", "María Gómez", "829-555-9876", "Los Jardines, Santiago", generarIdCliente(), "Activo", misPlanes.get(3));
+        c2.setFechaAsignacionPlan(new Date());
         misClientes.add(c2);
     }
 
@@ -208,6 +211,7 @@ public class Altice {
             for (Cliente c : misClientes) {
                 if (c.getIdCliente().equals(idCliente)) {
                     c.setPlan(planAsignar);
+                    c.setFechaAsignacionPlan(new Date());
                     break;
                 }
             }

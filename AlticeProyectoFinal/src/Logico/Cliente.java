@@ -1,15 +1,19 @@
 package Logico;
 
+import java.util.Date;
+
 public class Cliente extends Persona {
     private String idCliente;
     private String estado;
     private Plan plan;
+    private Date fechaAsignacionPlan;
 
     public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado, Plan plan) {
         super(cedula, nombre, telefono, direccion);
         this.idCliente = idCliente;
         this.estado = estado;
         this.plan = plan;
+        this.fechaAsignacionPlan = null;
     }
 
     public String getIdCliente() {
@@ -34,5 +38,13 @@ public class Cliente extends Persona {
 
     public void setPlan(Plan plan) {
         this.plan = plan;
+    }
+
+    public Date getFechaAsignacionPlan() {
+        return fechaAsignacionPlan;
+    }
+
+    public void setFechaAsignacionPlan(Date fechaAsignacionPlan) {
+        this.fechaAsignacionPlan = fechaAsignacionPlan;
     }
 }

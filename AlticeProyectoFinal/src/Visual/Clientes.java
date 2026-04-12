@@ -22,19 +22,20 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import Logico.Cliente;
-import Logico.Altice;
 import Logico.Empleado;
-import Logico.Rol;
+import Logico.Altice;
 
 public class Clientes extends JFrame {
 
 	private DefaultTableModel modeloTabla;
 	private JTable tablaClientes;
-	private Empleado empleadoLogueado;
+	private Empleado empleadoLogueado; 
 
+	
 	public Clientes(Empleado empleado) {
-		this.empleadoLogueado = empleado;
+		this.empleadoLogueado = empleado; 
 		setTitle("Sistema de Gestión - Módulo de Clientes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,6 +60,7 @@ public class Clientes extends JFrame {
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+		
 				Principal principal = new Principal(empleadoLogueado);
 				principal.setVisible(true);
 				dispose();
@@ -72,8 +74,11 @@ public class Clientes extends JFrame {
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		String rolStr = empleadoLogueado.getUsuario() != null ? empleadoLogueado.getUsuario().getRol().toString() : "SIN ROL";
-		JLabel lblUser = new JLabel("Hola, " + empleadoLogueado.getNombre() + " | " + rolStr + "   \u2699   \u23FB");
+	
+		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "";
+		
+		JLabel lblUser = new JLabel("Hola, " + nombreUsuario + " | " + rolUsuario + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -106,7 +111,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Estado", "Dirección", "Plan Contratado"};
+		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Estado", "Dirección", "Plan Contratado", "Fecha Asignación"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaClientes = new JTable(modeloTabla);
 		tablaClientes.setRowHeight(35);
@@ -186,17 +191,6 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		boolean tieneAccesoTotal = false;
-		if (empleadoLogueado.getUsuario() != null) {
-			Rol rol = empleadoLogueado.getUsuario().getRol();
-			if (rol == Rol.ADMINISTRADOR || rol == Rol.GERENTE) {
-				tieneAccesoTotal = true;
-			}
-		}
-
-		btnActualizar.setEnabled(tieneAccesoTotal);
-		btnEliminar.setEnabled(tieneAccesoTotal);
-
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
 		crudPanel.add(btnActualizar);
@@ -219,14 +213,23 @@ public class Clientes extends JFrame {
 		cargarClientes();
 	}
 
+	public Clientes() {
+		this(null);
+	}
+
 	private void cargarClientes() {
 		modeloTabla.setRowCount(0);
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		for (Cliente c : Altice.getInstance().getClientes()) {
 			String nombrePlan = "Sin Plan";
+			String fecha = "N/A";
 			if (c.getPlan() != null) {
 				nombrePlan = c.getPlan().getNombre();
+				if (c.getFechaAsignacionPlan() != null) {
+					fecha = sdf.format(c.getFechaAsignacionPlan());
+				}
 			}
-			Object[] fila = new Object[7];
+			Object[] fila = new Object[8];
 			fila[0] = c.getIdCliente();
 			fila[1] = c.getCedula();
 			fila[2] = c.getNombre();
@@ -234,6 +237,7 @@ public class Clientes extends JFrame {
 			fila[4] = c.getEstado();
 			fila[5] = c.getDireccion();
 			fila[6] = nombrePlan;
+			fila[7] = fecha;
 			modeloTabla.addRow(fila);
 		}
 	}
