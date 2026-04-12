@@ -2,8 +2,11 @@ package Logico;
 
 import java.util.Date;
 import java.util.Calendar;
+import java.io.Serializable;
 
-public class Cliente extends Persona {
+public class Cliente extends Persona implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String idCliente;
     private String estado;
     private Plan plan;
@@ -17,6 +20,12 @@ public class Cliente extends Persona {
         this.plan = plan;
         this.fechaAsignacionPlan = null;
         this.mesesContrato = 0;
+    }
+
+    @Override
+    public String mostrarDetalles() {
+        String planContratado = (plan != null) ? plan.getNombre() : "Sin Plan";
+        return "Cliente [ID=" + idCliente + ", Nombre=" + nombre + ", Estado=" + estado + ", Plan=" + planContratado + "]";
     }
 
     public String getIdCliente() {
