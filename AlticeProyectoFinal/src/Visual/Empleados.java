@@ -101,7 +101,7 @@ public class Empleados extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID Empleado", "Nombre Completo", "Departamento"};
+		String[] columnas = {"ID", "Cédula", "Nombre Completo", "Teléfono", "Departamento", "Rol", "Salario"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaEmpleados = new JTable(modeloTabla);
 		tablaEmpleados.setRowHeight(35);
@@ -206,10 +206,14 @@ public class Empleados extends JFrame {
 	private void cargarEmpleados() {
 		modeloTabla.setRowCount(0);
 		for (Empleado e : Altice.getInstance().getEmpleados()) {
-			Object[] fila = new Object[3];
+			Object[] fila = new Object[7];
 			fila[0] = e.getIdEmpleado();
-			fila[1] = e.getNombre();
-			fila[2] = e.getDepartamento();
+			fila[1] = e.getCedula();
+			fila[2] = e.getNombre();
+			fila[3] = e.getTelefono();
+			fila[4] = e.getDepartamento();
+			fila[5] = e.getUsuario() != null ? e.getUsuario().getRol().toString() : "N/A";
+			fila[6] = String.format("$%.2f", e.getSalario());
 			modeloTabla.addRow(fila);
 		}
 	}

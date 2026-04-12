@@ -101,7 +101,7 @@ public class CatalogoPlanes extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID Plan", "Categoría", "Nombre del Plan"};
+		String[] columnas = {"ID Plan", "Categoría", "Nombre del Plan", "Precio (RD$)"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaPlanes = new JTable(modeloTabla);
 		tablaPlanes.setRowHeight(35);
@@ -206,10 +206,11 @@ public class CatalogoPlanes extends JFrame {
 	private void cargarPlanes() {
 		modeloTabla.setRowCount(0);
 		for (Plan p : Altice.getInstance().getPlanes()) {
-			Object[] fila = new Object[3];
+			Object[] fila = new Object[4];
 			fila[0] = p.getIdPlan();
 			fila[1] = p.getCategoria();
 			fila[2] = p.getNombre();
+			fila[3] = String.format("$%.2f", p.getPrecio());
 			modeloTabla.addRow(fila);
 		}
 	}

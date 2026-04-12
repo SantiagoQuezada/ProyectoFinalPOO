@@ -39,12 +39,12 @@ public class Altice {
     }
 
     private void cargarDatosPrueba() {
-        misPlanes.add(new Plan("P-01", "Combinado", "Tripleplay Básico"));
-        misPlanes.add(new Plan("P-02", "Combinado", "Tripleplay Premium"));
-        misPlanes.add(new Plan("P-03", "Hogar", "Internet Fibra 100Mbps"));
-        misPlanes.add(new Plan("P-04", "Hogar", "Internet Fibra 300Mbps"));
-        misPlanes.add(new Plan("P-05", "Móvil", "Pospago Básico 15GB"));
-        misPlanes.add(new Plan("P-06", "Móvil", "Pospago Ilimitado 5G"));
+        misPlanes.add(new Plan("P-01", "Combinado", "Tripleplay Básico", 1500.0f));
+        misPlanes.add(new Plan("P-02", "Combinado", "Tripleplay Premium", 2500.0f));
+        misPlanes.add(new Plan("P-03", "Hogar", "Internet Fibra 100Mbps", 1200.0f));
+        misPlanes.add(new Plan("P-04", "Hogar", "Internet Fibra 300Mbps", 1800.0f));
+        misPlanes.add(new Plan("P-05", "Móvil", "Pospago Básico 15GB", 600.0f));
+        misPlanes.add(new Plan("P-06", "Móvil", "Pospago Ilimitado 5G", 1100.0f));
 
         Usuario u1 = new Usuario("amartinez", "1234", Rol.GERENTE);
         Usuario u2 = new Usuario("lgomez", "1234", Rol.SOPORTE_TECNICO);

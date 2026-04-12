@@ -22,6 +22,7 @@ public class RegPlan extends JDialog {
 	private JTextField txtIdPlan;
 	private JComboBox<String> cbxCategoria;
 	private JTextField txtNombre;
+	private JTextField txtPrecio;
 	private Plan planActual;
 
 	public RegPlan(Plan plan, boolean soloLectura) {
@@ -36,7 +37,7 @@ public class RegPlan extends JDialog {
 		
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 480, 300);
+		setBounds(100, 100, 480, 350);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -76,14 +77,24 @@ public class RegPlan extends JDialog {
 		txtNombre.setBounds(150, 130, 270, 25);
 		contentPanel.add(txtNombre);
 
+		JLabel lblPrecio = new JLabel("Precio (RD$):");
+		lblPrecio.setBounds(30, 180, 120, 20);
+		contentPanel.add(lblPrecio);
+
+		txtPrecio = new JTextField();
+		txtPrecio.setBounds(150, 180, 270, 25);
+		contentPanel.add(txtPrecio);
+
 		if (planActual != null) {
 			cbxCategoria.setSelectedItem(planActual.getCategoria());
 			txtNombre.setText(planActual.getNombre());
+			txtPrecio.setText(String.valueOf(planActual.getPrecio()));
 		}
 
 		if (soloLectura) {
 			cbxCategoria.setEnabled(false);
 			txtNombre.setEditable(false);
+			txtPrecio.setEditable(false);
 		}
 
 		JPanel buttonPane = new JPanel();
@@ -95,26 +106,32 @@ public class RegPlan extends JDialog {
 			btnRegistrar.setMnemonic(KeyEvent.VK_R);
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (txtNombre.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Por favor, indique un nombre para el plan.", "Error", JOptionPane.ERROR_MESSAGE);
+					if (txtNombre.getText().isEmpty() || txtPrecio.getText().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
-					String id = txtIdPlan.getText();
-					String categoria = cbxCategoria.getSelectedItem().toString();
-					String nombre = txtNombre.getText();
+					try {
+						String id = txtIdPlan.getText();
+						String categoria = cbxCategoria.getSelectedItem().toString();
+						String nombre = txtNombre.getText();
+						float precio = Float.parseFloat(txtPrecio.getText());
 
-					if (planActual == null) {
-						Plan nuevoPlan = new Plan(id, categoria, nombre);
-						Altice.getInstance().registrarPlan(nuevoPlan);
-						JOptionPane.showMessageDialog(null, "Plan registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						planActual.setCategoria(categoria);
-						planActual.setNombre(nombre);
-						JOptionPane.showMessageDialog(null, "Plan actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						if (planActual == null) {
+							Plan nuevoPlan = new Plan(id, categoria, nombre, precio);
+							Altice.getInstance().registrarPlan(nuevoPlan);
+							JOptionPane.showMessageDialog(null, "Plan registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							planActual.setCategoria(categoria);
+							planActual.setNombre(nombre);
+							planActual.setPrecio(precio);
+							JOptionPane.showMessageDialog(null, "Plan actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						}
+						
+						dispose();
+					} catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(null, "El precio debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					
-					dispose();
 				}
 			});
 			buttonPane.add(btnRegistrar);

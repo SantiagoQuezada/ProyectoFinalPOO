@@ -101,7 +101,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Dirección", "Plan Contratado"};
+		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Estado", "Dirección", "Plan Contratado"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaClientes = new JTable(modeloTabla);
 		tablaClientes.setRowHeight(35);
@@ -210,13 +210,14 @@ public class Clientes extends JFrame {
 			if (c.getPlan() != null) {
 				nombrePlan = c.getPlan().getNombre();
 			}
-			Object[] fila = new Object[6];
+			Object[] fila = new Object[7];
 			fila[0] = c.getIdCliente();
 			fila[1] = c.getCedula();
 			fila[2] = c.getNombre();
 			fila[3] = c.getTelefono();
-			fila[4] = c.getDireccion();
-			fila[5] = nombrePlan;
+			fila[4] = c.getEstado();
+			fila[5] = c.getDireccion();
+			fila[6] = nombrePlan;
 			modeloTabla.addRow(fila);
 		}
 	}

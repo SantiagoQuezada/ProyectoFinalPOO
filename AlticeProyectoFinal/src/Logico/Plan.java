@@ -4,11 +4,13 @@ public class Plan {
     private String idPlan;
     private String categoria;
     private String nombre;
+    private float precio;
 
-    public Plan(String idPlan, String categoria, String nombre) {
+    public Plan(String idPlan, String categoria, String nombre, float precio) {
         this.idPlan = idPlan;
         this.categoria = categoria;
         this.nombre = nombre;
+        this.precio = precio;
     }
 
     public String getIdPlan() { 
@@ -33,5 +35,13 @@ public class Plan {
     
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+    
+    public float getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(float precio) {
+        this.precio = precio;
     }
 }
