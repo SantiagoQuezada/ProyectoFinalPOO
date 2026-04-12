@@ -24,13 +24,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import Logico.Plan;
 import Logico.Altice;
+import Logico.Empleado;
+import Logico.Rol;
 
 public class CatalogoPlanes extends JFrame {
 
 	private DefaultTableModel modeloTabla;
 	private JTable tablaPlanes;
+	private Empleado empleadoLogueado;
 
-	public CatalogoPlanes() {
+	public CatalogoPlanes(Empleado empleado) {
+		this.empleadoLogueado = empleado;
 		setTitle("Sistema de Gestión - Catálogo de Planes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,7 +59,7 @@ public class CatalogoPlanes extends JFrame {
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Planes planes = new Planes();
+				Planes planes = new Planes(empleadoLogueado);
 				planes.setVisible(true);
 				dispose();
 			}
@@ -68,7 +72,8 @@ public class CatalogoPlanes extends JFrame {
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		JLabel lblUser = new JLabel("Hola, Juan Pérez | Administrador   \u2699   \u23FB");
+		String rolStr = empleadoLogueado.getUsuario() != null ? empleadoLogueado.getUsuario().getRol().toString() : "SIN ROL";
+		JLabel lblUser = new JLabel("Hola, " + empleadoLogueado.getNombre() + " | " + rolStr + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -180,6 +185,17 @@ public class CatalogoPlanes extends JFrame {
 				}
 			}
 		});
+
+		boolean tieneAccesoTotal = false;
+		if (empleadoLogueado.getUsuario() != null) {
+			Rol rol = empleadoLogueado.getUsuario().getRol();
+			if (rol == Rol.ADMINISTRADOR || rol == Rol.GERENTE) {
+				tieneAccesoTotal = true;
+			}
+		}
+
+		btnActualizar.setEnabled(tieneAccesoTotal);
+		btnEliminar.setEnabled(tieneAccesoTotal);
 
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);

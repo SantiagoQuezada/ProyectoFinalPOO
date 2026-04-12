@@ -1,6 +1,7 @@
 package Visual;
 
 import Logico.Altice;
+import Logico.Empleado;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -27,7 +28,10 @@ import java.awt.event.MouseEvent;
 
 public class Planes extends JFrame {
 
-	public Planes() {
+	private Empleado empleadoLogueado;
+
+	public Planes(Empleado empleado) {
+		this.empleadoLogueado = empleado;
 		setTitle("Sistema de Gestión - Módulo de Planes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,7 +55,7 @@ public class Planes extends JFrame {
 		btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(e -> {
-			Principal principal = new Principal();
+			Principal principal = new Principal(empleadoLogueado);
 			principal.setVisible(true);
 			dispose();
 		});
@@ -63,7 +67,8 @@ public class Planes extends JFrame {
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		JLabel lblUser = new JLabel("Hola, Juan Pérez | Administrador   \u2699   \u23FB");
+		String rolStr = empleadoLogueado.getUsuario() != null ? empleadoLogueado.getUsuario().getRol().toString() : "SIN ROL";
+		JLabel lblUser = new JLabel("Hola, " + empleadoLogueado.getNombre() + " | " + rolStr + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -103,7 +108,7 @@ public class Planes extends JFrame {
 		btnCatalogo.setMaximumSize(new Dimension(280, 45));
 		btnCatalogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnCatalogo.addActionListener(e -> {
-			CatalogoPlanes cat = new CatalogoPlanes();
+			CatalogoPlanes cat = new CatalogoPlanes(empleadoLogueado);
 			cat.setVisible(true);
 			dispose();
 		});

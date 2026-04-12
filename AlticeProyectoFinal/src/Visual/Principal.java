@@ -21,23 +21,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import Logico.Empleado;
 
 public class Principal extends JFrame {
+	
 
-	public static void main(String[] args) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Principal frame = new Principal();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private static Empleado empleadoLogueado;
 
-	public Principal() {
+	public Principal(Empleado empleado) {
+		this.empleadoLogueado = empleado;
+		
 		setTitle("Sistema de Gestión - Principal");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,7 +47,8 @@ public class Principal extends JFrame {
 		lblLogo.setForeground(Color.WHITE);
 		headerPanel.add(lblLogo, BorderLayout.WEST);
 
-		JLabel lblUser = new JLabel("Hola, Juan Pérez | Administrador   \u2699   \u23FB");
+		String rolStr = empleado.getUsuario() != null ? empleado.getUsuario().getRol().toString() : "SIN ROL";
+		JLabel lblUser = new JLabel("Hola, " + empleado.getNombre() + " | " + rolStr + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -87,23 +81,9 @@ public class Principal extends JFrame {
 		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
 		cardsPanel.setOpaque(false);
 
-		JPanel cardPlanes = crearTarjeta(
-				"\uD83D\uDCC8", 
-				"PLANES", 
-				"Gestionar paquetes, ofertas y<br>tarifas de servicios.", 
-				"VER PLANES");
-
-		JPanel cardEmpleados = crearTarjeta(
-				"\uD83D\uDC65", 
-				"EMPLEADOS", 
-				"Base de datos del personal,<br>roles y perfiles.", 
-				"VER EMPLEADOS");
-
-		JPanel cardClientes = crearTarjeta(
-				"\uD83D\uDCC1", 
-				"CLIENTES", 
-				"Consultar registros, servicios<br>activos y facturación.", 
-				"VER CLIENTES");
+		JPanel cardPlanes = crearTarjeta("\uD83D\uDCC8", "PLANES", "Gestionar paquetes, ofertas y<br>tarifas de servicios.", "VER PLANES");
+		JPanel cardEmpleados = crearTarjeta("\uD83D\uDC65", "EMPLEADOS", "Base de datos del personal,<br>roles y perfiles.", "VER EMPLEADOS");
+		JPanel cardClientes = crearTarjeta("\uD83D\uDCC1", "CLIENTES", "Consultar registros, servicios<br>activos y facturación.", "VER CLIENTES");
 
 		cardsPanel.add(cardPlanes);
 		cardsPanel.add(cardEmpleados);
@@ -160,29 +140,26 @@ public class Principal extends JFrame {
 		boton.setBorder(BorderFactory.createEmptyBorder());
 
 		boton.addMouseListener(new MouseAdapter() {
-			@Override
 			public void mouseEntered(MouseEvent e) {
 				boton.setBackground(new Color(50, 50, 50));
 			}
-			@Override
 			public void mouseExited(MouseEvent e) {
 				boton.setBackground(new Color(15, 15, 15));
 			}
 		});
 
 		boton.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (textoBoton.equals("VER PLANES")) {
-					Planes ventanaPlanes = new Planes();
+					Planes ventanaPlanes = new Planes(empleadoLogueado);
 					ventanaPlanes.setVisible(true);
 					dispose();
 				} else if (textoBoton.equals("VER EMPLEADOS")) {
-					Empleados ventanaEmpleados = new Empleados();
+					Empleados ventanaEmpleados = new Empleados(empleadoLogueado);
 					ventanaEmpleados.setVisible(true);
 					dispose();
 				} else if (textoBoton.equals("VER CLIENTES")) {
-					Clientes ventanaClientes = new Clientes();
+					Clientes ventanaClientes = new Clientes(empleadoLogueado);
 					ventanaClientes.setVisible(true);
 					dispose();
 				}

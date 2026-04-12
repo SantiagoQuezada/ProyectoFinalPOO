@@ -24,13 +24,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import Logico.Cliente;
 import Logico.Altice;
+import Logico.Empleado;
+import Logico.Rol;
 
 public class Clientes extends JFrame {
 
 	private DefaultTableModel modeloTabla;
 	private JTable tablaClientes;
+	private Empleado empleadoLogueado;
 
-	public Clientes() {
+	public Clientes(Empleado empleado) {
+		this.empleadoLogueado = empleado;
 		setTitle("Sistema de Gestión - Módulo de Clientes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,7 +59,7 @@ public class Clientes extends JFrame {
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Principal principal = new Principal();
+				Principal principal = new Principal(empleadoLogueado);
 				principal.setVisible(true);
 				dispose();
 			}
@@ -68,7 +72,8 @@ public class Clientes extends JFrame {
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		JLabel lblUser = new JLabel("Hola, Juan Pérez | Administrador   \u2699   \u23FB");
+		String rolStr = empleadoLogueado.getUsuario() != null ? empleadoLogueado.getUsuario().getRol().toString() : "SIN ROL";
+		JLabel lblUser = new JLabel("Hola, " + empleadoLogueado.getNombre() + " | " + rolStr + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -180,6 +185,17 @@ public class Clientes extends JFrame {
 				}
 			}
 		});
+
+		boolean tieneAccesoTotal = false;
+		if (empleadoLogueado.getUsuario() != null) {
+			Rol rol = empleadoLogueado.getUsuario().getRol();
+			if (rol == Rol.ADMINISTRADOR || rol == Rol.GERENTE) {
+				tieneAccesoTotal = true;
+			}
+		}
+
+		btnActualizar.setEnabled(tieneAccesoTotal);
+		btnEliminar.setEnabled(tieneAccesoTotal);
 
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
