@@ -37,8 +37,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Planes extends JFrame {
 
@@ -218,12 +216,11 @@ public class Planes extends JFrame {
 		tarjeta.setBorder(new EmptyBorder(30, 20, 30, 20));
 
 		JLabel lblIcono = new JLabel(icono);
-		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 65));
+		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 55));
 		lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblIcono.setHorizontalAlignment(JLabel.CENTER);
 		lblIcono.setVerticalAlignment(JLabel.CENTER);
-		lblIcono.setMinimumSize(new Dimension(100, 90));
-		lblIcono.setPreferredSize(new Dimension(100, 90));
+		lblIcono.setPreferredSize(new Dimension(100, 80));
 
 		JLabel lblTitulo = new JLabel(titulo);
 		lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
@@ -274,7 +271,7 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuAsignacion(String categoriaTitulo, String categoriaReal) {
 		JDialog dialog = new JDialog(this, "Asignación de Plan", true);
-		dialog.setSize(850, 650);
+		dialog.setSize(900, 650);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -287,21 +284,16 @@ public class Planes extends JFrame {
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		JPanel panelCentral = new JPanel();
-		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-		panelCentral.setBackground(new Color(245, 247, 250));
-		panelCentral.setBorder(new EmptyBorder(30, 40, 30, 40));
-
-		JPanel panelSelectorPlan = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		panelSelectorPlan.setBackground(new Color(245, 247, 250));
-		panelSelectorPlan.setAlignmentX(Component.LEFT_ALIGNMENT);
+		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+		topPanel.setBackground(Color.WHITE);
+		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		JLabel lblSeleccionarPlan = new JLabel("Plan a asignar: ");
-		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 15));
+		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 14));
 		lblSeleccionarPlan.setForeground(new Color(30, 30, 30));
 
 		JComboBox<String> cbPlanes = new JComboBox<>();
-		cbPlanes.setPreferredSize(new Dimension(350, 35));
+		cbPlanes.setPreferredSize(new Dimension(300, 35));
 		cbPlanes.setFont(new Font("Arial", Font.PLAIN, 14));
 		cbPlanes.setBackground(Color.WHITE);
 		cbPlanes.addItem("<Seleccione un plan>");
@@ -312,29 +304,29 @@ public class Planes extends JFrame {
 			}
 		}
 
-		panelSelectorPlan.add(lblSeleccionarPlan);
-		panelSelectorPlan.add(Box.createRigidArea(new Dimension(15, 0)));
-		panelSelectorPlan.add(cbPlanes);
-
-		JPanel panelBuscador = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		panelBuscador.setBackground(new Color(245, 247, 250));
-		panelBuscador.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
 		JLabel lblBuscar = new JLabel("Buscar Cliente: ");
-		lblBuscar.setFont(new Font("Arial", Font.BOLD, 15));
+		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		lblBuscar.setForeground(new Color(30, 30, 30));
 		
-		JTextField txtBuscarCliente = new JTextField(30);
-		txtBuscarCliente.setPreferredSize(new Dimension(350, 35));
+		JTextField txtBuscarCliente = new JTextField();
+		txtBuscarCliente.setPreferredSize(new Dimension(250, 35));
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtBuscarCliente.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createLineBorder(new Color(200, 200, 200)), 
 			new EmptyBorder(0, 10, 0, 10)
 		));
-		
-		panelBuscador.add(lblBuscar);
-		panelBuscador.add(Box.createRigidArea(new Dimension(12, 0)));
-		panelBuscador.add(txtBuscarCliente);
+
+		topPanel.add(lblSeleccionarPlan);
+		topPanel.add(cbPlanes);
+		topPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		topPanel.add(lblBuscar);
+		topPanel.add(txtBuscarCliente);
+
+		RoundedPanel topWrapper = new RoundedPanel(20);
+		topWrapper.setLayout(new BorderLayout());
+		topWrapper.setBackground(Color.WHITE);
+		topWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
+		topWrapper.add(topPanel, BorderLayout.CENTER);
 
 		String[] columnasClientes = {"ID", "Cédula/RNC - Nombre", "Teléfono"};
 		DefaultTableModel modeloTablaClientes = new DefaultTableModel(null, columnasClientes) {
@@ -343,6 +335,7 @@ public class Planes extends JFrame {
 		};
 		
 		JTable tablaClientes = new JTable(modeloTablaClientes);
+		tablaClientes.setFillsViewportHeight(true);
 		configurarTablaEstiloModerno(tablaClientes);
 
 		tablaClientes.getColumnModel().getColumn(0).setPreferredWidth(80);
@@ -357,8 +350,16 @@ public class Planes extends JFrame {
 		RoundedPanel tableWrapper = new RoundedPanel(20);
 		tableWrapper.setLayout(new BorderLayout());
 		tableWrapper.setBackground(Color.WHITE);
-		tableWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tableWrapper.setBorder(new EmptyBorder(10, 10, 10, 10));
 		tableWrapper.add(scrollPaneClientes, BorderLayout.CENTER);
+
+		JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
+		centerPanel.setBorder(new EmptyBorder(25, 30, 20, 30));
+		centerPanel.setBackground(new Color(245, 247, 250));
+		centerPanel.add(topWrapper, BorderLayout.NORTH);
+		centerPanel.add(tableWrapper, BorderLayout.CENTER);
+
+		dialog.add(centerPanel, BorderLayout.CENTER);
 
 		Runnable cargarClientesFiltrados = () -> {
 			modeloTablaClientes.setRowCount(0);
@@ -386,17 +387,9 @@ public class Planes extends JFrame {
 
 		cargarClientesFiltrados.run();
 
-		panelCentral.add(panelSelectorPlan);
-		panelCentral.add(Box.createRigidArea(new Dimension(0, 25)));
-		panelCentral.add(panelBuscador);
-		panelCentral.add(Box.createRigidArea(new Dimension(0, 20)));
-		panelCentral.add(tableWrapper);
-
-		dialog.add(panelCentral, BorderLayout.CENTER);
-
 		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		panelBotones.setBackground(new Color(245, 247, 250));
-		panelBotones.setBorder(new EmptyBorder(10, 20, 20, 20));
+		panelBotones.setBorder(new EmptyBorder(0, 20, 20, 20));
 
 		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
 		btnCancelar.setBackground(new Color(200, 200, 200));
@@ -463,16 +456,19 @@ public class Planes extends JFrame {
 		JComboBox<String> cbEstado = new JComboBox<>(new String[]{"Todos", "Activos", "Desactivados"});
 		cbEstado.setFont(new Font("Arial", Font.PLAIN, 14));
 		cbEstado.setBackground(Color.WHITE);
+		cbEstado.setPreferredSize(new Dimension(130, 35));
 
 		JLabel lblTipo = new JLabel("Tipo Cliente:");
 		lblTipo.setFont(new Font("Arial", Font.BOLD, 14));
 		JComboBox<String> cbTipo = new JComboBox<>(new String[]{"Todos", "Personales", "Empresariales"});
 		cbTipo.setFont(new Font("Arial", Font.PLAIN, 14));
 		cbTipo.setBackground(Color.WHITE);
+		cbTipo.setPreferredSize(new Dimension(130, 35));
 
 		JLabel lblBuscar = new JLabel("Buscar (Nombre/RNC):");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
-		JTextField txtBuscar = new JTextField(20);
+		JTextField txtBuscar = new JTextField();
+		txtBuscar.setPreferredSize(new Dimension(200, 35));
 		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtBuscar.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createLineBorder(new Color(200, 200, 200)), 
@@ -491,6 +487,7 @@ public class Planes extends JFrame {
 		RoundedPanel topWrapper = new RoundedPanel(20);
 		topWrapper.setLayout(new BorderLayout());
 		topWrapper.setBackground(Color.WHITE);
+		topWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
 		topWrapper.add(topPanel, BorderLayout.CENTER);
 
 		String[] cols = {"Identificación", "Cliente", "Tipo Cliente", "Plan Asignado", "Estado Plan"};
@@ -498,6 +495,7 @@ public class Planes extends JFrame {
 			public boolean isCellEditable(int r, int c) { return false; }
 		};
 		JTable table = new JTable(model);
+		table.setFillsViewportHeight(true);
 		configurarTablaEstiloModerno(table);
 
 		JScrollPane scroll = new JScrollPane(table);
@@ -507,7 +505,7 @@ public class Planes extends JFrame {
 		RoundedPanel tableWrapper = new RoundedPanel(20);
 		tableWrapper.setLayout(new BorderLayout());
 		tableWrapper.setBackground(Color.WHITE);
-		tableWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tableWrapper.setBorder(new EmptyBorder(10, 10, 10, 10));
 		tableWrapper.add(scroll, BorderLayout.CENTER);
 		
 		JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
@@ -515,6 +513,7 @@ public class Planes extends JFrame {
 		centerPanel.setBackground(new Color(245, 247, 250));
 		centerPanel.add(topWrapper, BorderLayout.NORTH);
 		centerPanel.add(tableWrapper, BorderLayout.CENTER);
+
 		dialog.add(centerPanel, BorderLayout.CENTER);
 
 		Runnable cargar = () -> {
@@ -649,7 +648,9 @@ public class Planes extends JFrame {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.setColor(new Color(220, 220, 220));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
 		}
