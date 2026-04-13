@@ -56,40 +56,10 @@ public class Planes extends JFrame {
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
 		headerPanel.setBorder(new EmptyBorder(15, 40, 15, 40));
 
-		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
-		leftHeaderPanel.setOpaque(false);
-
-		RoundedButton btnVolver = new RoundedButton("\u25C0 Volver al Inicio", 20);
-		btnVolver.setBackground(new Color(40, 40, 40));
-		btnVolver.setForeground(Color.WHITE);
-		btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
-		btnVolver.setPreferredSize(new Dimension(150, 35));
-		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
-		btnVolver.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnVolver.setBackground(new Color(60, 60, 60));
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnVolver.setBackground(new Color(40, 40, 40));
-			}
-		});
-
-		btnVolver.addActionListener(e -> {
-			Principal principal = new Principal(empleadoLogueado);
-			principal.setVisible(true);
-			dispose();
-		});
-
-		JLabel lblLogo = new JLabel("  \u221E Altice");
-		lblLogo.setFont(new Font("Arial", Font.BOLD, 28));
+		JLabel lblLogo = new JLabel("\u221E Altice");
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 32));
 		lblLogo.setForeground(Color.WHITE);
-
-		leftHeaderPanel.add(btnVolver);
-		leftHeaderPanel.add(lblLogo);
-		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
+		headerPanel.add(lblLogo, BorderLayout.WEST);
 
 		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
 		rightHeaderPanel.setOpaque(false);
@@ -99,7 +69,7 @@ public class Planes extends JFrame {
 		
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
-		lblUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
 		
 		rightHeaderPanel.add(lblUser);
@@ -133,20 +103,36 @@ public class Planes extends JFrame {
 		JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		actionPanel.setOpaque(false);
 
+		RoundedButton btnVolver = new RoundedButton("\u25C0 Volver al Inicio", 25);
+		btnVolver.setBackground(new Color(40, 40, 40));
+		btnVolver.setForeground(Color.WHITE);
+		btnVolver.setFont(new Font("Arial", Font.BOLD, 14));
+		btnVolver.setPreferredSize(new Dimension(190, 45));
+		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnVolver.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnVolver.setBackground(new Color(60, 60, 60)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnVolver.setBackground(new Color(40, 40, 40)); }
+		});
+		btnVolver.addActionListener(e -> {
+			Principal principal = new Principal(empleadoLogueado);
+			principal.setVisible(true);
+			dispose();
+		});
+
 		RoundedButton btnCatalogo = new RoundedButton("\u2699 Administrar Catálogo de Planes", 25);
 		btnCatalogo.setBackground(new Color(0, 102, 204));
 		btnCatalogo.setForeground(Color.WHITE);
 		btnCatalogo.setFont(new Font("Arial", Font.BOLD, 14));
 		btnCatalogo.setPreferredSize(new Dimension(280, 45));
 		btnCatalogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
 		btnCatalogo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) { btnCatalogo.setBackground(new Color(0, 80, 160)); }
 			@Override
 			public void mouseExited(MouseEvent e) { btnCatalogo.setBackground(new Color(0, 102, 204)); }
 		});
-
 		btnCatalogo.addActionListener(e -> {
 			CatalogoPlanes cat = new CatalogoPlanes(empleadoLogueado);
 			cat.setVisible(true);
@@ -159,16 +145,15 @@ public class Planes extends JFrame {
 		btnConsultas.setFont(new Font("Arial", Font.BOLD, 14));
 		btnConsultas.setPreferredSize(new Dimension(280, 45));
 		btnConsultas.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
 		btnConsultas.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) { btnConsultas.setBackground(new Color(80, 80, 80)); }
 			@Override
 			public void mouseExited(MouseEvent e) { btnConsultas.setBackground(new Color(60, 60, 60)); }
 		});
-
 		btnConsultas.addActionListener(e -> mostrarMenuConsultas());
 
+		actionPanel.add(btnVolver);
 		actionPanel.add(btnCatalogo);
 		actionPanel.add(btnConsultas);
 
@@ -434,7 +419,6 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuConsultas() {
 		JDialog dialog = new JDialog(this, "Control de Asignaciones", true);
-		// Aumenté el ancho del modal de 1000 a 1100 para evitar que se corten los componentes
 		dialog.setSize(1100, 650);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
@@ -628,14 +612,14 @@ public class Planes extends JFrame {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
-			g2.fillOval(x + 4, y, 8, 8);
-			g2.fillArc(x, y + 9, 16, 12, 0, 180);
+			g2.fillOval(x + 6, y + 2, 12, 12);
+			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			g2.dispose();
 		}
 		@Override
-		public int getIconWidth() { return 16; }
+		public int getIconWidth() { return 24; }
 		@Override
-		public int getIconHeight() { return 16; }
+		public int getIconHeight() { return 24; }
 	}
 
 	class RoundedPanel extends JPanel {
