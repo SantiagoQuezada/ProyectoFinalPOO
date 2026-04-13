@@ -1,31 +1,32 @@
 package Logico;
 
 import java.util.Date;
-import java.util.Calendar;
-import java.io.Serializable;
 
-public class Cliente extends Persona implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
+public class Cliente extends Persona {
     private String idCliente;
     private String estado;
     private Plan plan;
     private Date fechaAsignacionPlan;
-    private int mesesContrato;
+    private String tipoCliente;
+    private String rnc;
 
-    public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado, Plan plan) {
+    public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado, Plan plan, String tipoCliente, String rnc) {
         super(cedula, nombre, telefono, direccion);
         this.idCliente = idCliente;
         this.estado = estado;
         this.plan = plan;
         this.fechaAsignacionPlan = null;
-        this.mesesContrato = 0;
+        this.tipoCliente = tipoCliente;
+        this.rnc = rnc;
     }
 
     @Override
-    public String mostrarDetalles() {
-        String planContratado = (plan != null) ? plan.getNombre() : "Sin Plan";
-        return "Cliente [ID=" + idCliente + ", Nombre=" + nombre + ", Estado=" + estado + ", Plan=" + planContratado + "]";
+    public void mostrarDetalles() {
+        System.out.println("Detalles del Cliente:");
+        System.out.println("ID: " + idCliente);
+        System.out.println("Nombre/Empresa: " + getNombre());
+        System.out.println("Tipo: " + tipoCliente);
+        System.out.println("Estado: " + estado);
     }
 
     public String getIdCliente() {
@@ -60,27 +61,19 @@ public class Cliente extends Persona implements Serializable {
         this.fechaAsignacionPlan = fechaAsignacionPlan;
     }
 
-    public int getMesesContrato() {
-        return mesesContrato;
+    public String getTipoCliente() {
+        return tipoCliente;
     }
 
-    public void setMesesContrato(int mesesContrato) {
-        this.mesesContrato = mesesContrato;
+    public void setTipoCliente(String tipoCliente) {
+        this.tipoCliente = tipoCliente;
     }
 
-    public int getMesesRestantes() {
-        if (fechaAsignacionPlan == null || mesesContrato <= 0) return 0;
-        
-        Calendar start = Calendar.getInstance();
-        start.setTime(fechaAsignacionPlan);
-        
-        Calendar end = Calendar.getInstance();
-        
-        int diffYear = end.get(Calendar.YEAR) - start.get(Calendar.YEAR);
-        int diffMonth = diffYear * 12 + end.get(Calendar.MONTH) - start.get(Calendar.MONTH);
-        
-        int restantes = mesesContrato - diffMonth;
-        
-        return Math.max(restantes, 0);
+    public String getRnc() {
+        return rnc;
+    }
+
+    public void setRnc(String rnc) {
+        this.rnc = rnc;
     }
 }

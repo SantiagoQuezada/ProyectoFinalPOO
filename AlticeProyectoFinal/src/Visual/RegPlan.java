@@ -66,6 +66,7 @@ public class RegPlan extends JDialog {
 		cbxCategoria.addItem("Combinado");
 		cbxCategoria.addItem("Hogar");
 		cbxCategoria.addItem("Móvil");
+		cbxCategoria.addItem("Empresarial");
 		cbxCategoria.setBounds(150, 80, 270, 25);
 		contentPanel.add(cbxCategoria);
 

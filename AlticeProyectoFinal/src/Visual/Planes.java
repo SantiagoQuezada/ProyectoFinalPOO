@@ -1,26 +1,26 @@
 package Visual;
 
 import Logico.Altice;
-import Logico.Empleado;
 import Logico.Cliente;
 import Logico.Plan;
+import Logico.Empleado;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.BorderFactory;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.JDialog;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,7 +33,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
 
 public class Planes extends JFrame {
 
@@ -76,9 +75,10 @@ public class Planes extends JFrame {
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		String rolStr = empleadoLogueado != null && empleadoLogueado.getUsuario() != null ? empleadoLogueado.getUsuario().getRol().toString() : "SIN ROL";
-		String nombreStr = empleadoLogueado != null ? empleadoLogueado.getNombre() : "Usuario";
-		JLabel lblUser = new JLabel("Hola, " + nombreStr + " | " + rolStr + "   \u2699   \u23FB");
+		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "";
+		
+		JLabel lblUser = new JLabel("Hola, " + nombreUsuario + " | " + rolUsuario + "   \u2699   \u23FB");
 		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblUser.setForeground(new Color(200, 200, 200));
 		headerPanel.add(lblUser, BorderLayout.EAST);
@@ -108,15 +108,15 @@ public class Planes extends JFrame {
 
 		centerPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
-		JPanel panelBotonesTop = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-		panelBotonesTop.setOpaque(false);
+		JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+		actionPanel.setOpaque(false);
 
-		JButton btnCatalogo = new JButton("\u2699 Administrar Catálogo");
+		JButton btnCatalogo = new JButton("\u2699 Administrar Catálogo de Planes");
 		btnCatalogo.setBackground(new Color(40, 40, 40));
 		btnCatalogo.setForeground(Color.WHITE);
 		btnCatalogo.setFocusPainted(false);
 		btnCatalogo.setFont(new Font("Arial", Font.BOLD, 14));
-		btnCatalogo.setPreferredSize(new Dimension(240, 45));
+		btnCatalogo.setPreferredSize(new Dimension(280, 45));
 		btnCatalogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnCatalogo.addActionListener(e -> {
 			CatalogoPlanes cat = new CatalogoPlanes(empleadoLogueado);
@@ -124,35 +124,33 @@ public class Planes extends JFrame {
 			dispose();
 		});
 
-		JButton btnContratos = new JButton("\uD83D\uDCC4 Ver Contratos Activos");
-		btnContratos.setBackground(new Color(40, 40, 40));
-		btnContratos.setForeground(Color.WHITE);
-		btnContratos.setFocusPainted(false);
-		btnContratos.setFont(new Font("Arial", Font.BOLD, 14));
-		btnContratos.setPreferredSize(new Dimension(240, 45));
-		btnContratos.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		btnContratos.addActionListener(e -> mostrarContratosActivos());
+		JButton btnConsultas = new JButton("\uD83D\uDD0D Consultar Asignaciones");
+		btnConsultas.setBackground(new Color(40, 40, 40));
+		btnConsultas.setForeground(Color.WHITE);
+		btnConsultas.setFocusPainted(false);
+		btnConsultas.setFont(new Font("Arial", Font.BOLD, 14));
+		btnConsultas.setPreferredSize(new Dimension(280, 45));
+		btnConsultas.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnConsultas.addActionListener(e -> mostrarMenuConsultas());
 
-		panelBotonesTop.add(btnCatalogo);
-		panelBotonesTop.add(btnContratos);
+		actionPanel.add(btnCatalogo);
+		actionPanel.add(btnConsultas);
 
-		centerPanel.add(panelBotonesTop);
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 40)));
+		centerPanel.add(actionPanel);
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
-		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		cardsPanel.setOpaque(false);
 
-		String[] planesTripleplay = Altice.getInstance().obtenerNombresPlanesPorCategoria("Combinado");
-		String[] planesHogar = Altice.getInstance().obtenerNombresPlanesPorCategoria("Hogar");
-		String[] planesMoviles = Altice.getInstance().obtenerNombresPlanesPorCategoria("Móvil");
-
-		JPanel cardCombinados = crearTarjetaPlan("\uD83D\uDCFA", "COMBINADOS", "Tripleplay (TV + Internet + Voz)", planesTripleplay, "Combinado");
-		JPanel cardHogar = crearTarjetaPlan("\uD83C\uDFE0", "HOGAR", "Internet Fibra Óptica", planesHogar, "Hogar");
-		JPanel cardMoviles = crearTarjetaPlan("\uD83D\uDCF1", "MÓVILES", "Pospago e Ilimitados", planesMoviles, "Móvil");
+		JPanel cardCombinados = crearTarjetaPlan("\uD83D\uDCFA", "COMBINADOS", "Tripleplay (TV + Internet + Voz)", "Combinado");
+		JPanel cardHogar = crearTarjetaPlan("\uD83C\uDFE0", "HOGAR", "Internet Fibra Óptica", "Hogar");
+		JPanel cardMoviles = crearTarjetaPlan("\uD83D\uDCF1", "MÓVILES", "Pospago e Ilimitados", "Móvil");
+		JPanel cardEmpresariales = crearTarjetaPlan("\uD83C\uDFE2", "EMPRESARIALES", "Soluciones Corporativas", "Empresarial");
 
 		cardsPanel.add(cardCombinados);
 		cardsPanel.add(cardHogar);
 		cardsPanel.add(cardMoviles);
+		cardsPanel.add(cardEmpresariales);
 
 		centerPanel.add(cardsPanel);
 		wrapperPanel.add(centerPanel);
@@ -174,70 +172,71 @@ public class Planes extends JFrame {
 		this(null);
 	}
 
-	private JPanel crearTarjetaPlan(String icono, String titulo, String subtitulo, String[] planesDisponibles, String categoriaReal) {
+	private JPanel crearTarjetaPlan(String icono, String titulo, String subtitulo, String categoriaReal) {
 		JPanel tarjeta = new JPanel();
 		tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
-		tarjeta.setPreferredSize(new Dimension(300, 360));
+		tarjeta.setPreferredSize(new Dimension(280, 380));
 		tarjeta.setBackground(Color.WHITE);
 
 		tarjeta.setBorder(BorderFactory.createCompoundBorder(
-				new LineBorder(new Color(220, 220, 220), 1, true),
-				new EmptyBorder(30, 25, 30, 25)
+				new LineBorder(new Color(220, 220, 220), 1, false),
+				new EmptyBorder(30, 15, 30, 15)
 		));
 
 		JLabel lblIcono = new JLabel(icono);
-		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
+		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 90));
 		lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		JLabel lblTitulo = new JLabel("<html><div style='text-align: center; color: #1a1a1a;'>" + titulo + "</div></html>");
-		lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
+		JLabel lblTitulo = new JLabel(titulo);
+		lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
+		lblTitulo.setForeground(Color.BLACK);
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		JLabel lblDesc = new JLabel(subtitulo);
-		lblDesc.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblDesc.setForeground(new Color(100, 100, 100));
 		lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		JButton boton = new JButton("ASIGNAR PLAN");
 		boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		boton.setBackground(new Color(240, 240, 240));
-		boton.setForeground(new Color(30, 30, 30));
+		boton.setBackground(new Color(242, 242, 242));
+		boton.setForeground(Color.BLACK);
 		boton.setFocusPainted(false);
-		boton.setFont(new Font("Arial", Font.BOLD, 13));
+		boton.setFont(new Font("Arial", Font.BOLD, 14));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setPreferredSize(new Dimension(180, 45));
-		boton.setMaximumSize(new Dimension(200, 45));
+		boton.setPreferredSize(new Dimension(230, 45));
+		boton.setMaximumSize(new Dimension(230, 45));
 		boton.setBorder(new LineBorder(new Color(200, 200, 200), 1));
 
 		boton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				boton.setBackground(new Color(220, 220, 220));
+				boton.setBackground(new Color(230, 230, 230));
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				boton.setBackground(new Color(240, 240, 240));
+				boton.setBackground(new Color(242, 242, 242));
 			}
 		});
 
-		boton.addActionListener(e -> mostrarMenuAsignacion(subtitulo, planesDisponibles, categoriaReal));
+		boton.addActionListener(e -> mostrarMenuAsignacion(titulo, categoriaReal));
 
 		tarjeta.add(Box.createVerticalGlue());
 		tarjeta.add(lblIcono);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 20)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 25)));
 		tarjeta.add(lblTitulo);
 		tarjeta.add(Box.createRigidArea(new Dimension(0, 10)));
 		tarjeta.add(lblDesc);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 30)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 35)));
 		tarjeta.add(boton);
 		tarjeta.add(Box.createVerticalGlue());
 
 		return tarjeta;
 	}
 
-	private void mostrarMenuAsignacion(String categoriaTitulo, String[] planesDisponibles, String categoriaReal) {
+	private void mostrarMenuAsignacion(String categoriaTitulo, String categoriaReal) {
 		JDialog dialog = new JDialog(this, "Asignar Plan - " + categoriaTitulo, true);
-		dialog.setSize(750, 650);
+		dialog.setSize(750, 600);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(Color.WHITE);
@@ -247,16 +246,11 @@ public class Planes extends JFrame {
 		panelCentral.setBackground(Color.WHITE);
 		panelCentral.setBorder(new EmptyBorder(30, 40, 30, 40));
 
-		int minimoMeses = 12;
-		if (categoriaReal.equalsIgnoreCase("Hogar")) {
-			minimoMeses = 16;
-		}
-
 		JPanel panelSelectorPlan = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		panelSelectorPlan.setBackground(Color.WHITE);
 		panelSelectorPlan.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		JLabel lblSeleccionarPlan = new JLabel("1. Seleccionar el nuevo Plan a aplicar: ");
+		JLabel lblSeleccionarPlan = new JLabel("Plan a asignar: ");
 		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 15));
 
 		JComboBox<String> cbPlanes = new JComboBox<>();
@@ -265,7 +259,7 @@ public class Planes extends JFrame {
 		cbPlanes.addItem("<Seleccione un plan>");
 		
 		for (Plan p : Altice.getInstance().getPlanes()) {
-			if (p.getCategoria().equalsIgnoreCase(categoriaReal)) {
+			if (p.getCategoria().equalsIgnoreCase(categoriaReal) && p.getEstado().equals("Activo")) {
 				cbPlanes.addItem(p.getNombre() + " - $" + p.getPrecio());
 			}
 		}
@@ -274,26 +268,11 @@ public class Planes extends JFrame {
 		panelSelectorPlan.add(Box.createRigidArea(new Dimension(15, 0)));
 		panelSelectorPlan.add(cbPlanes);
 
-		JPanel panelMeses = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		panelMeses.setBackground(Color.WHITE);
-		panelMeses.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-		JLabel lblMeses = new JLabel("2. Meses de Contrato (Mínimo " + minimoMeses + "): ");
-		lblMeses.setFont(new Font("Arial", Font.BOLD, 15));
-
-		JTextField txtMeses = new JTextField(String.valueOf(minimoMeses));
-		txtMeses.setPreferredSize(new Dimension(100, 35));
-		txtMeses.setFont(new Font("Arial", Font.PLAIN, 15));
-
-		panelMeses.add(lblMeses);
-		panelMeses.add(Box.createRigidArea(new Dimension(15, 0)));
-		panelMeses.add(txtMeses);
-
 		JPanel panelBuscador = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		panelBuscador.setBackground(Color.WHITE);
 		panelBuscador.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		JLabel lblBuscar = new JLabel("3. Buscar Cliente: ");
+		JLabel lblBuscar = new JLabel("Buscar Cliente: ");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		JTextField txtBuscarCliente = new JTextField(30);
@@ -304,7 +283,7 @@ public class Planes extends JFrame {
 		panelBuscador.add(Box.createRigidArea(new Dimension(12, 0)));
 		panelBuscador.add(txtBuscarCliente);
 
-		String[] columnasClientes = {"ID", "Cédula/Nombre", "Teléfono"};
+		String[] columnasClientes = {"ID", "Cédula/RNC - Nombre", "Teléfono"};
 		DefaultTableModel modeloTablaClientes = new DefaultTableModel(null, columnasClientes) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -338,13 +317,15 @@ public class Planes extends JFrame {
 			modeloTablaClientes.setRowCount(0);
 			String busqueda = txtBuscarCliente.getText().toLowerCase();
 			for(Cliente c : Altice.getInstance().getClientes()) {
+				boolean matchRnc = c.getRnc() != null && c.getRnc().contains(busqueda);
 				if (c.getNombre().toLowerCase().contains(busqueda) || 
 					c.getCedula().contains(busqueda) || 
-					c.getTelefono().contains(busqueda)) {
+					c.getTelefono().contains(busqueda) || matchRnc) {
 					
+					String ident = c.getTipoCliente().equals("Empresarial") ? c.getRnc() : c.getCedula();
 					Object[] fila = new Object[3];
 					fila[0] = c.getIdCliente();
-					fila[1] = c.getCedula() + " - " + c.getNombre();
+					fila[1] = ident + " - " + c.getNombre();
 					fila[2] = c.getTelefono();
 					modeloTablaClientes.addRow(fila);
 				}
@@ -361,9 +342,7 @@ public class Planes extends JFrame {
 		cargarClientesFiltrados.run();
 
 		panelCentral.add(panelSelectorPlan);
-		panelCentral.add(Box.createRigidArea(new Dimension(0, 20)));
-		panelCentral.add(panelMeses);
-		panelCentral.add(Box.createRigidArea(new Dimension(0, 20)));
+		panelCentral.add(Box.createRigidArea(new Dimension(0, 25)));
 		panelCentral.add(panelBuscador);
 		panelCentral.add(Box.createRigidArea(new Dimension(0, 20)));
 		panelCentral.add(scrollPaneClientes);
@@ -387,8 +366,6 @@ public class Planes extends JFrame {
 		btnGuardar.setFocusPainted(false);
 		btnGuardar.setPreferredSize(new Dimension(180, 40));
 
-		final int minRequerido = minimoMeses;
-
 		btnGuardar.addActionListener(e -> {
 			int indexPlan = cbPlanes.getSelectedIndex();
 			int filaCliente = tablaClientes.getSelectedRow();
@@ -403,23 +380,12 @@ public class Planes extends JFrame {
 				return;
 			}
 			
-			try {
-				int meses = Integer.parseInt(txtMeses.getText());
-				if (meses < minRequerido) {
-					JOptionPane.showMessageDialog(dialog, "El mínimo de meses para este plan es " + minRequerido + ".", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				String nombrePlan = ((String) cbPlanes.getSelectedItem()).split(" - \\$")[0];
-				String idCliente = (String) modeloTablaClientes.getValueAt(filaCliente, 0);
-
-				Altice.getInstance().asignarPlanACliente(idCliente, nombrePlan, meses);
-				JOptionPane.showMessageDialog(dialog, "El plan '" + nombrePlan + "' ha sido asignado exitosamente al cliente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-				dialog.dispose();
-
-			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(dialog, "Ingrese un número válido para los meses de contrato.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			String nombrePlan = ((String) cbPlanes.getSelectedItem()).split(" - \\$")[0];
+			String idCliente = (String) modeloTablaClientes.getValueAt(filaCliente, 0);
+			
+			Altice.getInstance().asignarPlanACliente(idCliente, nombrePlan);
+			JOptionPane.showMessageDialog(dialog, "El plan '" + nombrePlan + "' ha sido asignado exitosamente al cliente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+			dialog.dispose();
 		});
 
 		panelBotones.add(btnCancelar);
@@ -429,69 +395,116 @@ public class Planes extends JFrame {
 		dialog.setVisible(true);
 	}
 
-	private void mostrarContratosActivos() {
-		JDialog dialog = new JDialog(this, "Listado de Contratos Activos", true);
-		dialog.setSize(900, 500);
+	private void mostrarMenuConsultas() {
+		JDialog dialog = new JDialog(this, "Control de Asignaciones de Planes", true);
+		dialog.setSize(1000, 600);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(Color.WHITE);
 
-		JPanel panelCentral = new JPanel(new BorderLayout());
-		panelCentral.setBackground(Color.WHITE);
-		panelCentral.setBorder(new EmptyBorder(20, 30, 20, 30));
+		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 20));
+		topPanel.setBackground(Color.WHITE);
+		topPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-		JLabel lblTitulo = new JLabel("Clientes con Planes Activos");
-		lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
-		lblTitulo.setBorder(new EmptyBorder(0, 0, 15, 0));
-		panelCentral.add(lblTitulo, BorderLayout.NORTH);
+		JLabel lblEstado = new JLabel("Estado Plan:");
+		lblEstado.setFont(new Font("Arial", Font.BOLD, 14));
+		JComboBox<String> cbEstado = new JComboBox<>(new String[]{"Todos", "Activos", "Desactivados"});
+		cbEstado.setFont(new Font("Arial", Font.PLAIN, 14));
 
-		String[] columnas = {"ID Cliente", "Nombre del Cliente", "Plan Activo", "Fecha Asignación", "Meses Totales", "Meses Restantes"};
-		DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
-			public boolean isCellEditable(int row, int column) { return false; }
+		JLabel lblTipo = new JLabel("Tipo Cliente:");
+		lblTipo.setFont(new Font("Arial", Font.BOLD, 14));
+		JComboBox<String> cbTipo = new JComboBox<>(new String[]{"Todos", "Personales", "Empresariales"});
+		cbTipo.setFont(new Font("Arial", Font.PLAIN, 14));
+
+		JLabel lblBuscar = new JLabel("Buscar (Nombre/RNC):");
+		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
+		JTextField txtBuscar = new JTextField(20);
+		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 14));
+
+		topPanel.add(lblEstado);
+		topPanel.add(cbEstado);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(lblTipo);
+		topPanel.add(cbTipo);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(lblBuscar);
+		topPanel.add(txtBuscar);
+
+		dialog.add(topPanel, BorderLayout.NORTH);
+
+		String[] cols = {"Identificación", "Cliente", "Tipo Cliente", "Plan Asignado", "Estado Plan"};
+		DefaultTableModel model = new DefaultTableModel(null, cols) {
+			public boolean isCellEditable(int r, int c) { return false; }
 		};
-		JTable tabla = new JTable(modelo);
-		tabla.setRowHeight(35);
-		tabla.setFont(new Font("Arial", Font.PLAIN, 14));
-		tabla.setGridColor(new Color(230, 230, 230));
-		tabla.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-		tabla.getTableHeader().setBackground(new Color(245, 247, 250));
+		JTable table = new JTable(model);
+		table.setRowHeight(35);
+		table.setFont(new Font("Arial", Font.PLAIN, 14));
+		table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
+		table.getTableHeader().setBackground(new Color(245, 247, 250));
+		table.setSelectionBackground(new Color(220, 235, 255));
+		table.setSelectionForeground(Color.BLACK);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-		for (Cliente c : Altice.getInstance().getClientes()) {
-			if (c.getPlan() != null) {
-				String fecha = c.getFechaAsignacionPlan() != null ? sdf.format(c.getFechaAsignacionPlan()) : "N/A";
-				modelo.addRow(new Object[]{
-					c.getIdCliente(),
-					c.getNombre(),
-					c.getPlan().getNombre(),
-					fecha,
-					c.getMesesContrato(),
-					c.getMesesRestantes()
-				});
-			}
-		}
-
-		JScrollPane scroll = new JScrollPane(tabla);
+		JScrollPane scroll = new JScrollPane(table);
 		scroll.setBorder(new LineBorder(new Color(220, 220, 220), 1));
-		panelCentral.add(scroll, BorderLayout.CENTER);
+		
+		JPanel centerPanel = new JPanel(new BorderLayout());
+		centerPanel.setBorder(new EmptyBorder(0, 30, 20, 30));
+		centerPanel.setBackground(Color.WHITE);
+		centerPanel.add(scroll, BorderLayout.CENTER);
+		dialog.add(centerPanel, BorderLayout.CENTER);
 
-		JPanel panelSur = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		panelSur.setBackground(Color.WHITE);
-		panelSur.setBorder(new EmptyBorder(10, 0, 0, 0));
+		Runnable cargar = () -> {
+			model.setRowCount(0);
+			String busq = txtBuscar.getText().toLowerCase();
+			String fEstado = cbEstado.getSelectedItem().toString();
+			String fTipo = cbTipo.getSelectedItem().toString();
 
-		JButton btnCerrar = new JButton("Cerrar Vista");
+			for (Cliente c : Altice.getInstance().getClientes()) {
+				String ident = c.getTipoCliente().equalsIgnoreCase("Empresarial") ? c.getRnc() : c.getCedula();
+				if (ident == null) ident = "";
+
+				boolean matchBusq = c.getNombre().toLowerCase().contains(busq) || ident.toLowerCase().contains(busq);
+				
+				boolean matchTipo = fTipo.equals("Todos") || 
+								   (fTipo.equals("Personales") && c.getTipoCliente().equalsIgnoreCase("Personal")) || 
+								   (fTipo.equals("Empresariales") && c.getTipoCliente().equalsIgnoreCase("Empresarial"));
+
+				String nombreP = "Sin Plan";
+				String estadoP = "N/A";
+				if (c.getPlan() != null) {
+					nombreP = c.getPlan().getNombre();
+					estadoP = c.getPlan().getEstado();
+				}
+
+				boolean matchEstado = fEstado.equals("Todos") || 
+									 (fEstado.equals("Activos") && estadoP.equalsIgnoreCase("Activo")) || 
+									 (fEstado.equals("Desactivados") && estadoP.equalsIgnoreCase("Desactivado"));
+
+				if (matchBusq && matchTipo && matchEstado) {
+					model.addRow(new Object[]{ident, c.getNombre(), c.getTipoCliente(), nombreP, estadoP});
+				}
+			}
+		};
+
+		txtBuscar.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) { cargar.run(); }
+		});
+		cbEstado.addActionListener(e -> cargar.run());
+		cbTipo.addActionListener(e -> cargar.run());
+		cargar.run();
+
+		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+		bottomPanel.setBackground(new Color(245, 247, 250));
+		JButton btnCerrar = new JButton("Cerrar");
 		btnCerrar.setBackground(new Color(15, 15, 15));
 		btnCerrar.setForeground(Color.WHITE);
-		btnCerrar.setFont(new Font("Arial", Font.BOLD, 12));
+		btnCerrar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCerrar.setFocusPainted(false);
 		btnCerrar.setPreferredSize(new Dimension(120, 40));
 		btnCerrar.addActionListener(e -> dialog.dispose());
+		bottomPanel.add(btnCerrar);
 
-		panelSur.add(btnCerrar);
-		panelCentral.add(panelSur, BorderLayout.SOUTH);
-
-		dialog.add(panelCentral, BorderLayout.CENTER);
+		dialog.add(bottomPanel, BorderLayout.SOUTH);
 		dialog.setVisible(true);
 	}
 }

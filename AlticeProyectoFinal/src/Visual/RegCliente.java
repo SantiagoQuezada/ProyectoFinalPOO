@@ -22,6 +22,8 @@ public class RegCliente extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtIdCliente;
+	private JComboBox<String> cbxTipoCliente;
+	private JTextField txtRnc;
 	private JTextField txtCedula;
 	private JTextField txtNombre;
 	private JTextField txtTelefono;
@@ -29,6 +31,9 @@ public class RegCliente extends JDialog {
 	private JComboBox<String> cbxEstado;
 	private JComboBox<String> cbxPlanes;
 	private Cliente clienteActual;
+
+	private JLabel lblCedula;
+	private JLabel lblNombre;
 
 	public RegCliente(Cliente cliente, boolean soloLectura) {
 		this.clienteActual = cliente;
@@ -42,7 +47,7 @@ public class RegCliente extends JDialog {
 		
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 480, 500);
+		setBounds(100, 100, 520, 650);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -50,7 +55,7 @@ public class RegCliente extends JDialog {
 		contentPanel.setLayout(null);
 
 		JLabel lblIdCliente = new JLabel("ID Cliente:");
-		lblIdCliente.setBounds(30, 30, 100, 20);
+		lblIdCliente.setBounds(30, 30, 120, 20);
 		contentPanel.add(lblIdCliente);
 
 		txtIdCliente = new JTextField();
@@ -60,99 +65,96 @@ public class RegCliente extends JDialog {
 			txtIdCliente.setText(clienteActual.getIdCliente());
 		}
 		txtIdCliente.setEditable(false);
-		txtIdCliente.setBounds(150, 30, 270, 25);
+		txtIdCliente.setBounds(160, 30, 300, 25);
 		contentPanel.add(txtIdCliente);
 
-		JLabel lblCedula = new JLabel("Cédula:");
-		lblCedula.setBounds(30, 80, 110, 20);
+		JLabel lblTipoCliente = new JLabel("Tipo Cliente:");
+		lblTipoCliente.setBounds(30, 90, 120, 20);
+		contentPanel.add(lblTipoCliente);
+
+		cbxTipoCliente = new JComboBox<String>();
+		cbxTipoCliente.addItem("Personal");
+		cbxTipoCliente.addItem("Empresarial");
+		cbxTipoCliente.setBounds(160, 90, 300, 25);
+		contentPanel.add(cbxTipoCliente);
+
+		JLabel lblRnc = new JLabel("RNC:");
+		lblRnc.setBounds(30, 150, 120, 20);
+		contentPanel.add(lblRnc);
+
+		txtRnc = new JTextField();
+		txtRnc.setBounds(160, 150, 300, 25);
+		txtRnc.setEnabled(false);
+		contentPanel.add(txtRnc);
+
+		lblCedula = new JLabel("Cédula:");
+		lblCedula.setBounds(30, 210, 120, 20);
 		contentPanel.add(lblCedula);
 
 		txtCedula = new JTextField();
-		txtCedula.setBounds(150, 80, 270, 25);
+		txtCedula.setBounds(160, 210, 300, 25);
 		contentPanel.add(txtCedula);
 
-		txtCedula.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					txtNombre.requestFocus();
-				}
-			}
-		});
-
-		JLabel lblNombre = new JLabel("Nombre Completo:");
-		lblNombre.setBounds(30, 130, 120, 20);
+		lblNombre = new JLabel("Nombre Completo:");
+		lblNombre.setBounds(30, 270, 120, 20);
 		contentPanel.add(lblNombre);
 
 		txtNombre = new JTextField();
-		txtNombre.setBounds(150, 130, 270, 25);
+		txtNombre.setBounds(160, 270, 300, 25);
 		contentPanel.add(txtNombre);
 
-		txtNombre.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					txtTelefono.requestFocus();
-				}
-			}
-		});
-
 		JLabel lblTelefono = new JLabel("Teléfono:");
-		lblTelefono.setBounds(30, 180, 110, 20);
+		lblTelefono.setBounds(30, 330, 120, 20);
 		contentPanel.add(lblTelefono);
 
 		txtTelefono = new JTextField();
-		txtTelefono.setBounds(150, 180, 270, 25);
+		txtTelefono.setBounds(160, 330, 300, 25);
 		contentPanel.add(txtTelefono);
 
-		txtTelefono.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					txtDireccion.requestFocus();
-				}
-			}
-		});
-
 		JLabel lblDireccion = new JLabel("Dirección:");
-		lblDireccion.setBounds(30, 230, 110, 20);
+		lblDireccion.setBounds(30, 390, 120, 20);
 		contentPanel.add(lblDireccion);
 
 		txtDireccion = new JTextField();
-		txtDireccion.setBounds(150, 230, 270, 25);
+		txtDireccion.setBounds(160, 390, 300, 25);
 		contentPanel.add(txtDireccion);
 
-		txtDireccion.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					cbxEstado.requestFocus();
-					cbxEstado.showPopup();
-				}
-			}
-		});
-
 		JLabel lblEstado = new JLabel("Estado:");
-		lblEstado.setBounds(30, 280, 100, 20);
+		lblEstado.setBounds(30, 450, 120, 20);
 		contentPanel.add(lblEstado);
 
 		cbxEstado = new JComboBox<String>();
 		cbxEstado.addItem("Activo");
 		cbxEstado.addItem("Inactivo");
 		cbxEstado.addItem("Suspendido");
-		cbxEstado.setBounds(150, 280, 270, 25);
+		cbxEstado.setBounds(160, 450, 300, 25);
 		contentPanel.add(cbxEstado);
 
 		JLabel lblPlan = new JLabel("Plan Inicial:");
-		lblPlan.setBounds(30, 330, 100, 20);
+		lblPlan.setBounds(30, 510, 120, 20);
 		contentPanel.add(lblPlan);
 
 		cbxPlanes = new JComboBox<String>();
-		cbxPlanes.setBounds(150, 330, 270, 25);
+		cbxPlanes.setBounds(160, 510, 300, 25);
 		cargarPlanes();
 		contentPanel.add(cbxPlanes);
 
+		cbxTipoCliente.addActionListener(e -> {
+			if (cbxTipoCliente.getSelectedItem().toString().equals("Empresarial")) {
+				txtRnc.setEnabled(true);
+				lblNombre.setText("Razón Social:");
+				lblCedula.setText("Cédula Representante:");
+			} else {
+				txtRnc.setEnabled(false);
+				txtRnc.setText("");
+				lblNombre.setText("Nombre Completo:");
+				lblCedula.setText("Cédula:");
+			}
+		});
+
 		if (clienteActual != null) {
+			cbxTipoCliente.setSelectedItem(clienteActual.getTipoCliente());
+			txtRnc.setText(clienteActual.getRnc());
 			txtCedula.setText(clienteActual.getCedula());
 			txtNombre.setText(clienteActual.getNombre());
 			txtTelefono.setText(clienteActual.getTelefono());
@@ -160,11 +162,13 @@ public class RegCliente extends JDialog {
 			cbxEstado.setSelectedItem(clienteActual.getEstado());
 			
 			if (clienteActual.getPlan() != null) {
-				cbxPlanes.setSelectedItem(clienteActual.getPlan().getNombre());
+				cbxPlanes.setSelectedItem(clienteActual.getPlan().getNombre() + " - $" + clienteActual.getPlan().getPrecio());
 			}
 		}
 
 		if (soloLectura) {
+			cbxTipoCliente.setEnabled(false);
+			txtRnc.setEditable(false);
 			txtCedula.setEditable(false);
 			txtNombre.setEditable(false);
 			txtTelefono.setEditable(false);
@@ -188,19 +192,23 @@ public class RegCliente extends JDialog {
 					}
 
 					String id = txtIdCliente.getText();
+					String tipoCliente = cbxTipoCliente.getSelectedItem().toString();
+					String rnc = txtRnc.getText();
 					String cedula = txtCedula.getText();
 					String nombre = txtNombre.getText();
 					String telefono = txtTelefono.getText();
 					String direccion = txtDireccion.getText();
 					String estado = cbxEstado.getSelectedItem().toString();
-					String nombrePlan = cbxPlanes.getSelectedItem().toString();
+					String nombrePlan = ((String) cbxPlanes.getSelectedItem()).split(" - \\$")[0];
 
 					if (clienteActual == null) {
-						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, null);
+						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, null, tipoCliente, rnc);
 						Altice.getInstance().registrarCliente(nuevoCliente);
 						Altice.getInstance().asignarPlanACliente(id, nombrePlan);
 						JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 					} else {
+						clienteActual.setTipoCliente(tipoCliente);
+						clienteActual.setRnc(rnc);
 						clienteActual.setCedula(cedula);
 						clienteActual.setNombre(nombre);
 						clienteActual.setTelefono(telefono);
@@ -237,23 +245,8 @@ public class RegCliente extends JDialog {
 
 	private void cargarPlanes() {
 		cbxPlanes.addItem("<Seleccione un plan>");
-
-		for (String plan : Altice.getInstance().obtenerNombresPlanesPorCategoria("Combinado")) {
-			if (!plan.equals("Seleccione un plan...")) {
-				cbxPlanes.addItem(plan);
-			}
-		}
-
-		for (String plan : Altice.getInstance().obtenerNombresPlanesPorCategoria("Hogar")) {
-			if (!plan.equals("Seleccione un plan...")) {
-				cbxPlanes.addItem(plan);
-			}
-		}
-
-		for (String plan : Altice.getInstance().obtenerNombresPlanesPorCategoria("Móvil")) {
-			if (!plan.equals("Seleccione un plan...")) {
-				cbxPlanes.addItem(plan);
-			}
+		for (Plan plan : Altice.getInstance().getPlanes()) {
+			cbxPlanes.addItem(plan.getNombre() + " - $" + plan.getPrecio());
 		}
 	}
 }

@@ -1,17 +1,10 @@
 package Logico;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Altice implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Altice {
     private static Altice instance;
-    
     private ArrayList<Empleado> misEmpleados;
     private ArrayList<Cliente> misClientes;
     private ArrayList<Plan> misPlanes;
@@ -35,46 +28,15 @@ public class Altice implements Serializable {
         contadorEmpleados = 1001;
         contadorContratos = 1;
         contadorPagos = 1;
-        contadorPlanes = 7;
+        contadorPlanes = 9;
         cargarDatosPrueba();
     }
 
     public static Altice getInstance() {
         if (instance == null) {
-            try {
-                // Intenta cargar el archivo guardado
-                FileInputStream fileIn = new FileInputStream("AlticeData.dat");
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-                instance = (Altice) in.readObject();
-                in.close();
-                fileIn.close();
-            } catch (Exception e) {
-                // Si falla (ej. primera vez que se abre), crea uno nuevo con datos quemados
-                instance = new Altice();
-            }
-
-            // Gancho de apagado por si acaso
-            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Altice.guardarDatos();
-                }
-            }));
+            instance = new Altice();
         }
         return instance;
-    }
-
-    public static void guardarDatos() {
-        try {
-            FileOutputStream fileOut = new FileOutputStream("AlticeData.dat");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut);
-            out.writeObject(instance);
-            out.close();
-            fileOut.close();
-        } catch (Exception e) {
-            System.err.println("Error guardando los datos del sistema:");
-            e.printStackTrace();
-        }
     }
 
     private void cargarDatosPrueba() {
@@ -84,6 +46,8 @@ public class Altice implements Serializable {
         misPlanes.add(new Plan("P-04", "Hogar", "Internet Fibra 300Mbps", 1800.0f));
         misPlanes.add(new Plan("P-05", "Móvil", "Pospago Básico 15GB", 600.0f));
         misPlanes.add(new Plan("P-06", "Móvil", "Pospago Ilimitado 5G", 1100.0f));
+        misPlanes.add(new Plan("P-07", "Empresarial", "Internet Dedicado 500Mbps", 9500.0f));
+        misPlanes.add(new Plan("P-08", "Empresarial", "Central IP Corporativa", 14000.0f));
 
         Usuario u1 = new Usuario("amartinez", "1234", Rol.GERENTE);
         Usuario u2 = new Usuario("lgomez", "1234", Rol.SOPORTE_TECNICO);
@@ -91,49 +55,46 @@ public class Altice implements Serializable {
         misEmpleados.add(new Empleado("001-0000000-1", "Ana Martínez", "809-555-0001", "Ensanche Naco", generarIdEmpleado(), "Ventas", 50000.0f, u1));
         misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte Técnico", 35000.0f, u2));
 
-        Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0));
+        Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0), "Personal", "N/A");
         c1.setFechaAsignacionPlan(new Date());
-        c1.setMesesContrato(12);
         misClientes.add(c1);
         
-        Cliente c2 = new Cliente("031-9876543-2", "María Gómez", "829-555-9876", "Los Jardines, Santiago", generarIdCliente(), "Activo", misPlanes.get(3));
+        Cliente c2 = new Cliente("031-9876543-2", "María Gómez", "829-555-9876", "Los Jardines, Santiago", generarIdCliente(), "Activo", misPlanes.get(3), "Personal", "N/A");
         c2.setFechaAsignacionPlan(new Date());
-        c2.setMesesContrato(16);
         misClientes.add(c2);
+
+        Cliente c3 = new Cliente("001-2223334-5", "Tech Solutions SRL", "809-111-2222", "Av. Winston Churchill", generarIdCliente(), "Activo", misPlanes.get(6), "Empresarial", "1-30-12345-6");
+        c3.setFechaAsignacionPlan(new Date());
+        misClientes.add(c3);
     }
 
     public String generarIdCliente() {
         String id = "C-00" + contadorClientes;
         contadorClientes++;
-        guardarDatos(); // Autoguardar estado del contador
         return id;
     }
 
     public String generarIdEmpleado() {
         String id = "E-" + contadorEmpleados;
         contadorEmpleados++;
-        guardarDatos();
         return id;
     }
 
     public String generarIdContrato() {
         String id = "CTR-" + contadorContratos;
         contadorContratos++;
-        guardarDatos();
         return id;
     }
 
     public String generarIdPago() {
         String id = "PAG-" + contadorPagos;
         contadorPagos++;
-        guardarDatos();
         return id;
     }
 
     public String generarIdPlan() {
         String id = "P-0" + contadorPlanes;
         contadorPlanes++;
-        guardarDatos();
         return id;
     }
 
@@ -170,12 +131,10 @@ public class Altice implements Serializable {
 
     public void registrarEmpleado(Empleado e) {
         misEmpleados.add(e);
-        guardarDatos(); // Autoguardado
     }
 
     public void eliminarEmpleado(String id) {
         misEmpleados.removeIf(e -> e.getIdEmpleado().equals(id));
-        guardarDatos(); // Autoguardado
     }
 
     public ArrayList<Cliente> getClientes() {
@@ -184,12 +143,10 @@ public class Altice implements Serializable {
 
     public void registrarCliente(Cliente c) {
         misClientes.add(c);
-        guardarDatos(); // Autoguardado
     }
 
     public void eliminarCliente(String id) {
         misClientes.removeIf(c -> c.getIdCliente().equals(id));
-        guardarDatos(); // Autoguardado
     }
 
     public ArrayList<Plan> getPlanes() {
@@ -198,12 +155,13 @@ public class Altice implements Serializable {
 
     public void registrarPlan(Plan p) {
         misPlanes.add(p);
-        guardarDatos(); // Autoguardado
     }
 
     public void eliminarPlan(String idPlan) {
-        misPlanes.removeIf(p -> p.getIdPlan().equals(idPlan));
-        guardarDatos(); // Autoguardado
+        Plan p = getPlanById(idPlan);
+        if (p != null) {
+            p.setEstado("Desactivado");
+        }
     }
 
     public ArrayList<Servicio> getServicios() {
@@ -212,7 +170,6 @@ public class Altice implements Serializable {
 
     public void registrarServicio(Servicio s) {
         misServicios.add(s);
-        guardarDatos();
     }
 
     public ArrayList<Contrato> getContratos() {
@@ -221,7 +178,6 @@ public class Altice implements Serializable {
 
     public void registrarContrato(Contrato c) {
         misContratos.add(c);
-        guardarDatos();
     }
 
     public ArrayList<Pagos> getPagos() {
@@ -230,14 +186,13 @@ public class Altice implements Serializable {
 
     public void registrarPago(Pagos p) {
         misPagos.add(p);
-        guardarDatos();
     }
 
     public String[] obtenerNombresPlanesPorCategoria(String categoria) {
         ArrayList<String> nombres = new ArrayList<>();
         nombres.add("Seleccione un plan...");
         for (Plan p : misPlanes) {
-            if (p.getCategoria().equals(categoria)) {
+            if (p.getCategoria().equals(categoria) && p.getEstado().equals("Activo")) {
                 nombres.add(p.getNombre());
             }
         }
@@ -254,10 +209,6 @@ public class Altice implements Serializable {
     }
 
     public void asignarPlanACliente(String idCliente, String nombrePlan) {
-        asignarPlanACliente(idCliente, nombrePlan, 12);
-    }
-
-    public void asignarPlanACliente(String idCliente, String nombrePlan, int meses) {
         Plan planAsignar = null;
         for (Plan p : misPlanes) {
             if (p.getNombre().equals(nombrePlan)) {
@@ -270,8 +221,6 @@ public class Altice implements Serializable {
                 if (c.getIdCliente().equals(idCliente)) {
                     c.setPlan(planAsignar);
                     c.setFechaAsignacionPlan(new Date());
-                    c.setMesesContrato(meses);
-                    guardarDatos(); // Autoguardado
                     break;
                 }
             }
@@ -287,5 +236,9 @@ public class Altice implements Serializable {
             }
         }
         return null;
+    }
+
+    public static void guardarDatos() {
+
     }
 }

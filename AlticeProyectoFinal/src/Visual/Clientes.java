@@ -31,11 +31,10 @@ public class Clientes extends JFrame {
 
 	private DefaultTableModel modeloTabla;
 	private JTable tablaClientes;
-	private Empleado empleadoLogueado; 
+	private Empleado empleadoLogueado;
 
-	
 	public Clientes(Empleado empleado) {
-		this.empleadoLogueado = empleado; 
+		this.empleadoLogueado = empleado;
 		setTitle("Sistema de Gestión - Módulo de Clientes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,7 +59,6 @@ public class Clientes extends JFrame {
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		
 				Principal principal = new Principal(empleadoLogueado);
 				principal.setVisible(true);
 				dispose();
@@ -74,7 +72,6 @@ public class Clientes extends JFrame {
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-	
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
 		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "";
 		
@@ -111,7 +108,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID", "Cédula", "Nombre", "Teléfono", "Estado", "Dirección", "Plan Contratado", "Fecha Asignación"};
+		String[] columnas = {"ID", "Tipo", "Cédula / RNC", "Nombre o Empresa", "Teléfono", "Estado", "Plan Contratado", "Fecha Asignación"};
 		modeloTabla = new DefaultTableModel(null, columnas);
 		tablaClientes = new JTable(modeloTabla);
 		tablaClientes.setRowHeight(35);
@@ -126,6 +123,15 @@ public class Clientes extends JFrame {
 		header.setBackground(new Color(245, 247, 250));
 		header.setForeground(new Color(50, 50, 50));
 		header.setPreferredSize(new Dimension(100, 40));
+
+		tablaClientes.getColumnModel().getColumn(0).setPreferredWidth(60);
+		tablaClientes.getColumnModel().getColumn(1).setPreferredWidth(100);
+		tablaClientes.getColumnModel().getColumn(2).setPreferredWidth(120);
+		tablaClientes.getColumnModel().getColumn(3).setPreferredWidth(200);
+		tablaClientes.getColumnModel().getColumn(4).setPreferredWidth(120);
+		tablaClientes.getColumnModel().getColumn(5).setPreferredWidth(80);
+		tablaClientes.getColumnModel().getColumn(6).setPreferredWidth(180);
+		tablaClientes.getColumnModel().getColumn(7).setPreferredWidth(130);
 
 		JScrollPane scrollPane = new JScrollPane(tablaClientes);
 		scrollPane.setBorder(new LineBorder(new Color(220, 220, 220), 1));
@@ -229,13 +235,16 @@ public class Clientes extends JFrame {
 					fecha = sdf.format(c.getFechaAsignacionPlan());
 				}
 			}
+			
+			String identificacion = c.getTipoCliente().equals("Empresarial") ? c.getRnc() : c.getCedula();
+			
 			Object[] fila = new Object[8];
 			fila[0] = c.getIdCliente();
-			fila[1] = c.getCedula();
-			fila[2] = c.getNombre();
-			fila[3] = c.getTelefono();
-			fila[4] = c.getEstado();
-			fila[5] = c.getDireccion();
+			fila[1] = c.getTipoCliente();
+			fila[2] = identificacion;
+			fila[3] = c.getNombre();
+			fila[4] = c.getTelefono();
+			fila[5] = c.getEstado();
 			fila[6] = nombrePlan;
 			fila[7] = fecha;
 			modeloTabla.addRow(fila);
