@@ -110,7 +110,7 @@ public class Empleados extends JFrame {
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
-		String[] columnas = {"ID", "Cédula", "Nombre Completo", "Teléfono", "Departamento", "Rol de Sistema", "Salario"};
+		String[] columnas = {"ID", "Cédula", "Nombre Completo", "Teléfono", "Departamento", "Rol de Sistema", "Salario", "Estado"};
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -172,11 +172,12 @@ public class Empleados extends JFrame {
 
 		tablaEmpleados.getColumnModel().getColumn(0).setPreferredWidth(60);
 		tablaEmpleados.getColumnModel().getColumn(1).setPreferredWidth(120);
-		tablaEmpleados.getColumnModel().getColumn(2).setPreferredWidth(250);
-		tablaEmpleados.getColumnModel().getColumn(3).setPreferredWidth(120);
-		tablaEmpleados.getColumnModel().getColumn(4).setPreferredWidth(150);
-		tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(120);
+		tablaEmpleados.getColumnModel().getColumn(2).setPreferredWidth(220);
+		tablaEmpleados.getColumnModel().getColumn(3).setPreferredWidth(110);
+		tablaEmpleados.getColumnModel().getColumn(4).setPreferredWidth(140);
+		tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(110);
 		tablaEmpleados.getColumnModel().getColumn(6).setPreferredWidth(100);
+		tablaEmpleados.getColumnModel().getColumn(7).setPreferredWidth(80);
 
 		JScrollPane scrollPane = new JScrollPane(tablaEmpleados);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -242,13 +243,20 @@ public class Empleados extends JFrame {
 			}
 		});
 
-		RoundedButton btnEliminar = crearBotonCRUD("Eliminar Empleado", new Color(220, 53, 69), new Color(180, 40, 50));
+		RoundedButton btnEliminar = crearBotonCRUD("Dar de Baja", new Color(220, 53, 69), new Color(180, 40, 50));
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaEmpleados.getSelectedRow();
 				if (filaSeleccionada >= 0) {
 					String idEmpleado = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
-					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea eliminar al empleado " + idEmpleado + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+					String estadoActual = (String) modeloTabla.getValueAt(filaSeleccionada, 7);
+					
+					if(estadoActual.equalsIgnoreCase("Inactivo")) {
+						JOptionPane.showMessageDialog(null, "Este empleado ya se encuentra inactivo.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+
+					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea dar de baja al empleado " + idEmpleado + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
 						Altice.getInstance().eliminarEmpleado(idEmpleado);
 						cargarEmpleados();
@@ -290,7 +298,7 @@ public class Empleados extends JFrame {
 	private void cargarEmpleados() {
 		modeloTabla.setRowCount(0);
 		for (Empleado e : Altice.getInstance().getEmpleados()) {
-			Object[] fila = new Object[7];
+			Object[] fila = new Object[8];
 			fila[0] = e.getIdEmpleado();
 			fila[1] = e.getCedula();
 			fila[2] = e.getNombre();
@@ -298,6 +306,7 @@ public class Empleados extends JFrame {
 			fila[4] = e.getDepartamento();
 			fila[5] = e.getUsuario() != null ? e.getUsuario().getRol().toString() : "N/A";
 			fila[6] = String.format("$%.2f", e.getSalario());
+			fila[7] = e.getEstado() != null ? e.getEstado() : "Activo";
 			modeloTabla.addRow(fila);
 		}
 	}

@@ -47,6 +47,7 @@ public class RegEmpleado extends JDialog {
 	private RoundedTextField txtUsername;
 	private RoundedPasswordField txtPassword;
 	private RoundedComboBox<Rol> cbxRol;
+	private RoundedComboBox<String> cbxEstado;
 	private Empleado empleadoActual;
 
 	public RegEmpleado(Empleado empleado, boolean soloLectura) {
@@ -54,7 +55,7 @@ public class RegEmpleado extends JDialog {
 		
 		setModal(true);
 		setResizable(false);
-		setSize(550, 750);
+		setSize(550, 800);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
@@ -239,6 +240,18 @@ public class RegEmpleado extends JDialog {
 		cbxRol.setBounds(180, 480, 280, 35);
 		contentPanel.add(cbxRol);
 
+		JLabel lblEstado = new JLabel("Estado:");
+		lblEstado.setFont(labelFont);
+		lblEstado.setForeground(labelColor);
+		lblEstado.setBounds(30, 530, 140, 35);
+		contentPanel.add(lblEstado);
+
+		cbxEstado = new RoundedComboBox<String>(15);
+		cbxEstado.addItem("Activo");
+		cbxEstado.addItem("Inactivo");
+		cbxEstado.setBounds(180, 530, 280, 35);
+		contentPanel.add(cbxEstado);
+
 		if (empleadoActual != null) {
 			txtCedula.setText(empleadoActual.getCedula());
 			txtNombre.setText(empleadoActual.getNombre());
@@ -249,6 +262,9 @@ public class RegEmpleado extends JDialog {
 			txtUsername.setText(empleadoActual.getUsuario().getUsername());
 			txtPassword.setText(empleadoActual.getUsuario().getPassword());
 			cbxRol.setSelectedItem(empleadoActual.getUsuario().getRol());
+			if (empleadoActual.getEstado() != null) {
+				cbxEstado.setSelectedItem(empleadoActual.getEstado());
+			}
 		}
 
 		if (soloLectura) {
@@ -261,6 +277,7 @@ public class RegEmpleado extends JDialog {
 			txtUsername.setEditable(false);
 			txtPassword.setEditable(false);
 			cbxRol.setEnabled(false);
+			cbxEstado.setEnabled(false);
 			
 			Color colorDeshabilitado = new Color(245, 245, 245);
 			txtCedula.setBackground(colorDeshabilitado);
@@ -272,6 +289,7 @@ public class RegEmpleado extends JDialog {
 			txtPassword.setBackground(colorDeshabilitado);
 			cbxDepartamento.setBackground(colorDeshabilitado);
 			cbxRol.setBackground(colorDeshabilitado);
+			cbxEstado.setBackground(colorDeshabilitado);
 		}
 
 		// --- Footer Buttons ---
@@ -322,10 +340,11 @@ public class RegEmpleado extends JDialog {
 						String username = txtUsername.getText();
 						String password = new String(txtPassword.getPassword());
 						Rol rol = (Rol) cbxRol.getSelectedItem();
+						String estado = cbxEstado.getSelectedItem().toString();
 
 						if (empleadoActual == null) {
 							Usuario nuevoUsuario = new Usuario(username, password, rol);
-							Empleado nuevoEmpleado = new Empleado(cedula, nombre, telefono, direccion, id, departamento, salario, nuevoUsuario);
+							Empleado nuevoEmpleado = new Empleado(cedula, nombre, telefono, direccion, id, departamento, salario, nuevoUsuario, estado);
 							Altice.getInstance().registrarEmpleado(nuevoEmpleado);
 							JOptionPane.showMessageDialog(null, "Empleado registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 						} else {
@@ -338,6 +357,7 @@ public class RegEmpleado extends JDialog {
 							empleadoActual.getUsuario().setUsername(username);
 							empleadoActual.getUsuario().setPassword(password);
 							empleadoActual.getUsuario().setRol(rol);
+							empleadoActual.setEstado(estado);
 							JOptionPane.showMessageDialog(null, "Empleado actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 						}
 						

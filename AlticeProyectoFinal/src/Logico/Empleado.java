@@ -5,19 +5,15 @@ public class Empleado extends Persona {
     private String departamento;
     private float salario;
     private Usuario usuario;
+    private String estado;
 
-    public Empleado(String cedula, String nombre, String telefono, String direccion, String idEmpleado, String departamento, float salario, Usuario usuario) {
+    public Empleado(String cedula, String nombre, String telefono, String direccion, String idEmpleado, String departamento, float salario, Usuario usuario, String estado) {
         super(cedula, nombre, telefono, direccion);
         this.idEmpleado = idEmpleado;
         this.departamento = departamento;
         this.salario = salario;
         this.usuario = usuario;
-    }
-
-    @Override
-    public String mostrarDetalles() {
-        String rol = (usuario != null) ? usuario.getRol().toString() : "Sin Rol";
-        return "Empleado [ID=" + idEmpleado + ", Nombre=" + nombre + ", Departamento=" + departamento + ", Rol=" + rol + "]";
+        this.estado = estado;
     }
 
     public String getIdEmpleado() {
@@ -50,5 +46,22 @@ public class Empleado extends Persona {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    @Override
+    public void mostrarDetalles() {
+        System.out.println("Detalles del Empleado:");
+        System.out.println("ID: " + idEmpleado);
+        System.out.println("Nombre: " + getNombre());
+        System.out.println("Departamento: " + departamento);
+        System.out.println("Estado: " + estado);
     }
 }

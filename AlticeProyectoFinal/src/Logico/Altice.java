@@ -52,8 +52,8 @@ public class Altice {
         Usuario u1 = new Usuario("amartinez", "1234", Rol.GERENTE);
         Usuario u2 = new Usuario("lgomez", "1234", Rol.SOPORTE_TECNICO);
         
-        misEmpleados.add(new Empleado("001-0000000-1", "Ana Martínez", "809-555-0001", "Ensanche Naco", generarIdEmpleado(), "Ventas", 50000.0f, u1));
-        misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte Técnico", 35000.0f, u2));
+        misEmpleados.add(new Empleado("001-0000000-1", "Ana Martínez", "809-555-0001", "Ensanche Naco", generarIdEmpleado(), "Ventas", 50000.0f, u1, "Activo"));
+        misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte Técnico", 35000.0f, u2, "Activo"));
 
         Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0), "Personal", "N/A");
         c1.setFechaAsignacionPlan(new Date());
@@ -134,7 +134,10 @@ public class Altice {
     }
 
     public void eliminarEmpleado(String id) {
-        misEmpleados.removeIf(e -> e.getIdEmpleado().equals(id));
+        Empleado e = getEmpleadoById(id);
+        if (e != null) {
+            e.setEstado("Inactivo");
+        }
     }
 
     public ArrayList<Cliente> getClientes() {
@@ -146,7 +149,10 @@ public class Altice {
     }
 
     public void eliminarCliente(String id) {
-        misClientes.removeIf(c -> c.getIdCliente().equals(id));
+        Cliente c = getClienteById(id);
+        if (c != null) {
+            c.setEstado("Inactivo");
+        }
     }
 
     public ArrayList<Plan> getPlanes() {

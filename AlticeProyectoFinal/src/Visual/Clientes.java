@@ -251,6 +251,13 @@ public class Clientes extends JFrame {
 				int filaSeleccionada = tablaClientes.getSelectedRow();
 				if (filaSeleccionada >= 0) {
 					String idCliente = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+					String estadoActual = (String) modeloTabla.getValueAt(filaSeleccionada, 5);
+					
+					if (estadoActual.equalsIgnoreCase("Inactivo")) {
+						JOptionPane.showMessageDialog(null, "Este cliente ya se encuentra inactivo.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+					
 					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea dar de baja al cliente " + idCliente + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
 						Altice.getInstance().eliminarCliente(idCliente);
