@@ -57,11 +57,11 @@ public class Empleado extends Persona {
     }
 
     @Override
-    public void mostrarDetalles() {
-        System.out.println("Detalles del Empleado:");
-        System.out.println("ID: " + idEmpleado);
-        System.out.println("Nombre: " + getNombre());
-        System.out.println("Departamento: " + departamento);
-        System.out.println("Estado: " + estado);
+    public String mostrarDetalles() {
+        return "Detalles del Empleado:\n" +
+               "ID: " + idEmpleado + "\n" +
+               "Nombre: " + getNombre() + "\n" +
+               "Departamento: " + departamento + "\n" +
+               "Estado: " + estado;
     }
 }

@@ -8,8 +8,6 @@ public class Altice {
     private ArrayList<Plan> misPlanes;
     private ArrayList<Empleado> misEmpleados;
     private ArrayList<Pago> misPagos;
-    
-  
     private int contadorClientes = 1;
     private int contadorEmpleados = 1;
     private int contadorPagos = 1;
