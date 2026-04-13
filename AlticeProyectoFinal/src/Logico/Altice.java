@@ -1,9 +1,15 @@
 package Logico;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Altice {
+public class Altice implements Serializable {
+    private static final long serialVersionUID = 1L;
     private ArrayList<Cliente> misClientes;
     private ArrayList<Plan> misPlanes;
     private ArrayList<Empleado> misEmpleados;
@@ -11,7 +17,7 @@ public class Altice {
     private int contadorClientes = 1;
     private int contadorEmpleados = 1;
     private int contadorPagos = 1;
-    private int contadorPlanes = 9; 
+    private int contadorPlanes = 1; 
 
     private static Altice altice = null;
 
@@ -20,49 +26,52 @@ public class Altice {
         misPlanes = new ArrayList<>();
         misEmpleados = new ArrayList<>();
         misPagos = new ArrayList<>();
-        cargarDatosPrueba();
     }
 
     public static Altice getInstance() {
         if (altice == null) {
-            altice = new Altice();
+            altice = cargarDatos();
+            if (altice == null) {
+                altice = new Altice();
+                altice.cargarDatosPorDefecto();
+            }
         }
         return altice;
     }
 
-    private void cargarDatosPrueba() {
-        misPlanes.add(new Plan("P-01", "Combinado", "Tripleplay Básico", 1500.0f));
-        misPlanes.add(new Plan("P-02", "Combinado", "Tripleplay Premium", 2500.0f));
-        misPlanes.add(new Plan("P-03", "Hogar", "Internet Fibra 100Mbps", 1200.0f));
-        misPlanes.add(new Plan("P-04", "Hogar", "Internet Fibra 300Mbps", 1800.0f));
-        misPlanes.add(new Plan("P-05", "Móvil", "Pospago Básico 15GB", 600.0f));
-        misPlanes.add(new Plan("P-06", "Móvil", "Pospago Ilimitado 5G", 1100.0f));
-        misPlanes.add(new Plan("P-07", "Empresarial", "Internet Dedicado 500Mbps", 9500.0f));
-        misPlanes.add(new Plan("P-08", "Empresarial", "Central IP Corporativa", 14000.0f));
+    private static Altice cargarDatos() {
+        Altice instancia = null;
+        try {
+            FileInputStream fileIn = new FileInputStream("AlticeData.dat");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            instancia = (Altice) in.readObject();
+            in.close();
+            fileIn.close();
+            System.out.println("✅ Datos cargados correctamente de AlticeData.dat");
+        } catch (Exception e) {
+            System.out.println("⚠️ Archivo corrupto o no encontrado. Creando datos por defecto.");
+        }
+        return instancia;
+    }
 
-        Usuario u1 = new Usuario("amartinez", "1234", Rol.GERENTE);
-        Usuario u2 = new Usuario("lgomez", "1234", Rol.SOPORTE_TECNICO);
-        
-        misEmpleados.add(new Empleado("001-0000000-1", "Ana Martínez", "809-555-0001", "Ensanche Naco", generarIdEmpleado(), "Ventas", 50000.0f, u1, "Activo"));
-        misEmpleados.add(new Empleado("001-0000000-2", "Luis Gómez", "809-555-0002", "Los Alcarrizos", generarIdEmpleado(), "Soporte Técnico", 35000.0f, u2, "Activo"));
+    public static void guardarDatos() {
+        if (altice == null) return;
+        try {
+            FileOutputStream fileOut = new FileOutputStream("AlticeData.dat");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(altice);
+            out.close();
+            fileOut.close();
+            System.out.println("💾 Datos guardados exitosamente.");
+        } catch (Exception e) {
+            System.err.println("❌ ERROR GRAVE AL GUARDAR LOS DATOS: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-        Cliente c1 = new Cliente("402-1234567-8", "Juan Pérez", "809-555-1234", "Ensanche Naco, Santo Domingo", generarIdCliente(), "Activo", misPlanes.get(0), "Personal", "N/A");
-        c1.setFechaAsignacionPlan(new Date());
-        misClientes.add(c1);
-        
-        Cliente c2 = new Cliente("031-9876543-2", "María Gómez", "829-555-9876", "Los Jardines, Santiago", generarIdCliente(), "Activo", misPlanes.get(3), "Personal", "N/A");
-        c2.setFechaAsignacionPlan(new Date());
-        misClientes.add(c2);
-
-        Cliente c3 = new Cliente("001-2223334-5", "Tech Solutions SRL", "809-111-2222", "Av. Winston Churchill", generarIdCliente(), "Activo", misPlanes.get(6), "Empresarial", "1-30-12345-6");
-        c3.setFechaAsignacionPlan(new Date());
-        misClientes.add(c3);
-
-        // --- Historial de Pagos de Prueba ---
-        long ahora = System.currentTimeMillis();
-        misPagos.add(new Pago(generarIdPago(), c1, new Date(ahora - 15L * 24 * 3600 * 1000), 1500.0f, "Tarjeta de Crédito", "Mensualidad"));
-        misPagos.add(new Pago(generarIdPago(), c2, new Date(ahora - 5L * 24 * 3600 * 1000), 1200.0f, "Efectivo", "Mensualidad"));
-        misPagos.add(new Pago(generarIdPago(), c3, new Date(), 9500.0f, "Transferencia Bancaria", "Instalación"));
+    private void cargarDatosPorDefecto() {
+        Usuario adminUser = new Usuario("admin", "1234", Rol.GERENTE);
+        misEmpleados.add(new Empleado("000-0000000-0", "Administrador Principal", "809-000-0000", "Altice Central", generarIdEmpleado(), "Gerencia", 50000.0f, adminUser, "Activo"));
     }
 
     public String generarIdCliente() {
@@ -217,9 +226,5 @@ public class Altice {
             }
         }
         return null;
-    }
-
-    public static void guardarDatos() {
-
     }
 }
