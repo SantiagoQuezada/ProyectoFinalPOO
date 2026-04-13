@@ -178,32 +178,38 @@ public class RegPlan extends JDialog {
 
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (txtNombre.getText().isEmpty() || txtPrecio.getText().isEmpty()) {
+					String nombre = txtNombre.getText().trim();
+					
+					if (nombre.isEmpty() || txtPrecio.getText().trim().isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
+					// Validación de Precio con Try-Catch
+					float precio = 0;
 					try {
-						String id = txtIdPlan.getText();
-						String categoria = cbxCategoria.getSelectedItem().toString();
-						String nombre = txtNombre.getText();
-						float precio = Float.parseFloat(txtPrecio.getText());
-
-						if (planActual == null) {
-							Plan nuevoPlan = new Plan(id, categoria, nombre, precio);
-							Altice.getInstance().registrarPlan(nuevoPlan);
-							JOptionPane.showMessageDialog(null, "Plan registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-						} else {
-							planActual.setCategoria(categoria);
-							planActual.setNombre(nombre);
-							planActual.setPrecio(precio);
-							JOptionPane.showMessageDialog(null, "Plan actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-						}
-						
-						dispose();
+						precio = Float.parseFloat(txtPrecio.getText().trim());
+						if (precio < 0) throw new NumberFormatException();
 					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(null, "El precio debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Dato '" + txtPrecio.getText() + "' no válido en la parte de Precio.\nSolo se permiten números positivos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
 					}
+
+					String id = txtIdPlan.getText();
+					String categoria = cbxCategoria.getSelectedItem().toString();
+
+					if (planActual == null) {
+						Plan nuevoPlan = new Plan(id, categoria, nombre, precio);
+						Altice.getInstance().registrarPlan(nuevoPlan);
+						JOptionPane.showMessageDialog(null, "Plan registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						planActual.setCategoria(categoria);
+						planActual.setNombre(nombre);
+						planActual.setPrecio(precio);
+						JOptionPane.showMessageDialog(null, "Plan actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					}
+					
+					dispose();
 				}
 			});
 			buttonPane.add(btnCancelar);
@@ -232,14 +238,14 @@ public class RegPlan extends JDialog {
 			this.radius = radius;
 			setOpaque(false);
 			setFont(new Font("Arial", Font.PLAIN, 14));
-			setBackground(new Color(240, 240, 240)); // Fondo gris claro
+			setBackground(new Color(240, 240, 240)); 
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); // Flecha minimalista
+					JButton button = new JButton("\u25BC"); 
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -252,7 +258,6 @@ public class RegPlan extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					// Previene el dibujado del fondo cuadrado por defecto
 				}
 			});
 
@@ -272,7 +277,7 @@ public class RegPlan extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
+							label.setBackground(new Color(0, 60, 130)); 
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);

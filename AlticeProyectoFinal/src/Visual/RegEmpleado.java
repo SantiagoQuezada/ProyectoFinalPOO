@@ -323,48 +323,68 @@ public class RegEmpleado extends JDialog {
 
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtSalario.getText().isEmpty() || txtUsername.getText().isEmpty()) {
+					String cedula = txtCedula.getText().trim();
+					String nombre = txtNombre.getText().trim();
+					String telefono = txtTelefono.getText().trim();
+					String direccion = txtDireccion.getText().trim();
+					String username = txtUsername.getText().trim();
+					String password = new String(txtPassword.getPassword());
+
+					// 1. Validar campos vacíos
+					if (cedula.isEmpty() || nombre.isEmpty() || txtSalario.getText().trim().isEmpty() || username.isEmpty() || password.isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
-					try {
-						String id = txtIdEmpleado.getText();
-						String cedula = txtCedula.getText();
-						String nombre = txtNombre.getText();
-						String telefono = txtTelefono.getText();
-						String direccion = txtDireccion.getText();
-						String departamento = cbxDepartamento.getSelectedItem().toString();
-						float salario = Float.parseFloat(txtSalario.getText());
-						
-						String username = txtUsername.getText();
-						String password = new String(txtPassword.getPassword());
-						Rol rol = (Rol) cbxRol.getSelectedItem();
-						String estado = cbxEstado.getSelectedItem().toString();
-
-						if (empleadoActual == null) {
-							Usuario nuevoUsuario = new Usuario(username, password, rol);
-							Empleado nuevoEmpleado = new Empleado(cedula, nombre, telefono, direccion, id, departamento, salario, nuevoUsuario, estado);
-							Altice.getInstance().registrarEmpleado(nuevoEmpleado);
-							JOptionPane.showMessageDialog(null, "Empleado registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-						} else {
-							empleadoActual.setCedula(cedula);
-							empleadoActual.setNombre(nombre);
-							empleadoActual.setTelefono(telefono);
-							empleadoActual.setDireccion(direccion);
-							empleadoActual.setDepartamento(departamento);
-							empleadoActual.setSalario(salario);
-							empleadoActual.getUsuario().setUsername(username);
-							empleadoActual.getUsuario().setPassword(password);
-							empleadoActual.getUsuario().setRol(rol);
-							empleadoActual.setEstado(estado);
-							JOptionPane.showMessageDialog(null, "Empleado actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-						}
-						
-						dispose();
-					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(null, "El salario debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+					// 2. Validaciones con Regex
+					if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + nombre + "' no válido en la parte de Nombre.\nNo se permiten números ni caracteres especiales.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
 					}
+					if (!cedula.matches("^[0-9\\-]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + cedula + "' no válido en la parte de Cédula.\nSolo se permiten números y guiones.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (!telefono.matches("^[0-9\\-\\+\\s]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + telefono + "' no válido en la parte de Teléfono.\nSolo se permiten números, guiones y el signo +.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					// 3. Validación de Salario con Try-Catch
+					float salario = 0;
+					try {
+						salario = Float.parseFloat(txtSalario.getText().trim());
+						if (salario < 0) throw new NumberFormatException();
+					} catch (NumberFormatException ex) {
+						JOptionPane.showMessageDialog(null, "Dato '" + txtSalario.getText() + "' no válido en la parte de Salario.\nSolo se permiten números positivos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					String id = txtIdEmpleado.getText();
+					String departamento = cbxDepartamento.getSelectedItem().toString();
+					Rol rol = (Rol) cbxRol.getSelectedItem();
+					String estado = cbxEstado.getSelectedItem().toString();
+
+					if (empleadoActual == null) {
+						Usuario nuevoUsuario = new Usuario(username, password, rol);
+						Empleado nuevoEmpleado = new Empleado(cedula, nombre, telefono, direccion, id, departamento, salario, nuevoUsuario, estado);
+						Altice.getInstance().registrarEmpleado(nuevoEmpleado);
+						JOptionPane.showMessageDialog(null, "Empleado registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					} else {
+						empleadoActual.setCedula(cedula);
+						empleadoActual.setNombre(nombre);
+						empleadoActual.setTelefono(telefono);
+						empleadoActual.setDireccion(direccion);
+						empleadoActual.setDepartamento(departamento);
+						empleadoActual.setSalario(salario);
+						empleadoActual.getUsuario().setUsername(username);
+						empleadoActual.getUsuario().setPassword(password);
+						empleadoActual.getUsuario().setRol(rol);
+						empleadoActual.setEstado(estado);
+						JOptionPane.showMessageDialog(null, "Empleado actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+					}
+					
+					dispose();
 				}
 			});
 			buttonPane.add(btnCancelar);
@@ -393,14 +413,14 @@ public class RegEmpleado extends JDialog {
 			this.radius = radius;
 			setOpaque(false);
 			setFont(new Font("Arial", Font.PLAIN, 14));
-			setBackground(new Color(240, 240, 240)); // Fondo gris claro
+			setBackground(new Color(240, 240, 240)); 
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); // Flecha minimalista
+					JButton button = new JButton("\u25BC"); 
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -413,7 +433,6 @@ public class RegEmpleado extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					// Previene el dibujado del fondo cuadrado por defecto
 				}
 			});
 
@@ -433,7 +452,7 @@ public class RegEmpleado extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
+							label.setBackground(new Color(0, 60, 130)); 
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);

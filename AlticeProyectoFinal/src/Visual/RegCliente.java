@@ -15,7 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
-import java.awt.Rectangle; // <- IMPORT CORREGIDO AQUI
+import java.awt.Rectangle; 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -48,12 +48,10 @@ public class RegCliente extends JDialog {
 	
 	private Cliente clienteActual;
 
-	// CONSTRUCTOR 1: Vacío (Para cuando Clientes.java llama a new RegCliente() sin parámetros)
 	public RegCliente() {
 		this(null, false);
 	}
 
-	// CONSTRUCTOR 2: Con parámetros (Para ver o modificar un cliente existente)
 	public RegCliente(Cliente cliente, boolean soloLectura) {
 		this.clienteActual = cliente;
 		
@@ -283,29 +281,46 @@ public class RegCliente extends JDialog {
 	
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (txtNombre.getText().trim().isEmpty() || txtCedula.getText().trim().isEmpty() || txtTelefono.getText().trim().isEmpty() || txtDireccion.getText().trim().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Debe completar todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-	
-					if (cbxTipoCliente.getSelectedIndex() == 1 && txtRnc.getText().trim().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Debe ingresar el RNC para clientes empresariales.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-	
-					if (Altice.getInstance().getPlanes().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "No puede registrar un cliente sin planes disponibles en el sistema.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-	
-					String idCliente = txtIdCliente.getText();
 					String nombre = txtNombre.getText().trim();
 					String cedula = txtCedula.getText().trim();
 					String telefono = txtTelefono.getText().trim();
 					String direccion = txtDireccion.getText().trim();
-					String tipoCliente = cbxTipoCliente.getSelectedItem().toString();
 					String rnc = cbxTipoCliente.getSelectedIndex() == 1 ? txtRnc.getText().trim() : "";
+
+					// 1. Validar campos vacíos
+					if (nombre.isEmpty() || cedula.isEmpty() || telefono.isEmpty() || direccion.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Debe completar todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (cbxTipoCliente.getSelectedIndex() == 1 && rnc.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Debe ingresar el RNC para clientes empresariales.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (Altice.getInstance().getPlanes().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "No puede registrar un cliente sin planes disponibles en el sistema.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+
+					// 2. Validaciones con Regex para evitar números en texto y letras en números
+					if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + nombre + "' no válido en la parte de Nombre.\nNo se permiten números ni caracteres especiales.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (!cedula.matches("^[0-9\\-]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + cedula + "' no válido en la parte de Cédula.\nSolo se permiten números y guiones.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (!telefono.matches("^[0-9\\-\\+\\s]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + telefono + "' no válido en la parte de Teléfono.\nSolo se permiten números, guiones y el signo +.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					if (cbxTipoCliente.getSelectedIndex() == 1 && !rnc.matches("^[0-9\\-]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + rnc + "' no válido en la parte de RNC.\nSolo se permiten números y guiones.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 	
+					String idCliente = txtIdCliente.getText();
+					String tipoCliente = cbxTipoCliente.getSelectedItem().toString();
 					Plan planSeleccionado = Altice.getInstance().getPlanes().get(cbxPlan.getSelectedIndex());
 					int duracion = Integer.parseInt(cbxDuracion.getSelectedItem().toString().split(" ")[0]);
 	

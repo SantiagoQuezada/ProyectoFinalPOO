@@ -71,7 +71,7 @@ public class RegPago extends JDialog {
 	private void construirUI_Formulario() {
 		setModal(true);
 		setResizable(false);
-		setSize(620, 850); // Aumentado para acomodar la deuda
+		setSize(620, 850); 
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
@@ -182,17 +182,16 @@ public class RegPago extends JDialog {
 			}
 		});
 
-		// --- NUEVO CAMPO: DEUDA ACTIVA ---
 		JLabel lblDeudaActiva = new JLabel("Deuda Activa:");
 		lblDeudaActiva.setFont(labelFont);
-		lblDeudaActiva.setForeground(new Color(200, 50, 50)); // Rojo oscuro para resaltar la deuda
+		lblDeudaActiva.setForeground(new Color(200, 50, 50));
 		lblDeudaActiva.setBounds(30, 290, 140, 35);
 		contentPanel.add(lblDeudaActiva);
 
 		txtDeudaActiva = new RoundedTextField(15);
 		txtDeudaActiva.setFont(new Font("Arial", Font.BOLD, 15));
 		txtDeudaActiva.setForeground(new Color(200, 50, 50));
-		txtDeudaActiva.setBackground(new Color(255, 235, 235)); // Fondo rojizo suave
+		txtDeudaActiva.setBackground(new Color(255, 235, 235)); 
 		txtDeudaActiva.setEditable(false);
 		txtDeudaActiva.setBounds(180, 290, 350, 35);
 		contentPanel.add(txtDeudaActiva);
@@ -306,45 +305,55 @@ public class RegPago extends JDialog {
 		btnRegistrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String selectedClientStr = listClientes.getSelectedValue();
-				if (selectedClientStr == null || txtMonto.getText().isEmpty()) {
+				if (selectedClientStr == null || txtMonto.getText().trim().isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Debe buscar y seleccionar un cliente de la lista, y digitar el monto.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				
 				String rncIngresado = txtRncPersonal.getText().trim();
-				if (cbxComprobante.getSelectedIndex() == 1 && rncIngresado.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Debe ingresar un RNC válido para generar el Comprobante Fiscal.", "Error", JOptionPane.ERROR_MESSAGE);
+				if (cbxComprobante.getSelectedIndex() == 1) {
+					if (rncIngresado.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Debe ingresar un RNC válido para generar el Comprobante Fiscal.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					// Validación de RNC
+					if (!rncIngresado.matches("^[0-9\\-]+$")) {
+						JOptionPane.showMessageDialog(null, "Dato '" + rncIngresado + "' no válido en la parte de RNC.\nSolo se permiten números y guiones.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+
+				// Validación del Monto con Try-Catch
+				float monto = 0;
+				try {
+					monto = Float.parseFloat(txtMonto.getText().trim());
+					if (monto <= 0) throw new NumberFormatException();
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "Dato '" + txtMonto.getText() + "' no válido en la parte de Monto.\nSolo se permiten números mayores a cero.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				try {
-					String idPago = txtIdPago.getText();
-					String idCliente = selectedClientStr.split(" - ")[0];
-					Cliente cliente = Altice.getInstance().getClienteById(idCliente);
-					
-					String tipoComp = cbxComprobante.getSelectedItem().toString().contains("Fiscal") ? "Comprobante Fiscal" : "Consumidor Final";
-					String conceptoFinal = cbxConcepto.getSelectedItem().toString() + " | " + tipoComp;
-					
-					if (cbxComprobante.getSelectedIndex() == 1) {
-						conceptoFinal += " | RNC:" + rncIngresado;
-					}
-					
-					String metodo = cbxMetodo.getSelectedItem().toString();
-					float monto = Float.parseFloat(txtMonto.getText());
-
-					Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, conceptoFinal);
-					Altice.getInstance().registrarPago(nuevoPago);
-					
-					// NUEVO: Restar el pago a la deuda activa del cliente
-					cliente.reducirDeuda(monto);
-					
-					dispose();
-					RegPago reciboGrafico = new RegPago(nuevoPago, true);
-					reciboGrafico.setVisible(true);
-
-				} catch (NumberFormatException ex) {
-					JOptionPane.showMessageDialog(null, "El monto debe ser numérico.", "Error", JOptionPane.ERROR_MESSAGE);
+				String idPago = txtIdPago.getText();
+				String idCliente = selectedClientStr.split(" - ")[0];
+				Cliente cliente = Altice.getInstance().getClienteById(idCliente);
+				
+				String tipoComp = cbxComprobante.getSelectedItem().toString().contains("Fiscal") ? "Comprobante Fiscal" : "Consumidor Final";
+				String conceptoFinal = cbxConcepto.getSelectedItem().toString() + " | " + tipoComp;
+				
+				if (cbxComprobante.getSelectedIndex() == 1) {
+					conceptoFinal += " | RNC:" + rncIngresado;
 				}
+				
+				String metodo = cbxMetodo.getSelectedItem().toString();
+
+				Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, conceptoFinal);
+				Altice.getInstance().registrarPago(nuevoPago);
+				
+				cliente.reducirDeuda(monto);
+				
+				dispose();
+				RegPago reciboGrafico = new RegPago(nuevoPago, true);
+				reciboGrafico.setVisible(true);
 			}
 		});
 
@@ -378,7 +387,6 @@ public class RegPago extends JDialog {
 			String idCliente = selectedClient.split(" - ")[0];
 			Cliente c = Altice.getInstance().getClienteById(idCliente);
 			
-			// Actualización de RNC y Comprobante
 			if(c != null && c.getTipoCliente().equals("Empresarial")) {
 				cbxComprobante.setSelectedIndex(1);
 				txtRncPersonal.setText(c.getRnc() != null ? c.getRnc() : "");
@@ -387,7 +395,6 @@ public class RegPago extends JDialog {
 				txtRncPersonal.setText("");
 			}
 
-			// Actualización de Deuda Activa (Ya no es simulada)
 			if (c != null) {
 				txtDeudaActiva.setText("$" + String.format("%.2f", c.getDeudaActiva()));
 			}
