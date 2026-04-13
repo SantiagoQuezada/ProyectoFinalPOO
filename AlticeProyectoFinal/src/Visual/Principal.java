@@ -1,5 +1,6 @@
 package Visual;
 
+import Logico.Empleado;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -8,9 +9,8 @@ import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.BorderFactory;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.Icon;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,6 +18,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,18 +28,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import Logico.Empleado;
-import Logico.Altice;
 
 public class Principal extends JFrame {
 
 	private Empleado empleadoLogueado;
-	private JLabel lblReloj;
 
 	public Principal(Empleado empleado) {
 		this.empleadoLogueado = empleado;
-		
-		setTitle("Sistema de Gestión - Principal");
+		setTitle("Altice - Panel de Control Principal");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -44,47 +43,54 @@ public class Principal extends JFrame {
 		getContentPane().setBackground(new Color(245, 247, 250));
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
-		headerPanel.setBackground(new Color(15, 15, 15));
-		headerPanel.setPreferredSize(new Dimension(1000, 70));
-		headerPanel.setBorder(new EmptyBorder(10, 30, 10, 30));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		headerPanel.setPreferredSize(new Dimension(1000, 80));
+		headerPanel.setBorder(new EmptyBorder(15, 40, 15, 40));
 
-		JLabel lblLogo = new JLabel("<html><span style='font-size:20px; font-family: Arial;'><b>\u221E Altice</b></span></html>");
+		JLabel lblLogo = new JLabel("\u221E Altice");
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 32));
 		lblLogo.setForeground(Color.WHITE);
 		headerPanel.add(lblLogo, BorderLayout.WEST);
 
-		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 5));
+		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 25, 5));
 		rightHeaderPanel.setOpaque(false);
 
-		String rolStr = empleado != null && empleado.getUsuario() != null ? empleado.getUsuario().getRol().toString() : "SIN ROL";
-		String nombreStr = empleado != null ? empleado.getNombre() : "Usuario";
-		JLabel lblUser = new JLabel("Hola, " + nombreStr + " | " + rolStr);
-		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblUser.setForeground(new Color(200, 200, 200));
+		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
 		
-		JButton btnSalir = new JButton("Salir \u23FB");
-		btnSalir.setBackground(new Color(200, 50, 50));
-		btnSalir.setForeground(Color.WHITE);
-		btnSalir.setFocusPainted(false);
-		btnSalir.setFont(new Font("Arial", Font.BOLD, 12));
-		btnSalir.setBorder(new EmptyBorder(8, 15, 8, 15));
-		btnSalir.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
+		lblUser.setIcon(new UserIcon()); // Icono de personita generado nativamente
+		lblUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblUser.setForeground(new Color(220, 220, 220));
+
+		RoundedButton btnLogout = new RoundedButton("Cerrar Sesión", 20);
+		btnLogout.setBackground(new Color(40, 40, 40));
+		btnLogout.setForeground(Color.WHITE);
+		btnLogout.setFont(new Font("Arial", Font.BOLD, 13));
+		btnLogout.setPreferredSize(new Dimension(140, 35));
+		btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
-		// EVENTO DE SALIR MODIFICADO PARA VISUALIZAR EL GUARDADO
-		btnSalir.addActionListener(e -> {
-			try {
-				Altice.guardarDatos();
-				JOptionPane.showMessageDialog(this, "Datos guardados correctamente en AlticeData.dat.\nEl sistema se cerrará ahora.", "Apagado Seguro", JOptionPane.INFORMATION_MESSAGE);
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(this, "Hubo un error al guardar los datos. Revisa la consola.", "Error", JOptionPane.ERROR_MESSAGE);
-			} finally {
-				System.exit(0);
+		btnLogout.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnLogout.setBackground(new Color(220, 50, 50));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnLogout.setBackground(new Color(40, 40, 40));
 			}
 		});
 
-		rightHeaderPanel.add(lblUser);
-		rightHeaderPanel.add(btnSalir);
+		btnLogout.addActionListener(e -> {
+			Login login = new Login();
+			login.setVisible(true);
+			dispose();
+		});
 
+		rightHeaderPanel.add(lblUser);
+		rightHeaderPanel.add(btnLogout);
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
+
 		add(headerPanel, BorderLayout.NORTH);
 
 		JPanel wrapperPanel = new JPanel(new GridBagLayout());
@@ -94,154 +100,240 @@ public class Principal extends JFrame {
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 		centerPanel.setOpaque(false);
 
-		JLabel lblTituloPrincipal = new JLabel("Panel de Control Principal");
-		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 36));
-		lblTituloPrincipal.setForeground(new Color(30, 30, 30));
-		lblTituloPrincipal.setAlignmentX(Component.CENTER_ALIGNMENT);
-		centerPanel.add(lblTituloPrincipal);
+		JLabel lblBienvenida = new JLabel("Bienvenido al Sistema de Gestión");
+		lblBienvenida.setFont(new Font("Arial", Font.BOLD, 36));
+		lblBienvenida.setForeground(new Color(10, 10, 10));
+		lblBienvenida.setAlignmentX(Component.CENTER_ALIGNMENT);
+		centerPanel.add(lblBienvenida);
 
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-		JLabel lblSubtitulo = new JLabel("Bienvenido al sistema interno. Gestiona las operaciones clave de la empresa.");
-		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
-		lblSubtitulo.setForeground(new Color(100, 100, 100));
-		lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-		centerPanel.add(lblSubtitulo);
+		JLabel lblInstruccion = new JLabel("Seleccione un módulo para comenzar a trabajar");
+		lblInstruccion.setFont(new Font("Arial", Font.PLAIN, 18));
+		lblInstruccion.setForeground(new Color(100, 100, 100));
+		lblInstruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
+		centerPanel.add(lblInstruccion);
 
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 60)));
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 50)));
 
 		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
 		cardsPanel.setOpaque(false);
 
-		JPanel cardPlanes = crearTarjeta("\uD83D\uDCC8", "PLANES", "Gestionar paquetes, ofertas y<br>tarifas de servicios.", "VER PLANES");
-		JPanel cardEmpleados = crearTarjeta("\uD83D\uDC65", "EMPLEADOS", "Base de datos del personal,<br>roles y perfiles.", "VER EMPLEADOS");
-		JPanel cardClientes = crearTarjeta("\uD83D\uDCC1", "CLIENTES", "Consultar registros, servicios<br>activos y facturación.", "VER CLIENTES");
+		RoundedPanel cardClientes = crearTarjetaModulo(
+			"\uD83D\uDC65", 
+			"Módulo Clientes", 
+			"Gestión de cartera y registros", 
+			e -> {
+				Clientes clientes = new Clientes(empleadoLogueado);
+				clientes.setVisible(true);
+				dispose();
+			}
+		);
 
-		cardsPanel.add(cardPlanes);
-		cardsPanel.add(cardEmpleados);
+		RoundedPanel cardPlanes = crearTarjetaModulo(
+			"\uD83D\uDCE1", 
+			"Módulo Planes", 
+			"Asignación y catálogo de planes", 
+			e -> {
+				Planes planes = new Planes(empleadoLogueado);
+				planes.setVisible(true);
+				dispose();
+			}
+		);
+
+		RoundedPanel cardEmpleados = crearTarjetaModulo(
+			"\uD83D\uDCBC", 
+			"Nómina y Staff", 
+			"Administración de empleados", 
+			e -> {
+				Empleados empleados = new Empleados(empleadoLogueado);
+				empleados.setVisible(true);
+				dispose();
+			}
+		);
+
 		cardsPanel.add(cardClientes);
+		cardsPanel.add(cardPlanes);
+		
+		if (empleadoLogueado == null || empleadoLogueado.getUsuario() == null || 
+			empleadoLogueado.getUsuario().getRol().toString().equals("GERENTE") || 
+			empleadoLogueado.getUsuario().getRol().toString().equals("ADMINISTRADOR")) {
+			cardsPanel.add(cardEmpleados);
+		}
 
 		centerPanel.add(cardsPanel);
 		wrapperPanel.add(centerPanel);
 
 		add(wrapperPanel, BorderLayout.CENTER);
 
-		JPanel footerPanel = new JPanel(new BorderLayout());
+		JPanel footerPanel = new JPanel();
+		footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.Y_AXIS));
 		footerPanel.setBackground(new Color(245, 247, 250));
-		footerPanel.setBorder(new EmptyBorder(15, 30, 15, 30));
-		
-		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Sistema de Gestión Interna | Términos y Condiciones");
-		lblFooter.setFont(new Font("Arial", Font.PLAIN, 13));
+		footerPanel.setBorder(new EmptyBorder(15, 0, 20, 0));
+
+		JLabel lblReloj = new JLabel();
+		lblReloj.setFont(new Font("Arial", Font.BOLD, 18));
+		lblReloj.setForeground(new Color(0, 102, 204)); 
+		lblReloj.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		Timer timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy  |  hh:mm:ss a");
+				lblReloj.setText(sdf.format(new Date()));
+			}
+		});
+		timer.start();
+
+		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Sistema de Gestión Interna");
+		lblFooter.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblFooter.setForeground(new Color(150, 150, 150));
-		lblFooter.setHorizontalAlignment(JLabel.CENTER);
-		footerPanel.add(lblFooter, BorderLayout.CENTER);
-		
-		lblReloj = new JLabel("");
-		lblReloj.setFont(new Font("Arial", Font.BOLD, 14));
-		lblReloj.setForeground(new Color(100, 100, 100));
-		footerPanel.add(lblReloj, BorderLayout.EAST);
+		lblFooter.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		footerPanel.add(lblReloj);
+		footerPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+		footerPanel.add(lblFooter);
 
 		add(footerPanel, BorderLayout.SOUTH);
-
-		iniciarHiloReloj();
 	}
 
-	private void iniciarHiloReloj() {
-		Runnable tareaReloj = new Runnable() {
-			@Override
-			public void run() {
-				SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				while (true) {
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-					}
-					String fechaHoraActual = formato.format(new Date());
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							lblReloj.setText("Hora del Sistema: " + fechaHoraActual);
-						}
-					});
-				}
-			}
-		};
-		Thread hiloReloj = new Thread(tareaReloj);
-		hiloReloj.setDaemon(true);
-		hiloReloj.start();
+	public Principal() {
+		this(null);
 	}
 
-	private JPanel crearTarjeta(String icono, String titulo, String descripcion, String textoBoton) {
-		JPanel tarjeta = new JPanel();
+	private RoundedPanel crearTarjetaModulo(String icono, String titulo, String desc, ActionListener accion) {
+		RoundedPanel tarjeta = new RoundedPanel(40);
 		tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
-		tarjeta.setPreferredSize(new Dimension(300, 360));
+		tarjeta.setPreferredSize(new Dimension(320, 380));
 		tarjeta.setBackground(Color.WHITE);
-
-		tarjeta.setBorder(BorderFactory.createCompoundBorder(
-				new LineBorder(new Color(220, 220, 220), 1, true),
-				new EmptyBorder(30, 25, 30, 25)
-		));
+		tarjeta.setBorder(new EmptyBorder(40, 30, 40, 30));
 
 		JLabel lblIcono = new JLabel(icono);
 		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
 		lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblIcono.setHorizontalAlignment(JLabel.CENTER);
 
-		JLabel lblTitulo = new JLabel("<html><div style='text-align: center; color: #1a1a1a;'>" + titulo + "</div></html>");
-		lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
+		JLabel lblTitulo = new JLabel(titulo);
+		lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
+		lblTitulo.setForeground(new Color(10, 10, 10));
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblTitulo.setHorizontalAlignment(JLabel.CENTER);
 
-		JLabel lblDesc = new JLabel("<html><div style='text-align: center; color: #666666;'>" + descripcion + "</div></html>");
-		lblDesc.setFont(new Font("Arial", Font.PLAIN, 14));
+		// Ancho fijo en HTML para forzar el centrado
+		JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 220px;'>" + desc + "</div></html>");
+		lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblDesc.setForeground(new Color(120, 120, 120));
 		lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblDesc.setHorizontalAlignment(JLabel.CENTER);
 
-		JButton boton = new JButton(textoBoton);
+		RoundedButton boton = new RoundedButton("ACCEDER", 25);
 		boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		boton.setBackground(new Color(15, 15, 15));
+		boton.setBackground(new Color(0, 102, 204)); 
 		boton.setForeground(Color.WHITE);
-		boton.setFocusPainted(false);
-		boton.setFont(new Font("Arial", Font.BOLD, 13));
+		boton.setFont(new Font("Arial", Font.BOLD, 14));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setPreferredSize(new Dimension(180, 45));
-		boton.setMaximumSize(new Dimension(200, 45));
-		boton.setBorder(BorderFactory.createEmptyBorder());
+		boton.setMaximumSize(new Dimension(260, 50));
+		boton.setPreferredSize(new Dimension(260, 50));
 
 		boton.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent e) {
-				boton.setBackground(new Color(50, 50, 50));
+				boton.setBackground(new Color(0, 80, 160));
 			}
+			@Override
 			public void mouseExited(MouseEvent e) {
-				boton.setBackground(new Color(15, 15, 15));
+				boton.setBackground(new Color(0, 102, 204));
 			}
 		});
 
-		boton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (textoBoton.equals("VER PLANES")) {
-					Planes ventanaPlanes = new Planes(empleadoLogueado);
-					ventanaPlanes.setVisible(true);
-					dispose();
-				} else if (textoBoton.equals("VER EMPLEADOS")) {
-					Empleados ventanaEmpleados = new Empleados(empleadoLogueado);
-					ventanaEmpleados.setVisible(true);
-					dispose();
-				} else if (textoBoton.equals("VER CLIENTES")) {
-					Clientes ventanaClientes = new Clientes(empleadoLogueado);
-					ventanaClientes.setVisible(true);
-					dispose();
-				}
-			}
-		});
+		boton.addActionListener(accion);
 
 		tarjeta.add(Box.createVerticalGlue());
 		tarjeta.add(lblIcono);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 20)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 25)));
 		tarjeta.add(lblTitulo);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 15)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 10)));
 		tarjeta.add(lblDesc);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 30)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 40)));
 		tarjeta.add(boton);
 		tarjeta.add(Box.createVerticalGlue());
 
 		return tarjeta;
+	}
+
+	// Icono personalizado de usuario dibujado con gráficos nativos
+	class UserIcon implements Icon {
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(220, 220, 220));
+			
+			// Cabeza
+			g2.fillOval(x + 4, y, 8, 8);
+			// Cuerpo
+			g2.fillArc(x, y + 9, 16, 12, 0, 180);
+			
+			g2.dispose();
+		}
+
+		@Override
+		public int getIconWidth() {
+			return 16;
+		}
+
+		@Override
+		public int getIconHeight() {
+			return 16;
+		}
+	}
+
+	class RoundedPanel extends JPanel {
+		private int radius;
+
+		public RoundedPanel(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			g2.setColor(new Color(235, 235, 235));
+			g2.fillRoundRect(2, 2, getWidth()-2, getHeight()-2, radius, radius);
+			
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth() - 4, getHeight() - 4, radius, radius);
+			
+			g2.setColor(new Color(220, 220, 220));
+			g2.drawRoundRect(0, 0, getWidth() - 4, getHeight() - 4, radius, radius);
+			
+			g2.dispose();
+			super.paintComponent(g);
+		}
+	}
+
+	class RoundedButton extends JButton {
+		private int radius;
+
+		public RoundedButton(String text, int radius) {
+			super(text);
+			this.radius = radius;
+			setContentAreaFilled(false);
+			setFocusPainted(false);
+			setBorderPainted(false);
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.dispose();
+			super.paintComponent(g);
+		}
 	}
 }
