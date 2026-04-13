@@ -24,6 +24,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -54,6 +55,13 @@ public class Principal extends JFrame {
 		}
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		boolean isAdmin = false;
+		if (empleadoLogueado == null || empleadoLogueado.getUsuario() == null || 
+			empleadoLogueado.getUsuario().getRol().toString().equals("GERENTE") || 
+			empleadoLogueado.getUsuario().getRol().toString().equals("ADMINISTRADOR")) {
+			isAdmin = true;
+		}
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(10, 10, 10));
@@ -128,10 +136,10 @@ public class Principal extends JFrame {
 		lblInstruccion.setAlignmentX(Component.CENTER_ALIGNMENT);
 		centerPanel.add(lblInstruccion);
 
-		centerPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+		centerPanel.add(Box.createRigidArea(new Dimension(0, 40)));
 
-		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
-		cardsPanel.setOpaque(false);
+		JPanel cardsGrid = new JPanel(new GridLayout(0, 3, 30, 30));
+		cardsGrid.setOpaque(false);
 
 		RoundedPanel cardClientes = crearTarjetaModulo(
 			"\uD83D\uDC65", 
@@ -182,7 +190,7 @@ public class Principal extends JFrame {
 			"Chat Interno", 
 			"Comunicación entre empleados", 
 			e -> {
-				ChatVentana chat = new ChatVentana(empleadoLogueado);
+				Visual.ChatVentana chat = new Visual.ChatVentana(empleadoLogueado);
 				chat.setVisible(true);
 			}
 		);
@@ -197,28 +205,48 @@ public class Principal extends JFrame {
 			}
 		);
 
-		cardsPanel.add(cardClientes);
-		cardsPanel.add(cardPlanes);
-		cardsPanel.add(cardPagos);
+		cardsGrid.add(cardClientes);
+		cardsGrid.add(cardPlanes);
+		cardsGrid.add(cardPagos);
 		
-		if (empleadoLogueado == null || empleadoLogueado.getUsuario() == null || 
-			empleadoLogueado.getUsuario().getRol().toString().equals("GERENTE") || 
-			empleadoLogueado.getUsuario().getRol().toString().equals("ADMINISTRADOR")) {
-			cardsPanel.add(cardEmpleados);
-			cardsPanel.add(cardGraficos); 
+		if (isAdmin) {
+			cardsGrid.add(cardEmpleados);
+			cardsGrid.add(cardGraficos); 
 		}
 		
-		cardsPanel.add(cardChat);
+		cardsGrid.add(cardChat);
 
-		centerPanel.add(cardsPanel);
+		JPanel cardsWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		cardsWrapper.setOpaque(false);
+		cardsWrapper.add(cardsGrid);
+
+		centerPanel.add(cardsWrapper);
 		wrapperPanel.add(centerPanel);
 
 		add(wrapperPanel, BorderLayout.CENTER);
 
-		JPanel footerPanel = new JPanel();
-		footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.Y_AXIS));
-		footerPanel.setBackground(new Color(245, 247, 250));
-		footerPanel.setBorder(new EmptyBorder(15, 0, 20, 0));
+		JPanel bottomContainer = new JPanel(new BorderLayout());
+		bottomContainer.setBackground(new Color(245, 247, 250));
+		bottomContainer.setBorder(new EmptyBorder(10, 20, 15, 20));
+
+		JPanel footerLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		footerLeft.setOpaque(false);
+		footerLeft.setPreferredSize(new Dimension(150, 40));
+
+		if (isAdmin) {
+			RoundedButton btnRespaldo = new RoundedButton("RESPALDO", 10);
+			btnRespaldo.setBackground(new Color(120, 120, 120));
+			btnRespaldo.setForeground(Color.WHITE);
+			btnRespaldo.setFont(new Font("Arial", Font.BOLD, 10));
+			btnRespaldo.setPreferredSize(new Dimension(100, 30));
+			btnRespaldo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			btnRespaldo.addActionListener(e -> {});
+			footerLeft.add(btnRespaldo);
+		}
+
+		JPanel footerCenter = new JPanel();
+		footerCenter.setLayout(new BoxLayout(footerCenter, BoxLayout.Y_AXIS));
+		footerCenter.setOpaque(false);
 
 		JLabel lblReloj = new JLabel();
 		lblReloj.setFont(new Font("Arial", Font.BOLD, 18));
@@ -239,11 +267,19 @@ public class Principal extends JFrame {
 		lblFooter.setForeground(new Color(150, 150, 150));
 		lblFooter.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		footerPanel.add(lblReloj);
-		footerPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-		footerPanel.add(lblFooter);
+		footerCenter.add(lblReloj);
+		footerCenter.add(Box.createRigidArea(new Dimension(0, 8)));
+		footerCenter.add(lblFooter);
 
-		add(footerPanel, BorderLayout.SOUTH);
+		JPanel footerRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		footerRight.setOpaque(false);
+		footerRight.setPreferredSize(new Dimension(150, 40));
+
+		bottomContainer.add(footerLeft, BorderLayout.WEST);
+		bottomContainer.add(footerCenter, BorderLayout.CENTER);
+		bottomContainer.add(footerRight, BorderLayout.EAST);
+
+		add(bottomContainer, BorderLayout.SOUTH);
 	}
 
 	public Principal() {
