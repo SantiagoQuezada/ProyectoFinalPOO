@@ -111,9 +111,11 @@ public class CatalogoPlanes extends JFrame {
 		panelTituloPlanes.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTituloPlanes.add(lblSubtituloPlanes);
 
-		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-		topPanel.setBackground(Color.WHITE);
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		// Contenedor de filtros con BoxLayout para evitar saltos de línea (wrap)
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		topPanel.setOpaque(false); // Para no tapar bordes redondeados
+		topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
 
 		JLabel lblCategoria = new JLabel("Categoría:");
 		lblCategoria.setFont(new Font("Arial", Font.BOLD, 14));
@@ -123,7 +125,7 @@ public class CatalogoPlanes extends JFrame {
 		cbFiltroCategoria.addItem("Hogar");
 		cbFiltroCategoria.addItem("Móvil");
 		cbFiltroCategoria.addItem("Empresarial");
-		cbFiltroCategoria.setPreferredSize(new Dimension(160, 35));
+		cbFiltroCategoria.setMaximumSize(new Dimension(160, 35));
 
 		JLabel lblEstado = new JLabel("Estado:");
 		lblEstado.setFont(new Font("Arial", Font.BOLD, 14));
@@ -131,21 +133,26 @@ public class CatalogoPlanes extends JFrame {
 		cbFiltroEstado.addItem("Todos");
 		cbFiltroEstado.addItem("Activos");
 		cbFiltroEstado.addItem("Desactivados");
-		cbFiltroEstado.setPreferredSize(new Dimension(150, 35));
+		cbFiltroEstado.setMaximumSize(new Dimension(150, 35));
 
 		JLabel lblBuscar = new JLabel("Buscar Plan:");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		txtBuscarPlan = new RoundedTextField(15);
-		txtBuscarPlan.setPreferredSize(new Dimension(250, 35));
+		txtBuscarPlan.setMaximumSize(new Dimension(250, 35));
 		txtBuscarPlan.setFont(new Font("Arial", Font.PLAIN, 14));
 
 		topPanel.add(lblCategoria);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbFiltroCategoria);
-		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(Box.createRigidArea(new Dimension(20, 0)));
 		topPanel.add(lblEstado);
-		topPanel.add(cbFiltroEstado);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(cbFiltroEstado);
+		
+		topPanel.add(Box.createHorizontalGlue()); // Empuja el buscador a la derecha
+		
 		topPanel.add(lblBuscar);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(txtBuscarPlan);
 
 		RoundedPanel topWrapper = new RoundedPanel(20);
@@ -271,7 +278,7 @@ public class CatalogoPlanes extends JFrame {
 		});
 
 		crudPanelPlanes.add(btnVolver);
-		crudPanelPlanes.add(Box.createRigidArea(new Dimension(30, 0))); // Separador
+		crudPanelPlanes.add(Box.createRigidArea(new Dimension(30, 0)));
 		crudPanelPlanes.add(btnCrear);
 		crudPanelPlanes.add(btnLeer);
 		crudPanelPlanes.add(btnActualizar);
@@ -333,7 +340,7 @@ public class CatalogoPlanes extends JFrame {
 
 	private void mostrarMenuAsignacion(String planPreseleccionado) {
 		JDialog dialog = new JDialog(this, "Asignación Rápida a Cliente", true);
-		dialog.setSize(1000, 700); // Modificado a tamaño más grande
+		dialog.setSize(1200, 750); // Modal expandido
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -346,16 +353,18 @@ public class CatalogoPlanes extends JFrame {
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-		topPanel.setBackground(Color.WHITE);
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		// Layout en X_AXIS para que los elementos nunca salten de línea
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		topPanel.setOpaque(false);
+		topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
 
 		JLabel lblSeleccionarPlan = new JLabel("Plan a asignar: ");
 		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 14));
 		lblSeleccionarPlan.setForeground(new Color(30, 30, 30));
 
 		RoundedComboBox<String> cbPlanes = new RoundedComboBox<>(15);
-		cbPlanes.setPreferredSize(new Dimension(350, 35));
+		cbPlanes.setMaximumSize(new Dimension(350, 35));
 		cbPlanes.addItem("<Seleccione un plan>");
 		
 		for (Plan p : Altice.getInstance().getPlanes()) {
@@ -378,13 +387,17 @@ public class CatalogoPlanes extends JFrame {
 		lblBuscar.setForeground(new Color(30, 30, 30));
 		
 		RoundedTextField txtBuscarCliente = new RoundedTextField(15);
-		txtBuscarCliente.setPreferredSize(new Dimension(300, 35));
+		txtBuscarCliente.setMaximumSize(new Dimension(300, 35));
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
 
 		topPanel.add(lblSeleccionarPlan);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbPlanes);
-		topPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		
+		topPanel.add(Box.createHorizontalGlue()); // Empuja hacia la derecha el buscador
+		
 		topPanel.add(lblBuscar);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(txtBuscarCliente);
 
 		RoundedPanel topWrapper = new RoundedPanel(20);
@@ -673,10 +686,17 @@ public class CatalogoPlanes extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
-			super.paintComponent(g);
 		}
 	}
 
