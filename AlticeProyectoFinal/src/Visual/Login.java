@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.EventQueue;
 
 public class Login extends JFrame {
@@ -66,28 +68,23 @@ public class Login extends JFrame {
 		cardPanel.setBorder(new EmptyBorder(45, 40, 45, 40));
 
 		JLabel lblLogo = new JLabel("\u221E Altice");
-		lblLogo.setFont(new Font("Arial", Font.BOLD, 52));
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 56));
 		lblLogo.setForeground(new Color(10, 10, 10));
 		lblLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		JLabel lblSubtitulo = new JLabel("Sistema de Gestión Interna");
-		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
-		lblSubtitulo.setForeground(new Color(120, 120, 120));
-		lblSubtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		JPanel formPanel = new JPanel();
 		formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
 		formPanel.setBackground(Color.WHITE);
 		formPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		JLabel lblUser = new JLabel("Usuario de Sistema");
-		lblUser.setFont(new Font("Arial", Font.BOLD, 14));
-		lblUser.setForeground(new Color(30, 30, 30));
+		JLabel lblUser = new JLabel("Usuario");
+		lblUser.setFont(new Font("Arial", Font.BOLD, 13));
+		lblUser.setForeground(new Color(100, 100, 100));
 		lblUser.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		txtUsername = new RoundedTextField(20);
-		txtUsername.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
-		txtUsername.setPreferredSize(new Dimension(320, 45));
+		txtUsername.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+		txtUsername.setPreferredSize(new Dimension(320, 50));
 		txtUsername.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
@@ -101,32 +98,43 @@ public class Login extends JFrame {
 		});
 
 		JLabel lblPass = new JLabel("Contraseña");
-		lblPass.setFont(new Font("Arial", Font.BOLD, 14));
-		lblPass.setForeground(new Color(30, 30, 30));
+		lblPass.setFont(new Font("Arial", Font.BOLD, 13));
+		lblPass.setForeground(new Color(100, 100, 100));
 		lblPass.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		txtPassword = new RoundedPasswordField(20);
-		txtPassword.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
-		txtPassword.setPreferredSize(new Dimension(320, 45));
+		txtPassword.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+		txtPassword.setPreferredSize(new Dimension(320, 50));
 		txtPassword.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 		formPanel.add(lblUser);
-		formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		formPanel.add(Box.createRigidArea(new Dimension(0, 8)));
 		formPanel.add(txtUsername);
-		formPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+		formPanel.add(Box.createRigidArea(new Dimension(0, 25)));
 		formPanel.add(lblPass);
-		formPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+		formPanel.add(Box.createRigidArea(new Dimension(0, 8)));
 		formPanel.add(txtPassword);
 
 		RoundedButton btnLogin = new RoundedButton("INICIAR SESIÓN", 25);
 		btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnLogin.setBackground(new Color(10, 10, 10));
+		btnLogin.setBackground(new Color(0, 102, 204)); // Azul Altice
 		btnLogin.setForeground(Color.WHITE);
 		btnLogin.setFont(new Font("Arial", Font.BOLD, 15));
 		btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 		btnLogin.setPreferredSize(new Dimension(320, 50));
+
+		btnLogin.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnLogin.setBackground(new Color(0, 80, 160)); // Azul más oscuro
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnLogin.setBackground(new Color(0, 102, 204)); // Vuelve al Azul Altice
+			}
+		});
 
 		ActionListener loginAction = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -163,11 +171,9 @@ public class Login extends JFrame {
 
 		cardPanel.add(Box.createVerticalGlue());
 		cardPanel.add(lblLogo);
-		cardPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-		cardPanel.add(lblSubtitulo);
-		cardPanel.add(Box.createRigidArea(new Dimension(0, 45)));
+		cardPanel.add(Box.createRigidArea(new Dimension(0, 60)));
 		cardPanel.add(formPanel);
-		cardPanel.add(Box.createRigidArea(new Dimension(0, 45)));
+		cardPanel.add(Box.createRigidArea(new Dimension(0, 50)));
 		cardPanel.add(btnLogin);
 		cardPanel.add(Box.createVerticalGlue());
 
@@ -210,7 +216,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(Color.WHITE);
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			g2.setColor(new Color(200, 200, 200));
+			g2.setColor(new Color(220, 220, 220)); // Borde más claro y moderno
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
@@ -232,7 +238,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(Color.WHITE);
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			g2.setColor(new Color(200, 200, 200));
+			g2.setColor(new Color(220, 220, 220)); // Borde más claro y moderno
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
@@ -256,9 +262,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
 			if (getModel().isPressed()) {
-				g2.setColor(new Color(40, 40, 40));
-			} else if (getModel().isRollover()) {
-				g2.setColor(new Color(60, 60, 60));
+				g2.setColor(new Color(0, 60, 120)); // Azul al presionar
 			} else {
 				g2.setColor(getBackground());
 			}
