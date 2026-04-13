@@ -1,6 +1,9 @@
 package Logico;
 
-public class Empleado extends Persona {
+import java.io.Serializable;
+
+public class Empleado extends Persona implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String idEmpleado;
     private String departamento;
     private float salario;

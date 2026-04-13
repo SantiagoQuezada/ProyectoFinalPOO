@@ -1,6 +1,7 @@
 package Visual;
 
 import Logico.Empleado;
+import Logico.Altice;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -32,15 +33,29 @@ import java.util.Date;
 public class Principal extends JFrame {
 
 	private Empleado empleadoLogueado;
+	// Variable estática para asegurar que el Hook de guardado se registre solo una vez
+	private static boolean hookRegistrado = false;
 
 	public Principal(Empleado empleado) {
 		this.empleadoLogueado = empleado;
 		setTitle("Altice - Panel de Control Principal");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
+
+		// Implementación del Shutdown Hook: 
+		// Esto garantiza que sin importar de qué ventana cierres el programa, 
+		// SIEMPRE se guardarán los datos antes de que la máquina virtual de Java muera.
+		if (!hookRegistrado) {
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				Altice.guardarDatos();
+			}));
+			hookRegistrado = true;
+		}
+
+		// Como tenemos el Hook, ya solo necesitamos la acción de cierre por defecto
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(10, 10, 10));
@@ -59,8 +74,8 @@ public class Principal extends JFrame {
 		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
 		
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
-		lblUser.setIcon(new UserIcon()); // Icono de personita más grande
-		lblUser.setFont(new Font("Arial", Font.BOLD, 17)); // Letras en Bold y más grandes
+		lblUser.setIcon(new UserIcon());
+		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
 
 		RoundedButton btnLogout = new RoundedButton("Cerrar Sesión", 20);
@@ -82,6 +97,7 @@ public class Principal extends JFrame {
 		});
 
 		btnLogout.addActionListener(e -> {
+			Altice.guardarDatos();
 			Login login = new Login();
 			login.setVisible(true);
 			dispose();
@@ -231,7 +247,6 @@ public class Principal extends JFrame {
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblTitulo.setHorizontalAlignment(JLabel.CENTER);
 
-		// Ancho fijo en HTML para forzar el centrado
 		JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 220px;'>" + desc + "</div></html>");
 		lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblDesc.setForeground(new Color(120, 120, 120));
@@ -273,7 +288,6 @@ public class Principal extends JFrame {
 		return tarjeta;
 	}
 
-	// Icono personalizado de usuario con tamaño y proporciones mejoradas
 	class UserIcon implements Icon {
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -281,9 +295,7 @@ public class Principal extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
 			
-			// Cabeza más grande y centrada
 			g2.fillOval(x + 6, y + 2, 12, 12);
-			// Cuerpo proporcionado al nuevo tamaño
 			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			
 			g2.dispose();
@@ -291,12 +303,12 @@ public class Principal extends JFrame {
 
 		@Override
 		public int getIconWidth() {
-			return 24; // Ancho ajustado
+			return 24;
 		}
 
 		@Override
 		public int getIconHeight() {
-			return 24; // Altura ajustada
+			return 24;
 		}
 	}
 

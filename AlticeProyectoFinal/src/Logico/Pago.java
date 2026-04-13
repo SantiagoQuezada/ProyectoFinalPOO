@@ -1,8 +1,10 @@
 package Logico;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Pago {
+public class Pago implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String idPago;
     private Cliente cliente;
     private Date fecha;

@@ -1,6 +1,9 @@
 package Logico;
 
-public class Plan {
+import java.io.Serializable;
+
+public class Plan implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String idPlan;
     private String categoria;
     private String nombre;
