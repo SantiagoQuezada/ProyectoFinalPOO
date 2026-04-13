@@ -21,12 +21,12 @@ public class Cliente extends Persona {
     }
 
     @Override
-    public void mostrarDetalles() {
-        System.out.println("Detalles del Cliente:");
-        System.out.println("ID: " + idCliente);
-        System.out.println("Nombre/Empresa: " + getNombre());
-        System.out.println("Tipo: " + tipoCliente);
-        System.out.println("Estado: " + estado);
+    public String mostrarDetalles() {
+        return "Detalles del Cliente:\n" +
+               "ID: " + idCliente + "\n" +
+               "Nombre/Empresa: " + getNombre() + "\n" +
+               "Tipo: " + tipoCliente + "\n" +
+               "Estado: " + estado;
     }
 
     public String getIdCliente() {
