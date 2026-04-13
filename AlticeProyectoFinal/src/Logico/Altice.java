@@ -9,13 +9,12 @@ public class Altice {
     private ArrayList<Empleado> misEmpleados;
     private ArrayList<Pago> misPagos;
     
-    // Contadores para la generación automática de IDs
+  
     private int contadorClientes = 1;
     private int contadorEmpleados = 1;
     private int contadorPagos = 1;
-    private int contadorPlanes = 9; // Empezamos en 9 porque agregamos 8 de prueba
-    
-    // Variable estática para el patrón Singleton
+    private int contadorPlanes = 9; 
+
     private static Altice altice = null;
 
     private Altice() {
