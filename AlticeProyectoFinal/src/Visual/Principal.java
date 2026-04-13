@@ -152,8 +152,20 @@ public class Principal extends JFrame {
 			}
 		);
 
+		RoundedPanel cardPagos = crearTarjetaModulo(
+			"💳", 
+			"Módulo Pagos", 
+			"Facturación y cobros", 
+			e -> {
+				Pagos pagos = new Pagos(empleadoLogueado);
+				pagos.setVisible(true);
+				dispose();
+			}
+		);
+
 		cardsPanel.add(cardClientes);
 		cardsPanel.add(cardPlanes);
+		cardsPanel.add(cardPagos);
 		
 		if (empleadoLogueado == null || empleadoLogueado.getUsuario() == null || 
 			empleadoLogueado.getUsuario().getRol().toString().equals("GERENTE") || 

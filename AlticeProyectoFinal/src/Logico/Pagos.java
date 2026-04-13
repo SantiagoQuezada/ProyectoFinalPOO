@@ -1,61 +1,39 @@
 package Logico;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class Pagos implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Pago {
     private String idPago;
-    private Contrato contrato;
+    private Cliente cliente;
+    private Date fecha;
     private float monto;
-    private Date fechaPago;
     private String metodoPago;
+    private String concepto;
 
-    public Pagos(String idPago, Contrato contrato, float monto, Date fechaPago, String metodoPago) {
+    public Pago(String idPago, Cliente cliente, Date fecha, float monto, String metodoPago, String concepto) {
         this.idPago = idPago;
-        this.contrato = contrato;
+        this.cliente = cliente;
+        this.fecha = fecha;
         this.monto = monto;
-        this.fechaPago = fechaPago;
         this.metodoPago = metodoPago;
+        this.concepto = concepto;
     }
 
-    public String getIdPago() {
-        return idPago;
-    }
+    public String getIdPago() { return idPago; }
+    public void setIdPago(String idPago) { this.idPago = idPago; }
 
-    public void setIdPago(String idPago) {
-        this.idPago = idPago;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public Contrato getContrato() {
-        return contrato;
-    }
+    public Date getFecha() { return fecha; }
+    public void setFecha(Date fecha) { this.fecha = fecha; }
 
-    public void setContrato(Contrato contrato) {
-        this.contrato = contrato;
-    }
+    public float getMonto() { return monto; }
+    public void setMonto(float monto) { this.monto = monto; }
 
-    public float getMonto() {
-        return monto;
-    }
+    public String getMetodoPago() { return metodoPago; }
+    public void setMetodoPago(String metodoPago) { this.metodoPago = metodoPago; }
 
-    public void setMonto(float monto) {
-        this.monto = monto;
-    }
-
-    public Date getFechaPago() {
-        return fechaPago;
-    }
-
-    public void setFechaPago(Date fechaPago) {
-        this.fechaPago = fechaPago;
-    }
-
-    public String getMetodoPago() {
-        return metodoPago;
-    }
-
-    public void setMetodoPago(String metodoPago) {
-        this.metodoPago = metodoPago;
-    }
+    public String getConcepto() { return concepto; }
+    public void setConcepto(String concepto) { this.concepto = concepto; }
 }

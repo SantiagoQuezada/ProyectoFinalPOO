@@ -4,39 +4,33 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Altice {
-    private static Altice instance;
-    private ArrayList<Empleado> misEmpleados;
     private ArrayList<Cliente> misClientes;
     private ArrayList<Plan> misPlanes;
-    private ArrayList<Servicio> misServicios;
-    private ArrayList<Contrato> misContratos;
-    private ArrayList<Pagos> misPagos;
-    private int contadorClientes;
-    private int contadorEmpleados;
-    private int contadorContratos;
-    private int contadorPagos;
-    private int contadorPlanes;
+    private ArrayList<Empleado> misEmpleados;
+    private ArrayList<Pago> misPagos;
+    
+    // Contadores para la generación automática de IDs
+    private int contadorClientes = 1;
+    private int contadorEmpleados = 1;
+    private int contadorPagos = 1;
+    private int contadorPlanes = 9; // Empezamos en 9 porque agregamos 8 de prueba
+    
+    // Variable estática para el patrón Singleton
+    private static Altice altice = null;
 
     private Altice() {
-        misEmpleados = new ArrayList<>();
         misClientes = new ArrayList<>();
         misPlanes = new ArrayList<>();
-        misServicios = new ArrayList<>();
-        misContratos = new ArrayList<>();
+        misEmpleados = new ArrayList<>();
         misPagos = new ArrayList<>();
-        contadorClientes = 1;
-        contadorEmpleados = 1001;
-        contadorContratos = 1;
-        contadorPagos = 1;
-        contadorPlanes = 9;
         cargarDatosPrueba();
     }
 
     public static Altice getInstance() {
-        if (instance == null) {
-            instance = new Altice();
+        if (altice == null) {
+            altice = new Altice();
         }
-        return instance;
+        return altice;
     }
 
     private void cargarDatosPrueba() {
@@ -69,31 +63,25 @@ public class Altice {
     }
 
     public String generarIdCliente() {
-        String id = "C-00" + contadorClientes;
+        String id = "C-" + String.format("%03d", contadorClientes);
         contadorClientes++;
         return id;
     }
 
     public String generarIdEmpleado() {
-        String id = "E-" + contadorEmpleados;
+        String id = "E-" + String.format("%03d", contadorEmpleados);
         contadorEmpleados++;
         return id;
     }
 
-    public String generarIdContrato() {
-        String id = "CTR-" + contadorContratos;
-        contadorContratos++;
-        return id;
-    }
-
     public String generarIdPago() {
-        String id = "PAG-" + contadorPagos;
+        String id = "PAG-" + String.format("%04d", contadorPagos);
         contadorPagos++;
         return id;
     }
 
     public String generarIdPlan() {
-        String id = "P-0" + contadorPlanes;
+        String id = "P-" + String.format("%02d", contadorPlanes);
         contadorPlanes++;
         return id;
     }
@@ -140,6 +128,14 @@ public class Altice {
         }
     }
 
+    public void registrarPago(Pago p) {
+        misPagos.add(p);
+    }
+
+    public ArrayList<Pago> getPagos() {
+        return misPagos;
+    }
+
     public ArrayList<Cliente> getClientes() {
         return misClientes;
     }
@@ -168,30 +164,6 @@ public class Altice {
         if (p != null) {
             p.setEstado("Desactivado");
         }
-    }
-
-    public ArrayList<Servicio> getServicios() {
-        return misServicios;
-    }
-
-    public void registrarServicio(Servicio s) {
-        misServicios.add(s);
-    }
-
-    public ArrayList<Contrato> getContratos() {
-        return misContratos;
-    }
-
-    public void registrarContrato(Contrato c) {
-        misContratos.add(c);
-    }
-
-    public ArrayList<Pagos> getPagos() {
-        return misPagos;
-    }
-
-    public void registrarPago(Pagos p) {
-        misPagos.add(p);
     }
 
     public String[] obtenerNombresPlanesPorCategoria(String categoria) {
