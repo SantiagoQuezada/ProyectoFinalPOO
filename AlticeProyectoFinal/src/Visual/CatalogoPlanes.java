@@ -15,7 +15,9 @@ import javax.swing.JDialog;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,10 +25,15 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import Logico.Plan;
 import Logico.Empleado;
 import Logico.Altice;
@@ -37,31 +44,41 @@ public class CatalogoPlanes extends JFrame {
 	private DefaultTableModel modeloTablaPlanes;
 	private JTable tablaPlanes;
 	private Empleado empleadoLogueado;
+	private JComboBox<String> cbFiltroCategoria;
+	private JComboBox<String> cbFiltroEstado;
+	private JTextField txtBuscarPlan;
 
 	public CatalogoPlanes(Empleado empleado) {
 		this.empleadoLogueado = empleado;
-		setTitle("Sistema de Gestión - Catálogo de Planes");
+		setTitle("Altice - Catálogo de Planes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
-		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setBackground(new Color(245, 247, 250));
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
-		headerPanel.setBackground(new Color(15, 15, 15));
-		headerPanel.setPreferredSize(new Dimension(1000, 70));
-		headerPanel.setBorder(new EmptyBorder(10, 30, 10, 30));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		headerPanel.setPreferredSize(new Dimension(1000, 80));
+		headerPanel.setBorder(new EmptyBorder(15, 40, 15, 40));
 
 		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 		leftHeaderPanel.setOpaque(false);
 
-		JButton btnVolver = new JButton("\u25C0 Volver a Planes");
+		RoundedButton btnVolver = new RoundedButton("\u25C0 Volver a Planes", 20);
 		btnVolver.setBackground(new Color(40, 40, 40));
 		btnVolver.setForeground(Color.WHITE);
-		btnVolver.setFocusPainted(false);
-		btnVolver.setBorder(new EmptyBorder(8, 15, 8, 15));
-		btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
+		btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
+		btnVolver.setPreferredSize(new Dimension(160, 35));
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		btnVolver.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnVolver.setBackground(new Color(60, 60, 60)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnVolver.setBackground(new Color(40, 40, 40)); }
+		});
+
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Planes planes = new Planes(empleadoLogueado);
@@ -70,38 +87,50 @@ public class CatalogoPlanes extends JFrame {
 			}
 		});
 
-		JLabel lblLogo = new JLabel("<html><span style='font-size:20px; font-family: Arial;'><b>\u221E Altice</b></span></html>");
+		JLabel lblLogo = new JLabel("  \u221E Altice");
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 28));
 		lblLogo.setForeground(Color.WHITE);
 
 		leftHeaderPanel.add(btnVolver);
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
+		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+		rightHeaderPanel.setOpaque(false);
+
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "";
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
 		
-		JLabel lblUser = new JLabel("Hola, " + nombreUsuario + " | " + rolUsuario + "   \u2699   \u23FB");
-		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblUser.setForeground(new Color(200, 200, 200));
-		headerPanel.add(lblUser, BorderLayout.EAST);
+		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
+		lblUser.setIcon(new UserIcon());
+		lblUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblUser.setForeground(new Color(220, 220, 220));
+		
+		rightHeaderPanel.add(lblUser);
+		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 
 		add(headerPanel, BorderLayout.NORTH);
 
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout());
-		centerPanel.setBackground(Color.WHITE);
+		centerPanel.setBackground(new Color(245, 247, 250));
 		centerPanel.setBorder(new EmptyBorder(40, 60, 40, 60));
+		
+		JPanel headerAndFilterPanel = new JPanel();
+		headerAndFilterPanel.setLayout(new BoxLayout(headerAndFilterPanel, BoxLayout.Y_AXIS));
+		headerAndFilterPanel.setBackground(new Color(245, 247, 250));
 		
 		JPanel panelTituloPlanes = new JPanel();
 		panelTituloPlanes.setLayout(new BoxLayout(panelTituloPlanes, BoxLayout.Y_AXIS));
-		panelTituloPlanes.setBackground(Color.WHITE);
+		panelTituloPlanes.setBackground(new Color(245, 247, 250));
+		panelTituloPlanes.setBorder(new EmptyBorder(0, 0, 20, 0));
 		
-		JLabel lblTituloPlanes = new JLabel("\uD83D\uDCDA Catálogo de Planes");
+		JLabel lblTituloPlanes = new JLabel("📚 Catálogo de Planes");
 		lblTituloPlanes.setFont(new Font("Arial", Font.BOLD, 32));
-		lblTituloPlanes.setForeground(new Color(30, 30, 30));
+		lblTituloPlanes.setForeground(new Color(10, 10, 10));
 		lblTituloPlanes.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		JLabel lblSubtituloPlanes = new JLabel("Administración del catálogo completo de planes disponibles.");
+		JLabel lblSubtituloPlanes = new JLabel("Administración del catálogo completo de planes y servicios disponibles.");
 		lblSubtituloPlanes.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblSubtituloPlanes.setForeground(new Color(100, 100, 100));
 		lblSubtituloPlanes.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -109,34 +138,77 @@ public class CatalogoPlanes extends JFrame {
 		panelTituloPlanes.add(lblTituloPlanes);
 		panelTituloPlanes.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTituloPlanes.add(lblSubtituloPlanes);
-		panelTituloPlanes.add(Box.createRigidArea(new Dimension(0, 30)));
 
-		centerPanel.add(panelTituloPlanes, BorderLayout.NORTH);
+		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+		topPanel.setBackground(Color.WHITE);
+		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+		JLabel lblCategoria = new JLabel("Categoría:");
+		lblCategoria.setFont(new Font("Arial", Font.BOLD, 14));
+		cbFiltroCategoria = new JComboBox<>(new String[]{"Todas", "Combinado", "Hogar", "Móvil", "Empresarial"});
+		cbFiltroCategoria.setFont(new Font("Arial", Font.PLAIN, 14));
+		cbFiltroCategoria.setBackground(Color.WHITE);
+
+		JLabel lblEstado = new JLabel("Estado:");
+		lblEstado.setFont(new Font("Arial", Font.BOLD, 14));
+		cbFiltroEstado = new JComboBox<>(new String[]{"Todos", "Activos", "Desactivados"});
+		cbFiltroEstado.setFont(new Font("Arial", Font.PLAIN, 14));
+		cbFiltroEstado.setBackground(Color.WHITE);
+
+		JLabel lblBuscar = new JLabel("Buscar Plan:");
+		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
+		txtBuscarPlan = new JTextField(25);
+		txtBuscarPlan.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtBuscarPlan.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createLineBorder(new Color(200, 200, 200)), 
+			new EmptyBorder(0, 10, 0, 10)
+		));
+
+		topPanel.add(lblCategoria);
+		topPanel.add(cbFiltroCategoria);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(lblEstado);
+		topPanel.add(cbFiltroEstado);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(lblBuscar);
+		topPanel.add(txtBuscarPlan);
+
+		RoundedPanel topWrapper = new RoundedPanel(20);
+		topWrapper.setLayout(new BorderLayout());
+		topWrapper.setBackground(Color.WHITE);
+		topWrapper.setAlignmentX(Component.LEFT_ALIGNMENT);
+		topWrapper.add(topPanel, BorderLayout.CENTER);
+
+		headerAndFilterPanel.add(panelTituloPlanes);
+		headerAndFilterPanel.add(topWrapper);
+		headerAndFilterPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
 		String[] columnasPlanes = {"ID Plan", "Categoría", "Nombre del Plan", "Precio (RD$)", "Estado"};
-		modeloTablaPlanes = new DefaultTableModel(null, columnasPlanes);
+		modeloTablaPlanes = new DefaultTableModel(null, columnasPlanes) {
+			@Override
+			public boolean isCellEditable(int row, int column) { return false; }
+		};
 		tablaPlanes = new JTable(modeloTablaPlanes);
-		tablaPlanes.setRowHeight(35);
-		tablaPlanes.setFont(new Font("Arial", Font.PLAIN, 15));
-		tablaPlanes.setForeground(Color.BLACK);
-		tablaPlanes.setGridColor(new Color(230, 230, 230));
-		tablaPlanes.setSelectionBackground(new Color(220, 235, 255));
-		tablaPlanes.setSelectionForeground(Color.BLACK);
-
-		JTableHeader headerPlanes = tablaPlanes.getTableHeader();
-		headerPlanes.setFont(new Font("Arial", Font.BOLD, 15));
-		headerPlanes.setBackground(new Color(245, 247, 250));
-		headerPlanes.setForeground(new Color(50, 50, 50));
-		headerPlanes.setPreferredSize(new Dimension(100, 40));
+		configurarTablaEstiloModerno(tablaPlanes);
 
 		JScrollPane scrollPanePlanes = new JScrollPane(tablaPlanes);
-		scrollPanePlanes.setBorder(new LineBorder(new Color(220, 220, 220), 1));
-		centerPanel.add(scrollPanePlanes, BorderLayout.CENTER);
+		scrollPanePlanes.setBorder(BorderFactory.createEmptyBorder());
+		scrollPanePlanes.getViewport().setBackground(Color.WHITE);
 
-		JPanel crudPanelPlanes = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 20));
-		crudPanelPlanes.setBackground(Color.WHITE);
+		RoundedPanel tableWrapper = new RoundedPanel(20);
+		tableWrapper.setLayout(new BorderLayout());
+		tableWrapper.setBackground(Color.WHITE);
+		tableWrapper.setBorder(new EmptyBorder(10, 10, 10, 10));
+		tableWrapper.add(scrollPanePlanes, BorderLayout.CENTER);
 
-		JButton btnCrear = crearBotonCRUD("Registrar Plan", false);
+		centerPanel.add(tableWrapper, BorderLayout.CENTER);
+
+		JPanel crudPanelPlanes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
+		crudPanelPlanes.setBackground(new Color(245, 247, 250));
+
+		RoundedButton btnCrear = crearBotonCRUD("Registrar Plan", new Color(0, 102, 204), new Color(0, 80, 160));
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				RegPlan modalReg = new RegPlan(null, false);
@@ -145,7 +217,7 @@ public class CatalogoPlanes extends JFrame {
 			}
 		});
 
-		JButton btnLeer = crearBotonCRUD("Ver Detalles", false);
+		RoundedButton btnLeer = crearBotonCRUD("Ver Detalles", new Color(60, 60, 60), new Color(80, 80, 80));
 		btnLeer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaPlanes.getSelectedRow();
@@ -160,7 +232,7 @@ public class CatalogoPlanes extends JFrame {
 			}
 		});
 
-		JButton btnActualizar = crearBotonCRUD("Editar Plan", false);
+		RoundedButton btnActualizar = crearBotonCRUD("Editar Plan", new Color(230, 126, 34), new Color(200, 100, 20));
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaPlanes.getSelectedRow();
@@ -176,7 +248,7 @@ public class CatalogoPlanes extends JFrame {
 			}
 		});
 
-		JButton btnEliminar = crearBotonCRUD("Desactivar Plan", false);
+		RoundedButton btnEliminar = crearBotonCRUD("Desactivar Plan", new Color(220, 53, 69), new Color(180, 40, 50));
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaPlanes.getSelectedRow();
@@ -200,8 +272,7 @@ public class CatalogoPlanes extends JFrame {
 			}
 		});
 
-		JButton btnAsignarPlan = crearBotonCRUD("Asignar Plan a Cliente", true);
-		btnAsignarPlan.setPreferredSize(new Dimension(200, 45));
+		RoundedButton btnAsignarPlan = crearBotonCRUD("Asignar a Cliente", new Color(40, 167, 69), new Color(30, 130, 50));
 		btnAsignarPlan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int fila = tablaPlanes.getSelectedRow();
@@ -234,6 +305,13 @@ public class CatalogoPlanes extends JFrame {
 
 		add(footerPanel, BorderLayout.SOUTH);
 
+		txtBuscarPlan.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) { cargarPlanes(); }
+		});
+		cbFiltroCategoria.addActionListener(e -> cargarPlanes());
+		cbFiltroEstado.addActionListener(e -> cargarPlanes());
+
 		cargarPlanes();
 	}
 
@@ -243,39 +321,55 @@ public class CatalogoPlanes extends JFrame {
 
 	private void cargarPlanes() {
 		modeloTablaPlanes.setRowCount(0);
+		
+		String busq = txtBuscarPlan != null ? txtBuscarPlan.getText().toLowerCase() : "";
+		String fCat = cbFiltroCategoria != null ? cbFiltroCategoria.getSelectedItem().toString() : "Todas";
+		String fEstado = cbFiltroEstado != null ? cbFiltroEstado.getSelectedItem().toString() : "Todos";
+
 		for (Plan p : Altice.getInstance().getPlanes()) {
-			Object[] fila = new Object[5];
-			fila[0] = p.getIdPlan();
-			fila[1] = p.getCategoria();
-			fila[2] = p.getNombre();
-			fila[3] = String.format("$%.2f", p.getPrecio());
-			fila[4] = p.getEstado();
-			modeloTablaPlanes.addRow(fila);
+			boolean matchBusq = p.getNombre().toLowerCase().contains(busq) || p.getIdPlan().toLowerCase().contains(busq);
+			boolean matchCat = fCat.equals("Todas") || p.getCategoria().equalsIgnoreCase(fCat);
+			boolean matchEstado = fEstado.equals("Todos") || p.getEstado().equalsIgnoreCase(fEstado);
+
+			if (matchBusq && matchCat && matchEstado) {
+				Object[] fila = new Object[5];
+				fila[0] = p.getIdPlan();
+				fila[1] = p.getCategoria();
+				fila[2] = p.getNombre();
+				fila[3] = String.format("$%.2f", p.getPrecio());
+				fila[4] = p.getEstado();
+				modeloTablaPlanes.addRow(fila);
+			}
 		}
 	}
 
 	private void mostrarMenuAsignacion(String planPreseleccionado) {
 		JDialog dialog = new JDialog(this, "Asignación Rápida a Cliente", true);
-		dialog.setSize(750, 600);
+		dialog.setSize(900, 650);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
-		dialog.getContentPane().setBackground(Color.WHITE);
+		dialog.getContentPane().setBackground(new Color(245, 247, 250));
 
-		JPanel panelCentral = new JPanel();
-		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-		panelCentral.setBackground(Color.WHITE);
-		panelCentral.setBorder(new EmptyBorder(30, 40, 30, 40));
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		JLabel lblDialogTitle = new JLabel("➕ Asignación de Plan a Cliente");
+		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
+		lblDialogTitle.setForeground(Color.WHITE);
+		headerPanel.add(lblDialogTitle);
+		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		JPanel panelSelectorPlan = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		panelSelectorPlan.setBackground(Color.WHITE);
-		panelSelectorPlan.setAlignmentX(Component.LEFT_ALIGNMENT);
+		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+		topPanel.setBackground(Color.WHITE);
+		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		JLabel lblSeleccionarPlan = new JLabel("Plan a asignar: ");
-		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 15));
+		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 14));
+		lblSeleccionarPlan.setForeground(new Color(30, 30, 30));
 
 		JComboBox<String> cbPlanes = new JComboBox<>();
-		cbPlanes.setPreferredSize(new Dimension(350, 35));
-		cbPlanes.setFont(new Font("Arial", Font.PLAIN, 15));
+		cbPlanes.setPreferredSize(new Dimension(300, 35));
+		cbPlanes.setFont(new Font("Arial", Font.PLAIN, 14));
+		cbPlanes.setBackground(Color.WHITE);
 		cbPlanes.addItem("<Seleccione un plan>");
 		
 		for (Plan p : Altice.getInstance().getPlanes()) {
@@ -293,54 +387,58 @@ public class CatalogoPlanes extends JFrame {
 			}
 		}
 
-		panelSelectorPlan.add(lblSeleccionarPlan);
-		panelSelectorPlan.add(Box.createRigidArea(new Dimension(15, 0)));
-		panelSelectorPlan.add(cbPlanes);
-
-		JPanel panelBuscador = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		panelBuscador.setBackground(Color.WHITE);
-		panelBuscador.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
 		JLabel lblBuscar = new JLabel("Buscar Cliente: ");
-		lblBuscar.setFont(new Font("Arial", Font.BOLD, 15));
+		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
+		lblBuscar.setForeground(new Color(30, 30, 30));
 		
-		JTextField txtBuscarCliente = new JTextField(30);
-		txtBuscarCliente.setPreferredSize(new Dimension(350, 35));
-		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 15));
-		
-		panelBuscador.add(lblBuscar);
-		panelBuscador.add(Box.createRigidArea(new Dimension(12, 0)));
-		panelBuscador.add(txtBuscarCliente);
+		JTextField txtBuscarCliente = new JTextField(20);
+		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtBuscarCliente.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createLineBorder(new Color(200, 200, 200)), 
+			new EmptyBorder(0, 10, 0, 10)
+		));
+
+		topPanel.add(lblSeleccionarPlan);
+		topPanel.add(cbPlanes);
+		topPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		topPanel.add(lblBuscar);
+		topPanel.add(txtBuscarCliente);
+
+		RoundedPanel topWrapper = new RoundedPanel(20);
+		topWrapper.setLayout(new BorderLayout());
+		topWrapper.setBackground(Color.WHITE);
+		topWrapper.add(topPanel, BorderLayout.CENTER);
 
 		String[] columnasClientes = {"ID", "Cédula/RNC - Nombre", "Teléfono"};
 		DefaultTableModel modeloTablaClientes = new DefaultTableModel(null, columnasClientes) {
 			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
+			public boolean isCellEditable(int row, int column) { return false; }
 		};
 		
 		JTable tablaClientes = new JTable(modeloTablaClientes);
-		tablaClientes.setRowHeight(35);
-		tablaClientes.setFont(new Font("Arial", Font.PLAIN, 15));
-		tablaClientes.setForeground(Color.BLACK);
-		tablaClientes.setGridColor(new Color(230, 230, 230));
-		tablaClientes.setSelectionBackground(new Color(220, 235, 255));
-		tablaClientes.setSelectionForeground(Color.BLACK);
-
-		JTableHeader headerClientes = tablaClientes.getTableHeader();
-		headerClientes.setFont(new Font("Arial", Font.BOLD, 15));
-		headerClientes.setBackground(new Color(245, 247, 250));
-		headerClientes.setForeground(new Color(50, 50, 50));
-		headerClientes.setPreferredSize(new Dimension(100, 40));
+		configurarTablaEstiloModerno(tablaClientes);
 
 		tablaClientes.getColumnModel().getColumn(0).setPreferredWidth(80);
-		tablaClientes.getColumnModel().getColumn(1).setPreferredWidth(350);
+		tablaClientes.getColumnModel().getColumn(1).setPreferredWidth(400);
 		tablaClientes.getColumnModel().getColumn(2).setPreferredWidth(150);
 
 		JScrollPane scrollPaneClientes = new JScrollPane(tablaClientes);
-		scrollPaneClientes.setAlignmentX(Component.LEFT_ALIGNMENT);
-		scrollPaneClientes.setBorder(new LineBorder(new Color(220, 220, 220), 1));
+		scrollPaneClientes.setBorder(BorderFactory.createEmptyBorder());
+		scrollPaneClientes.getViewport().setBackground(Color.WHITE);
+		
+		RoundedPanel tableWrapper = new RoundedPanel(20);
+		tableWrapper.setLayout(new BorderLayout());
+		tableWrapper.setBackground(Color.WHITE);
+		tableWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
+		tableWrapper.add(scrollPaneClientes, BorderLayout.CENTER);
+
+		JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
+		centerPanel.setBorder(new EmptyBorder(25, 30, 20, 30));
+		centerPanel.setBackground(new Color(245, 247, 250));
+		centerPanel.add(topWrapper, BorderLayout.NORTH);
+		centerPanel.add(tableWrapper, BorderLayout.CENTER);
+
+		dialog.add(centerPanel, BorderLayout.CENTER);
 
 		Runnable cargarClientesFiltrados = () -> {
 			modeloTablaClientes.setRowCount(0);
@@ -363,37 +461,27 @@ public class CatalogoPlanes extends JFrame {
 
 		txtBuscarCliente.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
-				cargarClientesFiltrados.run();
-			}
+			public void keyReleased(KeyEvent e) { cargarClientesFiltrados.run(); }
 		});
 
 		cargarClientesFiltrados.run();
 
-		panelCentral.add(panelSelectorPlan);
-		panelCentral.add(Box.createRigidArea(new Dimension(0, 25)));
-		panelCentral.add(panelBuscador);
-		panelCentral.add(Box.createRigidArea(new Dimension(0, 20)));
-		panelCentral.add(scrollPaneClientes);
-
-		dialog.add(panelCentral, BorderLayout.CENTER);
-
 		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		panelBotones.setBackground(new Color(245, 247, 250));
+		panelBotones.setBorder(new EmptyBorder(0, 20, 20, 20));
 
-		JButton btnCancelar = new JButton("Cancelar");
-		btnCancelar.setBackground(Color.WHITE);
+		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
+		btnCancelar.setBackground(new Color(200, 200, 200));
+		btnCancelar.setForeground(new Color(30, 30, 30));
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
-		btnCancelar.setFocusPainted(false);
-		btnCancelar.setPreferredSize(new Dimension(120, 40));
+		btnCancelar.setPreferredSize(new Dimension(120, 45));
 		btnCancelar.addActionListener(e -> dialog.dispose());
 
-		JButton btnGuardar = new JButton("Confirmar Asignación");
-		btnGuardar.setBackground(new Color(15, 15, 15));
+		RoundedButton btnGuardar = new RoundedButton("Confirmar Asignación", 20);
+		btnGuardar.setBackground(new Color(0, 102, 204));
 		btnGuardar.setForeground(Color.WHITE);
 		btnGuardar.setFont(new Font("Arial", Font.BOLD, 13));
-		btnGuardar.setFocusPainted(false);
-		btnGuardar.setPreferredSize(new Dimension(180, 40));
+		btnGuardar.setPreferredSize(new Dimension(190, 45));
 
 		btnGuardar.addActionListener(e -> {
 			int indexPlan = cbPlanes.getSelectedIndex();
@@ -424,21 +512,128 @@ public class CatalogoPlanes extends JFrame {
 		dialog.setVisible(true);
 	}
 
-	private JButton crearBotonCRUD(String texto, boolean esPrincipal) {
-		JButton boton = new JButton(texto);
-		if (esPrincipal) {
-			boton.setBackground(new Color(15, 15, 15));
-			boton.setForeground(Color.WHITE);
-		} else {
-			boton.setBackground(new Color(240, 240, 240));
-			boton.setForeground(new Color(30, 30, 30));
-			boton.setBorder(new LineBorder(new Color(200, 200, 200), 1));
+	private void configurarTablaEstiloModerno(JTable tabla) {
+		tabla.setRowHeight(40);
+		tabla.setFont(new Font("Arial", Font.PLAIN, 14));
+		tabla.setForeground(new Color(15, 15, 15));
+		tabla.setGridColor(new Color(220, 220, 220));
+		tabla.setSelectionBackground(new Color(0, 102, 204));
+		tabla.setSelectionForeground(Color.WHITE);
+		tabla.setShowVerticalLines(false);
+		tabla.setShowHorizontalLines(true);
+		tabla.setIntercellSpacing(new Dimension(0, 0));
+		tabla.setBorder(BorderFactory.createEmptyBorder());
+
+		JTableHeader header = tabla.getTableHeader();
+		header.setDefaultRenderer(new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				label.setBackground(new Color(15, 15, 15));
+				label.setForeground(Color.WHITE);
+				label.setFont(new Font("Arial", Font.BOLD, 13));
+				label.setHorizontalAlignment(JLabel.CENTER);
+				label.setBorder(new EmptyBorder(10, 10, 10, 10));
+				return label;
+			}
+		});
+		header.setPreferredSize(new Dimension(100, 45));
+		header.setReorderingAllowed(false);
+
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
+				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
+				
+				if (!isSelected) {
+					if (row % 2 == 0) c.setBackground(new Color(250, 250, 250));
+					else c.setBackground(new Color(240, 240, 240));
+					c.setForeground(new Color(15, 15, 15));
+				}
+				return c;
+			}
+		};
+
+		for (int i = 0; i < tabla.getColumnCount(); i++) {
+			tabla.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 		}
+	}
+
+	private RoundedButton crearBotonCRUD(String texto, Color bgDefault, Color bgHover) {
+		RoundedButton boton = new RoundedButton(texto, 25);
+		boton.setBackground(bgDefault);
+		boton.setForeground(Color.WHITE);
 		
-		boton.setFont(new Font("Arial", Font.BOLD, 13));
-		boton.setFocusPainted(false);
+		boton.setFont(new Font("Arial", Font.BOLD, 14));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setPreferredSize(new Dimension(140, 45));
+		boton.setPreferredSize(new Dimension(190, 45));
+
+		boton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(bgHover);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(bgDefault);
+			}
+		});
+
 		return boton;
+	}
+
+	class UserIcon implements Icon {
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(220, 220, 220));
+			g2.fillOval(x + 4, y, 8, 8);
+			g2.fillArc(x, y + 9, 16, 12, 0, 180);
+			g2.dispose();
+		}
+		@Override
+		public int getIconWidth() { return 16; }
+		@Override
+		public int getIconHeight() { return 16; }
+	}
+
+	class RoundedPanel extends JPanel {
+		private int radius;
+		public RoundedPanel(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.dispose();
+			super.paintComponent(g);
+		}
+	}
+
+	class RoundedButton extends JButton {
+		private int radius;
+		public RoundedButton(String text, int radius) {
+			super(text);
+			this.radius = radius;
+			setContentAreaFilled(false);
+			setFocusPainted(false);
+			setBorderPainted(false);
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.dispose();
+			super.paintComponent(g);
+		}
 	}
 }

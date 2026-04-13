@@ -215,11 +215,15 @@ public class Planes extends JFrame {
 		tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
 		tarjeta.setPreferredSize(new Dimension(280, 380));
 		tarjeta.setBackground(Color.WHITE);
-		tarjeta.setBorder(new EmptyBorder(40, 20, 40, 20));
+		tarjeta.setBorder(new EmptyBorder(30, 20, 30, 20));
 
 		JLabel lblIcono = new JLabel(icono);
-		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
+		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 65));
 		lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
+		lblIcono.setHorizontalAlignment(JLabel.CENTER);
+		lblIcono.setVerticalAlignment(JLabel.CENTER);
+		lblIcono.setMinimumSize(new Dimension(100, 90));
+		lblIcono.setPreferredSize(new Dimension(100, 90));
 
 		JLabel lblTitulo = new JLabel(titulo);
 		lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
@@ -257,11 +261,11 @@ public class Planes extends JFrame {
 
 		tarjeta.add(Box.createVerticalGlue());
 		tarjeta.add(lblIcono);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 25)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 15)));
 		tarjeta.add(lblTitulo);
 		tarjeta.add(Box.createRigidArea(new Dimension(0, 10)));
 		tarjeta.add(lblDesc);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 35)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 30)));
 		tarjeta.add(boton);
 		tarjeta.add(Box.createVerticalGlue());
 
@@ -269,11 +273,19 @@ public class Planes extends JFrame {
 	}
 
 	private void mostrarMenuAsignacion(String categoriaTitulo, String categoriaReal) {
-		JDialog dialog = new JDialog(this, "Asignar Plan - " + categoriaTitulo, true);
-		dialog.setSize(800, 600);
+		JDialog dialog = new JDialog(this, "Asignación de Plan", true);
+		dialog.setSize(850, 650);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
+
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		JLabel lblDialogTitle = new JLabel("➕ Asignar Plan: " + categoriaTitulo);
+		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
+		lblDialogTitle.setForeground(Color.WHITE);
+		headerPanel.add(lblDialogTitle);
+		dialog.add(headerPanel, BorderLayout.NORTH);
 
 		JPanel panelCentral = new JPanel();
 		panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
@@ -384,19 +396,20 @@ public class Planes extends JFrame {
 
 		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		panelBotones.setBackground(new Color(245, 247, 250));
+		panelBotones.setBorder(new EmptyBorder(10, 20, 20, 20));
 
 		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
 		btnCancelar.setBackground(new Color(200, 200, 200));
 		btnCancelar.setForeground(new Color(30, 30, 30));
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
-		btnCancelar.setPreferredSize(new Dimension(120, 40));
+		btnCancelar.setPreferredSize(new Dimension(120, 45));
 		btnCancelar.addActionListener(e -> dialog.dispose());
 
 		RoundedButton btnGuardar = new RoundedButton("Confirmar Asignación", 20);
 		btnGuardar.setBackground(new Color(0, 102, 204));
 		btnGuardar.setForeground(Color.WHITE);
 		btnGuardar.setFont(new Font("Arial", Font.BOLD, 13));
-		btnGuardar.setPreferredSize(new Dimension(180, 40));
+		btnGuardar.setPreferredSize(new Dimension(190, 45));
 
 		btnGuardar.addActionListener(e -> {
 			int indexPlan = cbPlanes.getSelectedIndex();
@@ -427,15 +440,23 @@ public class Planes extends JFrame {
 	}
 
 	private void mostrarMenuConsultas() {
-		JDialog dialog = new JDialog(this, "Control de Asignaciones de Planes", true);
-		dialog.setSize(1000, 600);
+		JDialog dialog = new JDialog(this, "Control de Asignaciones", true);
+		dialog.setSize(1000, 650);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
 
-		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 20));
-		topPanel.setBackground(new Color(245, 247, 250));
-		topPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		JLabel lblDialogTitle = new JLabel("🔍 Control de Asignaciones de Planes");
+		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
+		lblDialogTitle.setForeground(Color.WHITE);
+		headerPanel.add(lblDialogTitle);
+		dialog.add(headerPanel, BorderLayout.NORTH);
+
+		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+		topPanel.setBackground(Color.WHITE);
+		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		JLabel lblEstado = new JLabel("Estado Plan:");
 		lblEstado.setFont(new Font("Arial", Font.BOLD, 14));
@@ -467,7 +488,10 @@ public class Planes extends JFrame {
 		topPanel.add(lblBuscar);
 		topPanel.add(txtBuscar);
 
-		dialog.add(topPanel, BorderLayout.NORTH);
+		RoundedPanel topWrapper = new RoundedPanel(20);
+		topWrapper.setLayout(new BorderLayout());
+		topWrapper.setBackground(Color.WHITE);
+		topWrapper.add(topPanel, BorderLayout.CENTER);
 
 		String[] cols = {"Identificación", "Cliente", "Tipo Cliente", "Plan Asignado", "Estado Plan"};
 		DefaultTableModel model = new DefaultTableModel(null, cols) {
@@ -486,9 +510,10 @@ public class Planes extends JFrame {
 		tableWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
 		tableWrapper.add(scroll, BorderLayout.CENTER);
 		
-		JPanel centerPanel = new JPanel(new BorderLayout());
-		centerPanel.setBorder(new EmptyBorder(0, 30, 20, 30));
+		JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
+		centerPanel.setBorder(new EmptyBorder(25, 30, 20, 30));
 		centerPanel.setBackground(new Color(245, 247, 250));
+		centerPanel.add(topWrapper, BorderLayout.NORTH);
 		centerPanel.add(tableWrapper, BorderLayout.CENTER);
 		dialog.add(centerPanel, BorderLayout.CENTER);
 
@@ -534,11 +559,13 @@ public class Planes extends JFrame {
 
 		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		bottomPanel.setBackground(new Color(245, 247, 250));
+		bottomPanel.setBorder(new EmptyBorder(10, 20, 20, 20));
+
 		RoundedButton btnCerrar = new RoundedButton("Cerrar", 20);
 		btnCerrar.setBackground(new Color(60, 60, 60));
 		btnCerrar.setForeground(Color.WHITE);
 		btnCerrar.setFont(new Font("Arial", Font.BOLD, 13));
-		btnCerrar.setPreferredSize(new Dimension(120, 40));
+		btnCerrar.setPreferredSize(new Dimension(130, 45));
 		btnCerrar.addActionListener(e -> dialog.dispose());
 		bottomPanel.add(btnCerrar);
 
