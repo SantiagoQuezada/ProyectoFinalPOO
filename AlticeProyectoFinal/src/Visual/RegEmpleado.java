@@ -1,19 +1,35 @@
 package Visual;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Cursor;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.DefaultListCellRenderer;
+import java.awt.Component;
 import Logico.Empleado;
 import Logico.Altice;
 import Logico.Rol;
@@ -21,58 +37,85 @@ import Logico.Usuario;
 
 public class RegEmpleado extends JDialog {
 
-	private final JPanel contentPanel = new JPanel();
-	private JTextField txtIdEmpleado;
-	private JTextField txtCedula;
-	private JTextField txtNombre;
-	private JTextField txtTelefono;
-	private JTextField txtDireccion;
-	private JTextField txtSalario;
-	private JComboBox<String> cbxDepartamento;
-	private JTextField txtUsername;
-	private JTextField txtPassword;
-	private JComboBox<Rol> cbxRol;
+	private RoundedTextField txtIdEmpleado;
+	private RoundedTextField txtCedula;
+	private RoundedTextField txtNombre;
+	private RoundedTextField txtTelefono;
+	private RoundedTextField txtDireccion;
+	private RoundedTextField txtSalario;
+	private RoundedComboBox<String> cbxDepartamento;
+	private RoundedTextField txtUsername;
+	private RoundedPasswordField txtPassword;
+	private RoundedComboBox<Rol> cbxRol;
 	private Empleado empleadoActual;
 
 	public RegEmpleado(Empleado empleado, boolean soloLectura) {
 		this.empleadoActual = empleado;
-		if (empleadoActual == null) {
-			setTitle("Registrar Nuevo Empleado");
-		} else if (soloLectura) {
-			setTitle("Detalles del Empleado");
-		} else {
-			setTitle("Modificar Empleado");
-		}
 		
 		setModal(true);
 		setResizable(false);
-		setBounds(100, 100, 500, 600);
+		setSize(550, 750);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		getContentPane().setBackground(new Color(245, 247, 250));
+
+		// --- Header Panel ---
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		headerPanel.setPreferredSize(new Dimension(550, 70));
+		
+		String tituloHeader = "Registrar Nuevo Empleado";
+		if (empleadoActual != null) {
+			tituloHeader = soloLectura ? "Detalles del Empleado" : "Modificar Empleado";
+		}
+		
+		JLabel lblDialogTitle = new JLabel((soloLectura ? "👁 " : "📝 ") + tituloHeader);
+		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
+		lblDialogTitle.setForeground(Color.WHITE);
+		headerPanel.add(lblDialogTitle);
+		getContentPane().add(headerPanel, BorderLayout.NORTH);
+
+		// --- Main Content ---
+		JPanel centerContainer = new JPanel(new BorderLayout());
+		centerContainer.setBackground(new Color(245, 247, 250));
+		centerContainer.setBorder(new EmptyBorder(20, 25, 10, 25));
+
+		RoundedPanel contentPanel = new RoundedPanel(25);
+		contentPanel.setBackground(Color.WHITE);
 		contentPanel.setLayout(null);
+		centerContainer.add(contentPanel, BorderLayout.CENTER);
+		getContentPane().add(centerContainer, BorderLayout.CENTER);
+
+		Font labelFont = new Font("Arial", Font.BOLD, 14);
+		Color labelColor = new Color(50, 50, 50);
 
 		JLabel lblIdEmpleado = new JLabel("ID Empleado:");
-		lblIdEmpleado.setBounds(30, 30, 100, 20);
+		lblIdEmpleado.setFont(labelFont);
+		lblIdEmpleado.setForeground(labelColor);
+		lblIdEmpleado.setBounds(30, 30, 140, 35);
 		contentPanel.add(lblIdEmpleado);
 
-		txtIdEmpleado = new JTextField();
+		txtIdEmpleado = new RoundedTextField(15);
+		txtIdEmpleado.setFont(new Font("Arial", Font.PLAIN, 14));
 		if (empleadoActual == null) {
 			txtIdEmpleado.setText(Altice.getInstance().generarIdEmpleado());
 		} else {
 			txtIdEmpleado.setText(empleadoActual.getIdEmpleado());
 		}
 		txtIdEmpleado.setEditable(false);
-		txtIdEmpleado.setBounds(150, 30, 290, 25);
+		txtIdEmpleado.setBackground(new Color(240, 240, 240));
+		txtIdEmpleado.setBounds(180, 30, 280, 35);
 		contentPanel.add(txtIdEmpleado);
 
 		JLabel lblCedula = new JLabel("Cédula:");
-		lblCedula.setBounds(30, 80, 110, 20);
+		lblCedula.setFont(labelFont);
+		lblCedula.setForeground(labelColor);
+		lblCedula.setBounds(30, 80, 140, 35);
 		contentPanel.add(lblCedula);
 
-		txtCedula = new JTextField();
-		txtCedula.setBounds(150, 80, 290, 25);
+		txtCedula = new RoundedTextField(15);
+		txtCedula.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtCedula.setBounds(180, 80, 280, 35);
 		contentPanel.add(txtCedula);
 
 		txtCedula.addKeyListener(new KeyAdapter() {
@@ -83,11 +126,14 @@ public class RegEmpleado extends JDialog {
 		});
 
 		JLabel lblNombre = new JLabel("Nombre Completo:");
-		lblNombre.setBounds(30, 130, 120, 20);
+		lblNombre.setFont(labelFont);
+		lblNombre.setForeground(labelColor);
+		lblNombre.setBounds(30, 130, 140, 35);
 		contentPanel.add(lblNombre);
 
-		txtNombre = new JTextField();
-		txtNombre.setBounds(150, 130, 290, 25);
+		txtNombre = new RoundedTextField(15);
+		txtNombre.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtNombre.setBounds(180, 130, 280, 35);
 		contentPanel.add(txtNombre);
 
 		txtNombre.addKeyListener(new KeyAdapter() {
@@ -98,11 +144,14 @@ public class RegEmpleado extends JDialog {
 		});
 
 		JLabel lblTelefono = new JLabel("Teléfono:");
-		lblTelefono.setBounds(30, 180, 110, 20);
+		lblTelefono.setFont(labelFont);
+		lblTelefono.setForeground(labelColor);
+		lblTelefono.setBounds(30, 180, 140, 35);
 		contentPanel.add(lblTelefono);
 
-		txtTelefono = new JTextField();
-		txtTelefono.setBounds(150, 180, 290, 25);
+		txtTelefono = new RoundedTextField(15);
+		txtTelefono.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtTelefono.setBounds(180, 180, 280, 35);
 		contentPanel.add(txtTelefono);
 
 		txtTelefono.addKeyListener(new KeyAdapter() {
@@ -113,11 +162,14 @@ public class RegEmpleado extends JDialog {
 		});
 
 		JLabel lblDireccion = new JLabel("Dirección:");
-		lblDireccion.setBounds(30, 230, 110, 20);
+		lblDireccion.setFont(labelFont);
+		lblDireccion.setForeground(labelColor);
+		lblDireccion.setBounds(30, 230, 140, 35);
 		contentPanel.add(lblDireccion);
 
-		txtDireccion = new JTextField();
-		txtDireccion.setBounds(150, 230, 290, 25);
+		txtDireccion = new RoundedTextField(15);
+		txtDireccion.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtDireccion.setBounds(180, 230, 280, 35);
 		contentPanel.add(txtDireccion);
 
 		txtDireccion.addKeyListener(new KeyAdapter() {
@@ -128,50 +180,63 @@ public class RegEmpleado extends JDialog {
 		});
 
 		JLabel lblDepartamento = new JLabel("Departamento:");
-		lblDepartamento.setBounds(30, 280, 110, 20);
+		lblDepartamento.setFont(labelFont);
+		lblDepartamento.setForeground(labelColor);
+		lblDepartamento.setBounds(30, 280, 140, 35);
 		contentPanel.add(lblDepartamento);
 
-		cbxDepartamento = new JComboBox<String>();
+		cbxDepartamento = new RoundedComboBox<String>(15);
 		cbxDepartamento.addItem("Ventas");
 		cbxDepartamento.addItem("Soporte Técnico");
 		cbxDepartamento.addItem("Atención al Cliente");
 		cbxDepartamento.addItem("Administración");
-		cbxDepartamento.setBounds(150, 280, 290, 25);
+		cbxDepartamento.setBounds(180, 280, 280, 35);
 		contentPanel.add(cbxDepartamento);
 
-		JLabel lblSalario = new JLabel("Salario:");
-		lblSalario.setBounds(30, 330, 110, 20);
+		JLabel lblSalario = new JLabel("Salario (RD$):");
+		lblSalario.setFont(labelFont);
+		lblSalario.setForeground(labelColor);
+		lblSalario.setBounds(30, 330, 140, 35);
 		contentPanel.add(lblSalario);
 
-		txtSalario = new JTextField();
-		txtSalario.setBounds(150, 330, 290, 25);
+		txtSalario = new RoundedTextField(15);
+		txtSalario.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtSalario.setBounds(180, 330, 280, 35);
 		contentPanel.add(txtSalario);
 
 		JLabel lblUsername = new JLabel("Usuario Sis:");
-		lblUsername.setBounds(30, 380, 110, 20);
+		lblUsername.setFont(labelFont);
+		lblUsername.setForeground(labelColor);
+		lblUsername.setBounds(30, 380, 140, 35);
 		contentPanel.add(lblUsername);
 
-		txtUsername = new JTextField();
-		txtUsername.setBounds(150, 380, 290, 25);
+		txtUsername = new RoundedTextField(15);
+		txtUsername.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtUsername.setBounds(180, 380, 280, 35);
 		contentPanel.add(txtUsername);
 
 		JLabel lblPassword = new JLabel("Contraseña Sis:");
-		lblPassword.setBounds(30, 430, 110, 20);
+		lblPassword.setFont(labelFont);
+		lblPassword.setForeground(labelColor);
+		lblPassword.setBounds(30, 430, 140, 35);
 		contentPanel.add(lblPassword);
 
-		txtPassword = new JTextField();
-		txtPassword.setBounds(150, 430, 290, 25);
+		txtPassword = new RoundedPasswordField(15);
+		txtPassword.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtPassword.setBounds(180, 430, 280, 35);
 		contentPanel.add(txtPassword);
 
 		JLabel lblRol = new JLabel("Rol de Sistema:");
-		lblRol.setBounds(30, 480, 110, 20);
+		lblRol.setFont(labelFont);
+		lblRol.setForeground(labelColor);
+		lblRol.setBounds(30, 480, 140, 35);
 		contentPanel.add(lblRol);
 
-		cbxRol = new JComboBox<Rol>();
+		cbxRol = new RoundedComboBox<Rol>(15);
 		for (Rol rol : Rol.values()) {
 			cbxRol.addItem(rol);
 		}
-		cbxRol.setBounds(150, 480, 290, 25);
+		cbxRol.setBounds(180, 480, 280, 35);
 		contentPanel.add(cbxRol);
 
 		if (empleadoActual != null) {
@@ -196,15 +261,48 @@ public class RegEmpleado extends JDialog {
 			txtUsername.setEditable(false);
 			txtPassword.setEditable(false);
 			cbxRol.setEnabled(false);
+			
+			Color colorDeshabilitado = new Color(245, 245, 245);
+			txtCedula.setBackground(colorDeshabilitado);
+			txtNombre.setBackground(colorDeshabilitado);
+			txtTelefono.setBackground(colorDeshabilitado);
+			txtDireccion.setBackground(colorDeshabilitado);
+			txtSalario.setBackground(colorDeshabilitado);
+			txtUsername.setBackground(colorDeshabilitado);
+			txtPassword.setBackground(colorDeshabilitado);
+			cbxDepartamento.setBackground(colorDeshabilitado);
+			cbxRol.setBackground(colorDeshabilitado);
 		}
 
-		JPanel buttonPane = new JPanel();
-		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		// --- Footer Buttons ---
+		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+		buttonPane.setBackground(new Color(245, 247, 250));
+		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
+		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
+		btnCancelar.setBackground(new Color(200, 200, 200));
+		btnCancelar.setForeground(new Color(30, 30, 30));
+		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
+		btnCancelar.setPreferredSize(new Dimension(120, 40));
+		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnCancelar.addActionListener(e -> dispose());
+
 		if (!soloLectura) {
-			JButton btnRegistrar = new JButton(empleadoActual == null ? "Registrar Empleado" : "Guardar Cambios");
-			btnRegistrar.setMnemonic(KeyEvent.VK_R);
+			RoundedButton btnRegistrar = new RoundedButton(empleadoActual == null ? "Registrar" : "Guardar Cambios", 20);
+			btnRegistrar.setBackground(new Color(0, 102, 204));
+			btnRegistrar.setForeground(Color.WHITE);
+			btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
+			btnRegistrar.setPreferredSize(new Dimension(160, 40));
+			btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			
+			btnRegistrar.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 80, 160)); }
+				@Override
+				public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 102, 204)); }
+			});
+
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtSalario.getText().isEmpty() || txtUsername.getText().isEmpty()) {
@@ -222,7 +320,7 @@ public class RegEmpleado extends JDialog {
 						float salario = Float.parseFloat(txtSalario.getText());
 						
 						String username = txtUsername.getText();
-						String password = txtPassword.getText();
+						String password = new String(txtPassword.getPassword());
 						Rol rol = (Rol) cbxRol.getSelectedItem();
 
 						if (empleadoActual == null) {
@@ -249,18 +347,12 @@ public class RegEmpleado extends JDialog {
 					}
 				}
 			});
+			buttonPane.add(btnCancelar);
 			buttonPane.add(btnRegistrar);
 			getRootPane().setDefaultButton(btnRegistrar);
+		} else {
+			buttonPane.add(btnCancelar);
 		}
-
-		JButton btnCancelar = new JButton(soloLectura ? "Cerrar" : "Cancelar");
-		btnCancelar.setMnemonic(KeyEvent.VK_C);
-		btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-		buttonPane.add(btnCancelar);
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowOpened(java.awt.event.WindowEvent e) {
@@ -269,5 +361,196 @@ public class RegEmpleado extends JDialog {
 				}
 			}
 		});
+	}
+
+	// --- Componentes Personalizados ---
+	
+	class RoundedComboBox<E> extends JComboBox<E> {
+		private int radius;
+
+		public RoundedComboBox(int radius) {
+			super();
+			this.radius = radius;
+			setOpaque(false);
+			setFont(new Font("Arial", Font.PLAIN, 14));
+			setBackground(new Color(240, 240, 240)); // Fondo gris claro
+			setForeground(new Color(50, 50, 50));
+			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+			setUI(new BasicComboBoxUI() {
+				@Override
+				protected JButton createArrowButton() {
+					JButton button = new JButton("\u25BC"); // Flecha minimalista
+					button.setFont(new Font("Arial", Font.PLAIN, 10));
+					button.setForeground(new Color(150, 150, 150));
+					button.setContentAreaFilled(false);
+					button.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+					button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+					button.setFocusPainted(false);
+					button.setOpaque(false);
+					return button;
+				}
+				
+				@Override
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+					// Previene el dibujado del fondo cuadrado por defecto
+				}
+			});
+
+			setRenderer(new DefaultListCellRenderer() {
+				@Override
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+					label.setBorder(new EmptyBorder(8, 10, 8, 10));
+					
+					if (index == -1) {
+						label.setOpaque(false);
+						if (RoundedComboBox.this.isEnabled()) {
+							label.setForeground(new Color(50, 50, 50));
+						} else {
+							label.setForeground(new Color(150, 150, 150));
+						}
+					} else {
+						label.setOpaque(true);
+						if (isSelected) {
+							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
+							label.setForeground(Color.WHITE);
+						} else {
+							label.setBackground(Color.WHITE);
+							label.setForeground(new Color(50, 50, 50));
+						}
+					}
+					return label;
+				}
+			});
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			
+			g2.dispose();
+		}
+
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(200, 200, 200));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
+		}
+	}
+
+	class RoundedPanel extends JPanel {
+		private int radius;
+		public RoundedPanel(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(220, 220, 220));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
+		}
+	}
+
+	class RoundedTextField extends JTextField {
+		private int radius;
+		public RoundedTextField(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(200, 200, 200));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
+		}
+	}
+
+	class RoundedPasswordField extends JPasswordField {
+		private int radius;
+		public RoundedPasswordField(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(200, 200, 200));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
+		}
+	}
+
+	class RoundedButton extends JButton {
+		private int radius;
+		public RoundedButton(String text, int radius) {
+			super(text);
+			this.radius = radius;
+			setContentAreaFilled(false);
+			setFocusPainted(false);
+			setBorderPainted(false);
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
 	}
 }

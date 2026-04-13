@@ -370,7 +370,7 @@ public class RegCliente extends JDialog {
 			this.radius = radius;
 			setOpaque(false);
 			setFont(new Font("Arial", Font.PLAIN, 14));
-			setBackground(Color.WHITE);
+			setBackground(new Color(240, 240, 240)); // Fondo gris claro
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
@@ -384,6 +384,7 @@ public class RegCliente extends JDialog {
 					button.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 					button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 					button.setFocusPainted(false);
+					button.setOpaque(false);
 					return button;
 				}
 				
@@ -412,7 +413,7 @@ public class RegCliente extends JDialog {
 						// Renderizado para los items de la lista desplegada
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 102, 204)); // Azul Altice
+							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
@@ -429,14 +430,27 @@ public class RegCliente extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
+			// Se dibuja el fondo redondeado
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
 			
+			// Se recorta el área gráfica para que el contenido no sobresalga de la curva
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			
+			g2.dispose();
+		}
+
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			// El borde se dibuja al final para enmascarar cualquier imperfección en las esquinas
 			g2.setColor(new Color(200, 200, 200));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			
 			g2.dispose();
-			super.paintComponent(g);
 		}
 	}
 
@@ -451,11 +465,19 @@ public class RegCliente extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
-			super.paintComponent(g);
 		}
 	}
 
@@ -471,11 +493,19 @@ public class RegCliente extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(200, 200, 200));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
-			super.paintComponent(g);
 		}
 	}
 
@@ -494,8 +524,10 @@ public class RegCliente extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
 			g2.dispose();
-			super.paintComponent(g);
 		}
 	}
 }
