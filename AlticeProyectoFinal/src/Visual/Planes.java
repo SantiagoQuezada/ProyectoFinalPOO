@@ -261,7 +261,7 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuAsignacion(String categoriaTitulo, String categoriaReal) {
 		JDialog dialog = new JDialog(this, "Asignación de Plan", true);
-		dialog.setSize(1000, 700); // Ventana más grande
+		dialog.setSize(1200, 750); // Modal expandido
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -274,16 +274,18 @@ public class Planes extends JFrame {
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-		topPanel.setBackground(Color.WHITE);
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		// Layout en X_AXIS para que los elementos nunca salten de línea
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		topPanel.setOpaque(false);
+		topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
 
 		JLabel lblSeleccionarPlan = new JLabel("Plan a asignar: ");
 		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 14));
 		lblSeleccionarPlan.setForeground(new Color(30, 30, 30));
 
 		RoundedComboBox<String> cbPlanes = new RoundedComboBox<>(15);
-		cbPlanes.setPreferredSize(new Dimension(350, 35));
+		cbPlanes.setMaximumSize(new Dimension(350, 35));
 		cbPlanes.addItem("<Seleccione un plan>");
 		
 		for (Plan p : Altice.getInstance().getPlanes()) {
@@ -292,18 +294,31 @@ public class Planes extends JFrame {
 			}
 		}
 
+		if (planPreseleccionado != null) {
+			for (int i = 0; i < cbPlanes.getItemCount(); i++) {
+				if (cbPlanes.getItemAt(i).startsWith(planPreseleccionado + " -")) {
+					cbPlanes.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
+
 		JLabel lblBuscar = new JLabel("Buscar Cliente: ");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		lblBuscar.setForeground(new Color(30, 30, 30));
 		
 		RoundedTextField txtBuscarCliente = new RoundedTextField(15);
-		txtBuscarCliente.setPreferredSize(new Dimension(300, 35));
+		txtBuscarCliente.setMaximumSize(new Dimension(300, 35));
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
 
 		topPanel.add(lblSeleccionarPlan);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbPlanes);
-		topPanel.add(Box.createRigidArea(new Dimension(20, 0)));
+		
+		topPanel.add(Box.createHorizontalGlue()); // Empuja hacia la derecha el buscador
+		
 		topPanel.add(lblBuscar);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(txtBuscarCliente);
 
 		RoundedPanel topWrapper = new RoundedPanel(20);
@@ -396,6 +411,7 @@ public class Planes extends JFrame {
 				JOptionPane.showMessageDialog(dialog, "Debe seleccionar un plan del desplegable.", "Atención", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
+			
 			if(filaCliente < 0) {
 				JOptionPane.showMessageDialog(dialog, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
 				return;
@@ -418,7 +434,7 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuConsultas() {
 		JDialog dialog = new JDialog(this, "Control de Asignaciones", true);
-		dialog.setSize(1200, 700); // Ventana más grande para que quepan todos los filtros
+		dialog.setSize(1200, 750); // Modal expandido
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -431,9 +447,11 @@ public class Planes extends JFrame {
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
-		topPanel.setBackground(Color.WHITE);
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		// Layout en X_AXIS para que los elementos nunca salten de línea
+		JPanel topPanel = new JPanel();
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		topPanel.setOpaque(false);
+		topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
 
 		JLabel lblEstado = new JLabel("Estado Plan:");
 		lblEstado.setFont(new Font("Arial", Font.BOLD, 14));
@@ -441,7 +459,7 @@ public class Planes extends JFrame {
 		cbEstado.addItem("Todos");
 		cbEstado.addItem("Activos");
 		cbEstado.addItem("Desactivados");
-		cbEstado.setPreferredSize(new Dimension(160, 35));
+		cbEstado.setMaximumSize(new Dimension(160, 35));
 
 		JLabel lblTipo = new JLabel("Tipo Cliente:");
 		lblTipo.setFont(new Font("Arial", Font.BOLD, 14));
@@ -449,21 +467,26 @@ public class Planes extends JFrame {
 		cbTipo.addItem("Todos");
 		cbTipo.addItem("Personales");
 		cbTipo.addItem("Empresariales");
-		cbTipo.setPreferredSize(new Dimension(160, 35));
+		cbTipo.setMaximumSize(new Dimension(160, 35));
 
 		JLabel lblBuscar = new JLabel("Buscar (Nombre/RNC):");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		RoundedTextField txtBuscar = new RoundedTextField(15);
-		txtBuscar.setPreferredSize(new Dimension(250, 35));
+		txtBuscar.setMaximumSize(new Dimension(250, 35));
 		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 14));
 
 		topPanel.add(lblEstado);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbEstado);
-		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(Box.createRigidArea(new Dimension(20, 0)));
 		topPanel.add(lblTipo);
-		topPanel.add(cbTipo);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		topPanel.add(cbTipo);
+		
+		topPanel.add(Box.createHorizontalGlue()); // Empuja hacia la derecha
+		
 		topPanel.add(lblBuscar);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(txtBuscar);
 
 		RoundedPanel topWrapper = new RoundedPanel(20);
@@ -705,7 +728,7 @@ public class Planes extends JFrame {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
 			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
