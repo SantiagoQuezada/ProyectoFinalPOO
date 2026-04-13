@@ -219,7 +219,7 @@ public class Principal extends JFrame {
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblTitulo.setHorizontalAlignment(JLabel.CENTER);
 
-		// Ancho fijo en HTML para forzar el centrado
+	
 		JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 220px;'>" + desc + "</div></html>");
 		lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblDesc.setForeground(new Color(120, 120, 120));
@@ -261,7 +261,6 @@ public class Principal extends JFrame {
 		return tarjeta;
 	}
 
-	// Icono personalizado de usuario dibujado con gráficos nativos
 	class UserIcon implements Icon {
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {

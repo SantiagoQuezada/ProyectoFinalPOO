@@ -12,7 +12,9 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,8 +22,13 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import Logico.Cliente;
 import Logico.Empleado;
@@ -35,28 +42,39 @@ public class Clientes extends JFrame {
 
 	public Clientes(Empleado empleado) {
 		this.empleadoLogueado = empleado;
-		setTitle("Sistema de Gestión - Módulo de Clientes");
+		setTitle("Altice - Módulo de Clientes");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
-		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setBackground(new Color(245, 247, 250));
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
-		headerPanel.setBackground(new Color(15, 15, 15));
-		headerPanel.setPreferredSize(new Dimension(1000, 70));
-		headerPanel.setBorder(new EmptyBorder(10, 30, 10, 30));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		headerPanel.setPreferredSize(new Dimension(1000, 80));
+		headerPanel.setBorder(new EmptyBorder(15, 40, 15, 40));
 
 		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 		leftHeaderPanel.setOpaque(false);
 
-		JButton btnVolver = new JButton("\u25C0 Volver al Inicio");
+		RoundedButton btnVolver = new RoundedButton("\u25C0 Volver al Inicio", 20);
 		btnVolver.setBackground(new Color(40, 40, 40));
 		btnVolver.setForeground(Color.WHITE);
-		btnVolver.setFocusPainted(false);
-		btnVolver.setBorder(new EmptyBorder(8, 15, 8, 15));
-		btnVolver.setFont(new Font("Arial", Font.BOLD, 12));
+		btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
+		btnVolver.setPreferredSize(new Dimension(150, 35));
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		btnVolver.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				btnVolver.setBackground(new Color(60, 60, 60));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				btnVolver.setBackground(new Color(40, 40, 40));
+			}
+		});
+
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Principal principal = new Principal(empleadoLogueado);
@@ -65,38 +83,57 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		JLabel lblLogo = new JLabel("<html><span style='font-size:20px; font-family: Arial;'><b>\u221E Altice</b></span></html>");
+		JLabel lblLogo = new JLabel("  \u221E Altice");
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 28));
 		lblLogo.setForeground(Color.WHITE);
 
 		leftHeaderPanel.add(btnVolver);
 		leftHeaderPanel.add(lblLogo);
 		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
 
-		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "";
+		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
+		rightHeaderPanel.setOpaque(false);
+
+		String nombreUsuario;
+		if (empleadoLogueado != null) {
+			nombreUsuario = empleadoLogueado.getNombre();
+		} else {
+			nombreUsuario = "Usuario";
+		}
+
+		String rolUsuario;
+		if (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) {
+			rolUsuario = empleadoLogueado.getUsuario().getRol().toString();
+		} else {
+			rolUsuario = "Admin";
+		}
 		
-		JLabel lblUser = new JLabel("Hola, " + nombreUsuario + " | " + rolUsuario + "   \u2699   \u23FB");
-		lblUser.setFont(new Font("Arial", Font.PLAIN, 14));
-		lblUser.setForeground(new Color(200, 200, 200));
-		headerPanel.add(lblUser, BorderLayout.EAST);
+		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
+		lblUser.setIcon(new UserIcon());
+		lblUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblUser.setForeground(new Color(220, 220, 220));
+		
+		rightHeaderPanel.add(lblUser);
+		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 
 		add(headerPanel, BorderLayout.NORTH);
 
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout());
-		centerPanel.setBackground(Color.WHITE);
+		centerPanel.setBackground(new Color(245, 247, 250));
 		centerPanel.setBorder(new EmptyBorder(40, 60, 40, 60));
 
 		JPanel panelTitulo = new JPanel();
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
-		panelTitulo.setBackground(Color.WHITE);
+		panelTitulo.setBackground(new Color(245, 247, 250));
+		panelTitulo.setBorder(new EmptyBorder(0, 0, 30, 0));
 
-		JLabel lblTituloPrincipal = new JLabel("\uD83D\uDCC1 Listado de Clientes Activos");
+		JLabel lblTituloPrincipal = new JLabel("👥 Listado de Clientes Activos");
 		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 32));
-		lblTituloPrincipal.setForeground(new Color(30, 30, 30));
+		lblTituloPrincipal.setForeground(new Color(10, 10, 10));
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		JLabel lblSubtitulo = new JLabel("Consulta y gestión de clientes y sus planes contratados.");
+		JLabel lblSubtitulo = new JLabel("Consulta y gestión integral de la cartera de clientes y sus planes.");
 		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblSubtitulo.setForeground(new Color(100, 100, 100));
 		lblSubtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -104,43 +141,93 @@ public class Clientes extends JFrame {
 		panelTitulo.add(lblTituloPrincipal);
 		panelTitulo.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTitulo.add(lblSubtitulo);
-		panelTitulo.add(Box.createRigidArea(new Dimension(0, 30)));
 
 		centerPanel.add(panelTitulo, BorderLayout.NORTH);
 
 		String[] columnas = {"ID", "Tipo", "Cédula / RNC", "Nombre o Empresa", "Teléfono", "Estado", "Plan Contratado", "Fecha Asignación"};
-		modeloTabla = new DefaultTableModel(null, columnas);
+		modeloTabla = new DefaultTableModel(null, columnas) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		
 		tablaClientes = new JTable(modeloTabla);
-		tablaClientes.setRowHeight(35);
-		tablaClientes.setFont(new Font("Arial", Font.PLAIN, 15));
-		tablaClientes.setForeground(Color.BLACK);
-		tablaClientes.setGridColor(new Color(230, 230, 230));
-		tablaClientes.setSelectionBackground(new Color(220, 235, 255));
-		tablaClientes.setSelectionForeground(Color.BLACK);
+		tablaClientes.setRowHeight(45);
+		tablaClientes.setFont(new Font("Arial", Font.PLAIN, 14));
+		tablaClientes.setForeground(new Color(15, 15, 15));
+		tablaClientes.setGridColor(new Color(210, 210, 210));
+		tablaClientes.setSelectionBackground(new Color(0, 102, 204));
+		tablaClientes.setSelectionForeground(Color.WHITE);
+		tablaClientes.setShowVerticalLines(false);
+		tablaClientes.setShowHorizontalLines(true);
+		tablaClientes.setIntercellSpacing(new Dimension(0, 0));
+		tablaClientes.setBorder(BorderFactory.createEmptyBorder());
 
 		JTableHeader header = tablaClientes.getTableHeader();
-		header.setFont(new Font("Arial", Font.BOLD, 15));
-		header.setBackground(new Color(245, 247, 250));
-		header.setForeground(new Color(50, 50, 50));
-		header.setPreferredSize(new Dimension(100, 40));
+		header.setDefaultRenderer(new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				label.setBackground(new Color(15, 15, 15));
+				label.setForeground(Color.WHITE);
+				label.setFont(new Font("Arial", Font.BOLD, 13));
+				label.setHorizontalAlignment(JLabel.CENTER);
+				label.setBorder(new EmptyBorder(10, 10, 10, 10));
+				return label;
+			}
+		});
+		header.setPreferredSize(new Dimension(100, 50));
+		header.setReorderingAllowed(false);
+
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
+				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
+				
+				if (!isSelected) {
+					if (row % 2 == 0) {
+						c.setBackground(new Color(245, 245, 245));
+					} else {
+						c.setBackground(new Color(235, 235, 235));
+					}
+					c.setForeground(new Color(15, 15, 15));
+				}
+				return c;
+			}
+		};
+
+		for (int i = 0; i < tablaClientes.getColumnCount(); i++) {
+			tablaClientes.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+		}
 
 		tablaClientes.getColumnModel().getColumn(0).setPreferredWidth(60);
 		tablaClientes.getColumnModel().getColumn(1).setPreferredWidth(100);
-		tablaClientes.getColumnModel().getColumn(2).setPreferredWidth(120);
-		tablaClientes.getColumnModel().getColumn(3).setPreferredWidth(200);
+		tablaClientes.getColumnModel().getColumn(2).setPreferredWidth(130);
+		tablaClientes.getColumnModel().getColumn(3).setPreferredWidth(220);
 		tablaClientes.getColumnModel().getColumn(4).setPreferredWidth(120);
 		tablaClientes.getColumnModel().getColumn(5).setPreferredWidth(80);
 		tablaClientes.getColumnModel().getColumn(6).setPreferredWidth(180);
 		tablaClientes.getColumnModel().getColumn(7).setPreferredWidth(130);
 
 		JScrollPane scrollPane = new JScrollPane(tablaClientes);
-		scrollPane.setBorder(new LineBorder(new Color(220, 220, 220), 1));
-		centerPanel.add(scrollPane, BorderLayout.CENTER);
+		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		scrollPane.getViewport().setBackground(new Color(240, 240, 240));
 
-		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 20));
-		crudPanel.setBackground(Color.WHITE);
+		RoundedPanel tableWrapper = new RoundedPanel(20);
+		tableWrapper.setLayout(new BorderLayout());
+		tableWrapper.setBackground(new Color(240, 240, 240));
+		tableWrapper.setBorder(new EmptyBorder(10, 10, 10, 10));
+		tableWrapper.add(scrollPane, BorderLayout.CENTER);
 
-		JButton btnCrear = crearBotonCRUD("Registrar Cliente", true);
+		centerPanel.add(tableWrapper, BorderLayout.CENTER);
+
+		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
+		crudPanel.setBackground(new Color(245, 247, 250));
+
+		RoundedButton btnCrear = crearBotonCRUD("Registrar Cliente", new Color(0, 102, 204), new Color(0, 80, 160));
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				RegCliente modalReg = new RegCliente(null, false);
@@ -149,7 +236,7 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		JButton btnLeer = crearBotonCRUD("Ver Detalles", false);
+		RoundedButton btnLeer = crearBotonCRUD("Ver Detalles", new Color(60, 60, 60), new Color(80, 80, 80));
 		btnLeer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaClientes.getSelectedRow();
@@ -164,7 +251,7 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		JButton btnActualizar = crearBotonCRUD("Editar Seleccionado", false);
+		RoundedButton btnActualizar = crearBotonCRUD("Editar Seleccionado", new Color(230, 126, 34), new Color(200, 100, 20));
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaClientes.getSelectedRow();
@@ -180,7 +267,7 @@ public class Clientes extends JFrame {
 			}
 		});
 
-		JButton btnEliminar = crearBotonCRUD("Dar de Baja", false);
+		RoundedButton btnEliminar = crearBotonCRUD("Dar de Baja", new Color(220, 53, 69), new Color(180, 40, 50));
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaClientes.getSelectedRow();
@@ -210,7 +297,7 @@ public class Clientes extends JFrame {
 		footerPanel.setBackground(new Color(245, 247, 250));
 		footerPanel.setBorder(new EmptyBorder(15, 0, 15, 0));
 		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Clientes");
-		lblFooter.setFont(new Font("Arial", Font.PLAIN, 13));
+		lblFooter.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblFooter.setForeground(new Color(150, 150, 150));
 		footerPanel.add(lblFooter);
 
@@ -227,16 +314,26 @@ public class Clientes extends JFrame {
 		modeloTabla.setRowCount(0);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		for (Cliente c : Altice.getInstance().getClientes()) {
-			String nombrePlan = "Sin Plan";
-			String fecha = "N/A";
+			String nombrePlan;
+			String fecha;
 			if (c.getPlan() != null) {
 				nombrePlan = c.getPlan().getNombre();
 				if (c.getFechaAsignacionPlan() != null) {
 					fecha = sdf.format(c.getFechaAsignacionPlan());
+				} else {
+					fecha = "N/A";
 				}
+			} else {
+				nombrePlan = "Sin Plan";
+				fecha = "N/A";
 			}
 			
-			String identificacion = c.getTipoCliente().equals("Empresarial") ? c.getRnc() : c.getCedula();
+			String identificacion;
+			if (c.getTipoCliente().equals("Empresarial")) {
+				identificacion = c.getRnc();
+			} else {
+				identificacion = c.getCedula();
+			}
 			
 			Object[] fila = new Object[8];
 			fila[0] = c.getIdCliente();
@@ -251,21 +348,91 @@ public class Clientes extends JFrame {
 		}
 	}
 
-	private JButton crearBotonCRUD(String texto, boolean esPrincipal) {
-		JButton boton = new JButton(texto);
-		if (esPrincipal) {
-			boton.setBackground(new Color(15, 15, 15));
-			boton.setForeground(Color.WHITE);
-		} else {
-			boton.setBackground(new Color(240, 240, 240));
-			boton.setForeground(new Color(30, 30, 30));
-			boton.setBorder(new LineBorder(new Color(200, 200, 200), 1));
-		}
+	private RoundedButton crearBotonCRUD(String texto, Color bgDefault, Color bgHover) {
+		RoundedButton boton = new RoundedButton(texto, 25);
+		boton.setBackground(bgDefault);
+		boton.setForeground(Color.WHITE);
 		
-		boton.setFont(new Font("Arial", Font.BOLD, 13));
-		boton.setFocusPainted(false);
+		boton.setFont(new Font("Arial", Font.BOLD, 14));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setPreferredSize(new Dimension(170, 45));
+		boton.setPreferredSize(new Dimension(190, 45));
+
+		boton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(bgHover);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(bgDefault);
+			}
+		});
+
 		return boton;
+	}
+
+	class UserIcon implements Icon {
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(220, 220, 220));
+			
+			g2.fillOval(x + 4, y, 8, 8);
+			g2.fillArc(x, y + 9, 16, 12, 0, 180);
+			
+			g2.dispose();
+		}
+
+		@Override
+		public int getIconWidth() {
+			return 16;
+		}
+
+		@Override
+		public int getIconHeight() {
+			return 16;
+		}
+	}
+
+	class RoundedPanel extends JPanel {
+		private int radius;
+
+		public RoundedPanel(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.dispose();
+			super.paintComponent(g);
+		}
+	}
+
+	class RoundedButton extends JButton {
+		private int radius;
+
+		public RoundedButton(String text, int radius) {
+			super(text);
+			this.radius = radius;
+			setContentAreaFilled(false);
+			setFocusPainted(false);
+			setBorderPainted(false);
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.dispose();
+			super.paintComponent(g);
+		}
 	}
 }
