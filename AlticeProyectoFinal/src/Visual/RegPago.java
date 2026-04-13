@@ -9,7 +9,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Cursor;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,8 +25,13 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.SwingConstants;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 import Logico.Pago;
 import Logico.Cliente;
 import Logico.Altice;
@@ -44,6 +48,19 @@ public class RegPago extends JDialog {
 	public RegPago(Pago pago, boolean soloLectura) {
 		this.pagoActual = pago;
 		
+		// Si es solo lectura (Ver Recibo o Recibo post-pago), dibujamos un ticket moderno
+		if (soloLectura && pagoActual != null) {
+			construirUI_Recibo();
+		} else {
+			// Si es para pagar, dibujamos el formulario
+			construirUI_Formulario();
+		}
+	}
+
+	// =========================================================================================
+	// INTERFAZ 1: FORMULARIO DE PAGO
+	// =========================================================================================
+	private void construirUI_Formulario() {
 		setModal(true);
 		setResizable(false);
 		setSize(550, 500);
@@ -55,12 +72,7 @@ public class RegPago extends JDialog {
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));
 		
-		String tituloHeader = "Procesar Nuevo Pago";
-		if (pagoActual != null) {
-			tituloHeader = "Recibo de Pago Emitido";
-		}
-		
-		JLabel lblDialogTitle = new JLabel((soloLectura ? "🧾 " : "💵 ") + tituloHeader);
+		JLabel lblDialogTitle = new JLabel("💵 Procesar Nuevo Pago");
 		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
 		lblDialogTitle.setForeground(Color.WHITE);
 		headerPanel.add(lblDialogTitle);
@@ -87,11 +99,7 @@ public class RegPago extends JDialog {
 
 		txtIdPago = new RoundedTextField(15);
 		txtIdPago.setFont(new Font("Arial", Font.PLAIN, 14));
-		if (pagoActual == null) {
-			txtIdPago.setText(Altice.getInstance().generarIdPago());
-		} else {
-			txtIdPago.setText(pagoActual.getIdPago());
-		}
+		txtIdPago.setText(Altice.getInstance().generarIdPago());
 		txtIdPago.setEditable(false);
 		txtIdPago.setBackground(new Color(240, 240, 240));
 		txtIdPago.setBounds(180, 30, 280, 35);
@@ -129,7 +137,7 @@ public class RegPago extends JDialog {
 
 		JLabel lblMonto = new JLabel("Monto a Pagar:");
 		lblMonto.setFont(labelFont);
-		lblMonto.setForeground(new Color(0, 102, 204)); // Azul para resaltar el monto
+		lblMonto.setForeground(new Color(0, 102, 204));
 		lblMonto.setBounds(30, 180, 140, 35);
 		contentPanel.add(lblMonto);
 
@@ -151,52 +159,31 @@ public class RegPago extends JDialog {
 		cbxMetodo.setBounds(180, 230, 280, 35);
 		contentPanel.add(cbxMetodo);
 
-        // --- Lógica Autocompletar Monto ---
-        ActionListener updateMontoAction = e -> {
-            if (cbxConcepto.getSelectedItem().toString().equals("Mensualidad") && cbxCliente.getSelectedIndex() > 0) {
-                String selectedClient = (String) cbxCliente.getSelectedItem();
-                String idCliente = selectedClient.split(" - ")[0];
-                Cliente c = Altice.getInstance().getClienteById(idCliente);
-                if(c != null && c.getPlan() != null) {
-                    txtMonto.setText(String.valueOf(c.getPlan().getPrecio()));
-                } else {
-                    txtMonto.setText("0.0");
-                }
-            } else if (!soloLectura) {
-                txtMonto.setText("");
-            }
-        };
-        cbxCliente.addActionListener(updateMontoAction);
-        cbxConcepto.addActionListener(updateMontoAction);
+		// Lógica Autocompletar Monto Mensualidad
+		ActionListener updateMontoAction = e -> {
+		    if (cbxConcepto.getSelectedItem().toString().equals("Mensualidad") && cbxCliente.getSelectedIndex() > 0) {
+		        String selectedClient = (String) cbxCliente.getSelectedItem();
+		        String idCliente = selectedClient.split(" - ")[0];
+		        Cliente c = Altice.getInstance().getClienteById(idCliente);
+		        if(c != null && c.getPlan() != null) {
+		            txtMonto.setText(String.valueOf(c.getPlan().getPrecio()));
+		        } else {
+		            txtMonto.setText("0.0");
+		        }
+		    } else {
+		        txtMonto.setText("");
+		    }
+		};
+		cbxCliente.addActionListener(updateMontoAction);
+		cbxConcepto.addActionListener(updateMontoAction);
 
-		if (pagoActual != null) {
-			cbxCliente.addItem(pagoActual.getCliente().getIdCliente() + " - " + pagoActual.getCliente().getNombre());
-			cbxCliente.setSelectedItem(pagoActual.getCliente().getIdCliente() + " - " + pagoActual.getCliente().getNombre());
-			cbxConcepto.setSelectedItem(pagoActual.getConcepto());
-			txtMonto.setText(String.valueOf(pagoActual.getMonto()));
-			cbxMetodo.setSelectedItem(pagoActual.getMetodoPago());
-		}
-
-		if (soloLectura) {
-			cbxCliente.setEnabled(false);
-			cbxConcepto.setEnabled(false);
-			cbxMetodo.setEnabled(false);
-			txtMonto.setEditable(false);
-			
-			Color colorDeshabilitado = new Color(245, 245, 245);
-			cbxCliente.setBackground(colorDeshabilitado);
-			cbxConcepto.setBackground(colorDeshabilitado);
-			cbxMetodo.setBackground(colorDeshabilitado);
-			txtMonto.setBackground(colorDeshabilitado);
-		}
-
-		// --- Footer Buttons ---
+		// Footer Buttons
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		buttonPane.setBackground(new Color(245, 247, 250));
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
+		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
 		btnCancelar.setBackground(new Color(200, 200, 200));
 		btnCancelar.setForeground(new Color(30, 30, 30));
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
@@ -204,53 +191,171 @@ public class RegPago extends JDialog {
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnCancelar.addActionListener(e -> dispose());
 
-		if (!soloLectura) {
-			RoundedButton btnRegistrar = new RoundedButton("Procesar Pago", 20);
-			btnRegistrar.setBackground(new Color(0, 150, 50)); // Verde para cobrar
-			btnRegistrar.setForeground(Color.WHITE);
-			btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
-			btnRegistrar.setPreferredSize(new Dimension(160, 40));
-			btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			
-			btnRegistrar.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 130, 40)); }
-				@Override
-				public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 150, 50)); }
-			});
+		RoundedButton btnRegistrar = new RoundedButton("Procesar Pago", 20);
+		btnRegistrar.setBackground(new Color(0, 150, 50)); 
+		btnRegistrar.setForeground(Color.WHITE);
+		btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
+		btnRegistrar.setPreferredSize(new Dimension(160, 40));
+		btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		btnRegistrar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 130, 40)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 150, 50)); }
+		});
 
-			btnRegistrar.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (cbxCliente.getSelectedIndex() == 0 || txtMonto.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente y digitar el monto.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					try {
-						String idPago = txtIdPago.getText();
-						String selectedClientStr = (String) cbxCliente.getSelectedItem();
-                        String idCliente = selectedClientStr.split(" - ")[0];
-                        Cliente cliente = Altice.getInstance().getClienteById(idCliente);
-                        
-						String concepto = cbxConcepto.getSelectedItem().toString();
-						String metodo = cbxMetodo.getSelectedItem().toString();
-						float monto = Float.parseFloat(txtMonto.getText());
-
-						Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, concepto);
-						Altice.getInstance().registrarPago(nuevoPago);
-						JOptionPane.showMessageDialog(null, "Pago procesado y registrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-						dispose();
-					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(null, "El monto debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-					}
+		btnRegistrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (cbxCliente.getSelectedIndex() == 0 || txtMonto.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente y digitar el monto.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
 				}
-			});
-			buttonPane.add(btnCancelar);
-			buttonPane.add(btnRegistrar);
-			getRootPane().setDefaultButton(btnRegistrar);
-		} else {
-			buttonPane.add(btnCancelar);
-		}
+				try {
+					String idPago = txtIdPago.getText();
+					String selectedClientStr = (String) cbxCliente.getSelectedItem();
+					String idCliente = selectedClientStr.split(" - ")[0];
+					Cliente cliente = Altice.getInstance().getClienteById(idCliente);
+					
+					String concepto = cbxConcepto.getSelectedItem().toString();
+					String metodo = cbxMetodo.getSelectedItem().toString();
+					float monto = Float.parseFloat(txtMonto.getText());
+
+					Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, concepto);
+					Altice.getInstance().registrarPago(nuevoPago);
+					
+					dispose();
+					// ¡Magia! En vez de un simple mensajito, abrimos el ticket elegante.
+					RegPago reciboGrafico = new RegPago(nuevoPago, true);
+					reciboGrafico.setVisible(true);
+
+				} catch (NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, "El monto debe ser numérico.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+
+		buttonPane.add(btnCancelar);
+		buttonPane.add(btnRegistrar);
+		getRootPane().setDefaultButton(btnRegistrar);
+	}
+
+	// =========================================================================================
+	// INTERFAZ 2: TICKET/RECIBO "BONITO"
+	// =========================================================================================
+	private void construirUI_Recibo() {
+		setModal(true);
+		setResizable(false);
+		setSize(420, 600);
+		setLocationRelativeTo(null);
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().setBackground(new Color(240, 242, 245));
+
+		JPanel paddingPanel = new JPanel(new BorderLayout());
+		paddingPanel.setOpaque(false);
+		paddingPanel.setBorder(new EmptyBorder(25, 35, 25, 35));
+
+		// Panel que simula el papel impreso
+		RoundedPanel ticketPanel = new RoundedPanel(20);
+		ticketPanel.setBackground(Color.WHITE);
+		ticketPanel.setLayout(new BoxLayout(ticketPanel, BoxLayout.Y_AXIS));
+		ticketPanel.setBorder(new EmptyBorder(30, 25, 30, 25));
+
+		JLabel lblLogo = new JLabel("\u221E Altice");
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 32));
+		lblLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		JLabel lblTitle = new JLabel("COMPROBANTE DE PAGO");
+		lblTitle.setFont(new Font("Arial", Font.BOLD, 13));
+		lblTitle.setForeground(new Color(120, 120, 120));
+		lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		ticketPanel.add(lblLogo);
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+		ticketPanel.add(lblTitle);
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+		JLabel sep1 = new JLabel("--------------------------------------------------------------");
+		sep1.setForeground(new Color(200, 200, 200));
+		sep1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		ticketPanel.add(sep1);
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy  hh:mm a");
+		
+		ticketPanel.add(crearFilaDetalle("No. Recibo:", pagoActual.getIdPago()));
+		ticketPanel.add(crearFilaDetalle("Fecha:", sdf.format(pagoActual.getFecha())));
+		
+		String idClient = pagoActual.getCliente().getTipoCliente().equals("Empresarial") ? pagoActual.getCliente().getRnc() : pagoActual.getCliente().getCedula();
+		ticketPanel.add(crearFilaDetalle("Identificación:", idClient));
+		ticketPanel.add(crearFilaDetalle("Cliente:", pagoActual.getCliente().getNombre()));
+		ticketPanel.add(crearFilaDetalle("Concepto:", pagoActual.getConcepto()));
+		ticketPanel.add(crearFilaDetalle("Método Pago:", pagoActual.getMetodoPago()));
+
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+		JLabel sep2 = new JLabel("--------------------------------------------------------------");
+		sep2.setForeground(new Color(200, 200, 200));
+		sep2.setAlignmentX(Component.CENTER_ALIGNMENT);
+		ticketPanel.add(sep2);
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+		JLabel lblTotalText = new JLabel("TOTAL PAGADO");
+		lblTotalText.setFont(new Font("Arial", Font.BOLD, 14));
+		lblTotalText.setForeground(new Color(100, 100, 100));
+		lblTotalText.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		JLabel lblTotalAmount = new JLabel(String.format("$%.2f", pagoActual.getMonto()));
+		lblTotalAmount.setFont(new Font("Arial", Font.BOLD, 36));
+		lblTotalAmount.setForeground(new Color(0, 150, 50));
+		lblTotalAmount.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		ticketPanel.add(lblTotalText);
+		ticketPanel.add(lblTotalAmount);
+		
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 30)));
+		
+		JLabel lblGracias = new JLabel("¡Gracias por preferir a Altice!");
+		lblGracias.setFont(new Font("Arial", Font.ITALIC, 13));
+		lblGracias.setForeground(new Color(150, 150, 150));
+		lblGracias.setAlignmentX(Component.CENTER_ALIGNMENT);
+		ticketPanel.add(lblGracias);
+
+		paddingPanel.add(ticketPanel, BorderLayout.CENTER);
+		getContentPane().add(paddingPanel, BorderLayout.CENTER);
+
+		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		bottomPanel.setBackground(new Color(240, 242, 245));
+		bottomPanel.setBorder(new EmptyBorder(0, 0, 20, 0));
+
+		RoundedButton btnCerrar = new RoundedButton("Cerrar Comprobante", 20);
+		btnCerrar.setBackground(new Color(60, 60, 60));
+		btnCerrar.setForeground(Color.WHITE);
+		btnCerrar.setFont(new Font("Arial", Font.BOLD, 14));
+		btnCerrar.setPreferredSize(new Dimension(200, 45));
+		btnCerrar.addActionListener(e -> dispose());
+		bottomPanel.add(btnCerrar);
+
+		getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+	}
+
+	private JPanel crearFilaDetalle(String label, String valor) {
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.setOpaque(false);
+		panel.setMaximumSize(new Dimension(400, 25));
+		
+		JLabel lblIzq = new JLabel(label);
+		lblIzq.setFont(new Font("Arial", Font.PLAIN, 14));
+		lblIzq.setForeground(new Color(120, 120, 120));
+		
+		JLabel lblDer = new JLabel(valor);
+		lblDer.setFont(new Font("Arial", Font.BOLD, 14));
+		lblDer.setForeground(new Color(30, 30, 30));
+		lblDer.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		panel.add(lblIzq, BorderLayout.WEST);
+		panel.add(lblDer, BorderLayout.EAST);
+		panel.setBorder(new EmptyBorder(3, 0, 3, 0));
+		return panel;
 	}
 
 	// --- Componentes Personalizados ---

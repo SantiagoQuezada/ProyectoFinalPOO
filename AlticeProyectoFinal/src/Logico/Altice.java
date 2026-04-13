@@ -60,6 +60,12 @@ public class Altice {
         Cliente c3 = new Cliente("001-2223334-5", "Tech Solutions SRL", "809-111-2222", "Av. Winston Churchill", generarIdCliente(), "Activo", misPlanes.get(6), "Empresarial", "1-30-12345-6");
         c3.setFechaAsignacionPlan(new Date());
         misClientes.add(c3);
+
+        // --- Historial de Pagos de Prueba ---
+        long ahora = System.currentTimeMillis();
+        misPagos.add(new Pago(generarIdPago(), c1, new Date(ahora - 15L * 24 * 3600 * 1000), 1500.0f, "Tarjeta de Crédito", "Mensualidad"));
+        misPagos.add(new Pago(generarIdPago(), c2, new Date(ahora - 5L * 24 * 3600 * 1000), 1200.0f, "Efectivo", "Mensualidad"));
+        misPagos.add(new Pago(generarIdPago(), c3, new Date(), 9500.0f, "Transferencia Bancaria", "Instalación"));
     }
 
     public String generarIdCliente() {
