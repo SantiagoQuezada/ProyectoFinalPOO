@@ -50,7 +50,9 @@ public class RegPago extends JDialog {
 	private RoundedTextField txtBuscarCliente;
 	private JList<String> listClientes;
 	private DefaultListModel<String> listModelClientes;
+	private RoundedTextField txtDeudaActiva;
 	private RoundedComboBox<String> cbxComprobante;
+	private RoundedTextField txtRncPersonal;
 	private RoundedComboBox<String> cbxConcepto;
 	private RoundedComboBox<String> cbxMetodo;
 	private RoundedTextField txtMonto;
@@ -69,7 +71,7 @@ public class RegPago extends JDialog {
 	private void construirUI_Formulario() {
 		setModal(true);
 		setResizable(false);
-		setSize(620, 750);
+		setSize(620, 850); // Aumentado para acomodar la deuda
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
@@ -180,22 +182,57 @@ public class RegPago extends JDialog {
 			}
 		});
 
+		// --- NUEVO CAMPO: DEUDA ACTIVA ---
+		JLabel lblDeudaActiva = new JLabel("Deuda Activa:");
+		lblDeudaActiva.setFont(labelFont);
+		lblDeudaActiva.setForeground(new Color(200, 50, 50)); // Rojo oscuro para resaltar la deuda
+		lblDeudaActiva.setBounds(30, 290, 140, 35);
+		contentPanel.add(lblDeudaActiva);
+
+		txtDeudaActiva = new RoundedTextField(15);
+		txtDeudaActiva.setFont(new Font("Arial", Font.BOLD, 15));
+		txtDeudaActiva.setForeground(new Color(200, 50, 50));
+		txtDeudaActiva.setBackground(new Color(255, 235, 235)); // Fondo rojizo suave
+		txtDeudaActiva.setEditable(false);
+		txtDeudaActiva.setBounds(180, 290, 350, 35);
+		contentPanel.add(txtDeudaActiva);
+
 		JLabel lblComprobante = new JLabel("Tipo Comprobante:");
 		lblComprobante.setFont(labelFont);
 		lblComprobante.setForeground(labelColor);
-		lblComprobante.setBounds(30, 295, 140, 35);
+		lblComprobante.setBounds(30, 345, 140, 35);
 		contentPanel.add(lblComprobante);
 
 		cbxComprobante = new RoundedComboBox<String>(15);
 		cbxComprobante.addItem("Normal (Consumidor Final)");
 		cbxComprobante.addItem("Comprobante Fiscal (Empresarial)");
-		cbxComprobante.setBounds(180, 295, 350, 35);
+		cbxComprobante.setBounds(180, 345, 350, 35);
 		contentPanel.add(cbxComprobante);
+
+		JLabel lblRncPersonal = new JLabel("RNC Cliente:");
+		lblRncPersonal.setFont(labelFont);
+		lblRncPersonal.setForeground(labelColor);
+		lblRncPersonal.setBounds(30, 395, 140, 35);
+		contentPanel.add(lblRncPersonal);
+
+		txtRncPersonal = new RoundedTextField(15);
+		txtRncPersonal.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtRncPersonal.setBounds(180, 395, 350, 35);
+		txtRncPersonal.setEnabled(false);
+		contentPanel.add(txtRncPersonal);
+
+		cbxComprobante.addActionListener(e -> {
+			boolean isFiscal = cbxComprobante.getSelectedIndex() == 1;
+			txtRncPersonal.setEnabled(isFiscal);
+			if (!isFiscal) {
+				txtRncPersonal.setText("");
+			}
+		});
 
 		JLabel lblConcepto = new JLabel("Concepto:");
 		lblConcepto.setFont(labelFont);
 		lblConcepto.setForeground(labelColor);
-		lblConcepto.setBounds(30, 345, 140, 35);
+		lblConcepto.setBounds(30, 445, 140, 35);
 		contentPanel.add(lblConcepto);
 
 		cbxConcepto = new RoundedComboBox<String>(15);
@@ -203,38 +240,38 @@ public class RegPago extends JDialog {
 		cbxConcepto.addItem("Instalación");
 		cbxConcepto.addItem("Compra de Equipo");
 		cbxConcepto.addItem("Otros");
-		cbxConcepto.setBounds(180, 345, 350, 35);
+		cbxConcepto.setBounds(180, 445, 350, 35);
 		contentPanel.add(cbxConcepto);
 
 		JLabel lblMetodo = new JLabel("Método de Pago:");
 		lblMetodo.setFont(labelFont);
 		lblMetodo.setForeground(labelColor);
-		lblMetodo.setBounds(30, 395, 140, 35);
+		lblMetodo.setBounds(30, 495, 140, 35);
 		contentPanel.add(lblMetodo);
 
 		cbxMetodo = new RoundedComboBox<String>(15);
 		cbxMetodo.addItem("Efectivo");
 		cbxMetodo.addItem("Tarjeta de Crédito");
 		cbxMetodo.addItem("Transferencia Bancaria");
-		cbxMetodo.setBounds(180, 395, 350, 35);
+		cbxMetodo.setBounds(180, 495, 350, 35);
 		contentPanel.add(cbxMetodo);
 
 		JLabel lblMonto = new JLabel("Monto a Pagar:");
 		lblMonto.setFont(new Font("Arial", Font.BOLD, 16));
 		lblMonto.setForeground(new Color(0, 102, 204));
-		lblMonto.setBounds(30, 460, 140, 45);
+		lblMonto.setBounds(30, 560, 140, 45);
 		contentPanel.add(lblMonto);
 
 		txtMonto = new RoundedTextField(20);
 		txtMonto.setFont(new Font("Arial", Font.BOLD, 22));
 		txtMonto.setForeground(new Color(0, 150, 50));
-		txtMonto.setBounds(180, 460, 350, 45);
+		txtMonto.setBounds(180, 560, 350, 45);
 		contentPanel.add(txtMonto);
 
 		listClientes.addListSelectionListener(e -> {
 			if (!e.getValueIsAdjusting()) {
 				actualizarMonto();
-				actualizarTipoComprobante();
+				actualizarDatosCliente();
 			}
 		});
 		cbxConcepto.addActionListener(e -> actualizarMonto());
@@ -273,6 +310,13 @@ public class RegPago extends JDialog {
 					JOptionPane.showMessageDialog(null, "Debe buscar y seleccionar un cliente de la lista, y digitar el monto.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
+				String rncIngresado = txtRncPersonal.getText().trim();
+				if (cbxComprobante.getSelectedIndex() == 1 && rncIngresado.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Debe ingresar un RNC válido para generar el Comprobante Fiscal.", "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+
 				try {
 					String idPago = txtIdPago.getText();
 					String idCliente = selectedClientStr.split(" - ")[0];
@@ -281,11 +325,18 @@ public class RegPago extends JDialog {
 					String tipoComp = cbxComprobante.getSelectedItem().toString().contains("Fiscal") ? "Comprobante Fiscal" : "Consumidor Final";
 					String conceptoFinal = cbxConcepto.getSelectedItem().toString() + " | " + tipoComp;
 					
+					if (cbxComprobante.getSelectedIndex() == 1) {
+						conceptoFinal += " | RNC:" + rncIngresado;
+					}
+					
 					String metodo = cbxMetodo.getSelectedItem().toString();
 					float monto = Float.parseFloat(txtMonto.getText());
 
 					Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, conceptoFinal);
 					Altice.getInstance().registrarPago(nuevoPago);
+					
+					// NUEVO: Restar el pago a la deuda activa del cliente
+					cliente.reducirDeuda(monto);
 					
 					dispose();
 					RegPago reciboGrafico = new RegPago(nuevoPago, true);
@@ -321,16 +372,27 @@ public class RegPago extends JDialog {
 		}
 	}
 	
-	private void actualizarTipoComprobante() {
+	private void actualizarDatosCliente() {
 		String selectedClient = listClientes.getSelectedValue();
 		if (selectedClient != null && !selectedClient.isEmpty()) {
 			String idCliente = selectedClient.split(" - ")[0];
 			Cliente c = Altice.getInstance().getClienteById(idCliente);
+			
+			// Actualización de RNC y Comprobante
 			if(c != null && c.getTipoCliente().equals("Empresarial")) {
-				cbxComprobante.setSelectedIndex(1); // Auto-selecciona Fiscal para empresariales
+				cbxComprobante.setSelectedIndex(1);
+				txtRncPersonal.setText(c.getRnc() != null ? c.getRnc() : "");
 			} else {
 				cbxComprobante.setSelectedIndex(0);
+				txtRncPersonal.setText("");
 			}
+
+			// Actualización de Deuda Activa (Ya no es simulada)
+			if (c != null) {
+				txtDeudaActiva.setText("$" + String.format("%.2f", c.getDeudaActiva()));
+			}
+		} else {
+			txtDeudaActiva.setText("");
 		}
 	}
 
@@ -344,7 +406,7 @@ public class RegPago extends JDialog {
 				if(c.getNombre().toLowerCase().contains(busqueda) || 
 				   c.getIdCliente().toLowerCase().contains(busqueda) || 
 				   identificacion.toLowerCase().contains(busqueda)) {
-					listModelClientes.addElement(c.getIdCliente() + " - " + c.getNombre());
+					listModelClientes.addElement(c.getIdCliente() + " - " + c.getNombre() + " (" + (c.getTipoCliente().equals("Empresarial") ? "RNC" : "Cédula") + ": " + identificacion + ")");
 				}
 			}
 		}
@@ -356,30 +418,29 @@ public class RegPago extends JDialog {
 		setSize(680, 960);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
-		getContentPane().setBackground(new Color(230, 235, 240)); // Fondo gris moderno
+		getContentPane().setBackground(new Color(230, 235, 240)); 
 
 		JPanel paddingPanel = new JPanel(new BorderLayout());
 		paddingPanel.setBackground(new Color(230, 235, 240));
 		paddingPanel.setBorder(new EmptyBorder(40, 50, 40, 50));
 
-		// Tarjeta Blanca Principal
 		RoundedPanel ticketPanel = new RoundedPanel(25);
 		ticketPanel.setBackground(Color.WHITE);
 		ticketPanel.setLayout(new BoxLayout(ticketPanel, BoxLayout.Y_AXIS));
 		ticketPanel.setBorder(new EmptyBorder(50, 50, 50, 50));
 
-		// CABECERA MODERNA
+		boolean isFiscal = pagoActual.getConcepto().contains("Fiscal");
+
 		JLabel lblLogo = new JLabel("\u221E Altice");
 		lblLogo.setFont(new Font("Arial", Font.BOLD, 48));
 		lblLogo.setForeground(new Color(15, 15, 15));
 		lblLogo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		JLabel lblTitle = new JLabel("FACTURA COMERCIAL");
-		lblTitle.setFont(new Font("Arial", Font.PLAIN, 18));
+		JLabel lblTitle = new JLabel(isFiscal ? "FACTURA DE CRÉDITO FISCAL" : "FACTURA COMERCIAL");
+		lblTitle.setFont(new Font("Arial", Font.BOLD, 18));
 		lblTitle.setForeground(new Color(120, 120, 120));
 		lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 		
-		// MONTO EN GRANDE (ESTILO STRIPE/APPLE)
 		JLabel lblTotalAmount = new JLabel(String.format("$%.2f", pagoActual.getMonto()));
 		lblTotalAmount.setFont(new Font("Arial", Font.BOLD, 56));
 		lblTotalAmount.setForeground(new Color(15, 15, 15));
@@ -393,13 +454,22 @@ public class RegPago extends JDialog {
 		ticketPanel.add(lblLogo);
 		ticketPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 		ticketPanel.add(lblTitle);
+		
+		if (isFiscal) {
+			JLabel lblAlticeRnc = new JLabel("RNC Emisor: 1-30-01867-0");
+			lblAlticeRnc.setFont(new Font("Arial", Font.PLAIN, 15));
+			lblAlticeRnc.setForeground(new Color(100, 100, 100));
+			lblAlticeRnc.setAlignmentX(Component.CENTER_ALIGNMENT);
+			ticketPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+			ticketPanel.add(lblAlticeRnc);
+		}
+
 		ticketPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 		ticketPanel.add(lblTotalAmount);
 		ticketPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 		ticketPanel.add(lblExito);
 		ticketPanel.add(Box.createRigidArea(new Dimension(0, 35)));
 
-		// SEPARADOR MODERNO
 		JSeparator sep1 = new JSeparator();
 		sep1.setForeground(new Color(230, 230, 230));
 		sep1.setBackground(new Color(230, 230, 230));
@@ -413,10 +483,8 @@ public class RegPago extends JDialog {
 		ticketPanel.add(crearFilaDetalle("Fecha y Hora", sdf.format(pagoActual.getFecha())));
 		ticketPanel.add(crearFilaDetalle("No. Recibo", pagoActual.getIdPago()));
 		
-		// Lógica del NCF
-		boolean isFiscal = pagoActual.getConcepto().contains("Fiscal");
 		String ncfBase = isFiscal ? "B0100000" : "B0200000";
-		String secID = pagoActual.getIdPago().replaceAll("\\D+", ""); // Extrae números del ID
+		String secID = pagoActual.getIdPago().replaceAll("\\D+", "");
 		if (secID.isEmpty()) secID = "123";
 		String ncfFinal = ncfBase + secID;
 		
@@ -433,14 +501,40 @@ public class RegPago extends JDialog {
 		ticketPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
 		String idClient = pagoActual.getCliente().getTipoCliente().equals("Empresarial") ? pagoActual.getCliente().getRnc() : pagoActual.getCliente().getCedula();
-		String tipoId = pagoActual.getCliente().getTipoCliente().equals("Empresarial") ? "RNC" : "Cédula";
+		String tipoId = pagoActual.getCliente().getTipoCliente().equals("Empresarial") ? "RNC Cliente" : "Cédula";
+		String nombreLabel = isFiscal ? "Razón Social" : "Cliente";
 		
-		ticketPanel.add(crearFilaDetalle("Cliente", pagoActual.getCliente().getNombre()));
+		if (isFiscal && pagoActual.getConcepto().contains("RNC:")) {
+			String[] parts = pagoActual.getConcepto().split("RNC:");
+			if (parts.length > 1) {
+				idClient = parts[1].trim();
+				tipoId = "RNC Cliente";
+			}
+		}
+		
+		ticketPanel.add(crearFilaDetalle(nombreLabel, pagoActual.getCliente().getNombre()));
 		ticketPanel.add(crearFilaDetalle(tipoId, idClient));
 		
 		String conceptoLimpio = pagoActual.getConcepto().split("\\|")[0].trim();
 		ticketPanel.add(crearFilaDetalle("Concepto", conceptoLimpio));
 		ticketPanel.add(crearFilaDetalle("Método de Pago", pagoActual.getMetodoPago()));
+
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+		JSeparator sep3 = new JSeparator();
+		sep3.setForeground(new Color(230, 230, 230));
+		sep3.setBackground(new Color(230, 230, 230));
+		sep3.setMaximumSize(new Dimension(500, 2));
+		sep3.setAlignmentX(Component.CENTER_ALIGNMENT);
+		ticketPanel.add(sep3);
+		ticketPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
+		if (isFiscal) {
+			double subtotal = pagoActual.getMonto() / 1.18;
+			double itbis = pagoActual.getMonto() - subtotal;
+			ticketPanel.add(crearFilaDetalle("Subtotal", String.format("$%.2f", subtotal)));
+			ticketPanel.add(crearFilaDetalle("ITBIS (18%)", String.format("$%.2f", itbis)));
+		}
+		ticketPanel.add(crearFilaDetalle("Total Facturado", String.format("$%.2f", pagoActual.getMonto())));
 
 		ticketPanel.add(Box.createRigidArea(new Dimension(0, 40)));
 		
@@ -464,7 +558,7 @@ public class RegPago extends JDialog {
 		bottomPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
 
 		RoundedButton btnCerrar = new RoundedButton("Cerrar Comprobante", 25);
-		btnCerrar.setBackground(new Color(20, 20, 20)); // Negro elegante
+		btnCerrar.setBackground(new Color(20, 20, 20)); 
 		btnCerrar.setForeground(Color.WHITE);
 		btnCerrar.setFont(new Font("Arial", Font.BOLD, 16));
 		btnCerrar.setPreferredSize(new Dimension(300, 55));
@@ -580,7 +674,6 @@ public class RegPago extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			// Dibujar Sombra Suave
 			g2.setColor(new Color(0, 0, 0, 15));
 			g2.fillRoundRect(2, 2, getWidth() - 2, getHeight() - 2, radius, radius);
 			
