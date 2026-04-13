@@ -21,6 +21,9 @@ import javax.swing.JDialog;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.JList;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.Icon;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -32,6 +35,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Rectangle;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -103,17 +107,18 @@ public class Planes extends JFrame {
 		JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		actionPanel.setOpaque(false);
 
+		// Botón de Volver en gris metálico
 		RoundedButton btnVolver = new RoundedButton("\u25C0 Volver al Inicio", 25);
-		btnVolver.setBackground(new Color(40, 40, 40));
+		btnVolver.setBackground(new Color(108, 117, 125));
 		btnVolver.setForeground(Color.WHITE);
 		btnVolver.setFont(new Font("Arial", Font.BOLD, 14));
 		btnVolver.setPreferredSize(new Dimension(190, 45));
 		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnVolver.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { btnVolver.setBackground(new Color(60, 60, 60)); }
+			public void mouseEntered(MouseEvent e) { btnVolver.setBackground(new Color(130, 140, 150)); }
 			@Override
-			public void mouseExited(MouseEvent e) { btnVolver.setBackground(new Color(40, 40, 40)); }
+			public void mouseExited(MouseEvent e) { btnVolver.setBackground(new Color(108, 117, 125)); }
 		});
 		btnVolver.addActionListener(e -> {
 			Principal principal = new Principal(empleadoLogueado);
@@ -256,7 +261,7 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuAsignacion(String categoriaTitulo, String categoriaReal) {
 		JDialog dialog = new JDialog(this, "Asignación de Plan", true);
-		dialog.setSize(900, 650);
+		dialog.setSize(1000, 700); // Ventana más grande
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -277,10 +282,8 @@ public class Planes extends JFrame {
 		lblSeleccionarPlan.setFont(new Font("Arial", Font.BOLD, 14));
 		lblSeleccionarPlan.setForeground(new Color(30, 30, 30));
 
-		JComboBox<String> cbPlanes = new JComboBox<>();
-		cbPlanes.setPreferredSize(new Dimension(300, 35));
-		cbPlanes.setFont(new Font("Arial", Font.PLAIN, 14));
-		cbPlanes.setBackground(Color.WHITE);
+		RoundedComboBox<String> cbPlanes = new RoundedComboBox<>(15);
+		cbPlanes.setPreferredSize(new Dimension(350, 35));
 		cbPlanes.addItem("<Seleccione un plan>");
 		
 		for (Plan p : Altice.getInstance().getPlanes()) {
@@ -293,13 +296,9 @@ public class Planes extends JFrame {
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		lblBuscar.setForeground(new Color(30, 30, 30));
 		
-		JTextField txtBuscarCliente = new JTextField();
-		txtBuscarCliente.setPreferredSize(new Dimension(250, 35));
+		RoundedTextField txtBuscarCliente = new RoundedTextField(15);
+		txtBuscarCliente.setPreferredSize(new Dimension(300, 35));
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtBuscarCliente.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createLineBorder(new Color(200, 200, 200)), 
-			new EmptyBorder(0, 10, 0, 10)
-		));
 
 		topPanel.add(lblSeleccionarPlan);
 		topPanel.add(cbPlanes);
@@ -419,7 +418,7 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuConsultas() {
 		JDialog dialog = new JDialog(this, "Control de Asignaciones", true);
-		dialog.setSize(1100, 650);
+		dialog.setSize(1200, 700); // Ventana más grande para que quepan todos los filtros
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -438,27 +437,25 @@ public class Planes extends JFrame {
 
 		JLabel lblEstado = new JLabel("Estado Plan:");
 		lblEstado.setFont(new Font("Arial", Font.BOLD, 14));
-		JComboBox<String> cbEstado = new JComboBox<>(new String[]{"Todos", "Activos", "Desactivados"});
-		cbEstado.setFont(new Font("Arial", Font.PLAIN, 14));
-		cbEstado.setBackground(Color.WHITE);
-		cbEstado.setPreferredSize(new Dimension(130, 35));
+		RoundedComboBox<String> cbEstado = new RoundedComboBox<>(15);
+		cbEstado.addItem("Todos");
+		cbEstado.addItem("Activos");
+		cbEstado.addItem("Desactivados");
+		cbEstado.setPreferredSize(new Dimension(160, 35));
 
 		JLabel lblTipo = new JLabel("Tipo Cliente:");
 		lblTipo.setFont(new Font("Arial", Font.BOLD, 14));
-		JComboBox<String> cbTipo = new JComboBox<>(new String[]{"Todos", "Personales", "Empresariales"});
-		cbTipo.setFont(new Font("Arial", Font.PLAIN, 14));
-		cbTipo.setBackground(Color.WHITE);
-		cbTipo.setPreferredSize(new Dimension(130, 35));
+		RoundedComboBox<String> cbTipo = new RoundedComboBox<>(15);
+		cbTipo.addItem("Todos");
+		cbTipo.addItem("Personales");
+		cbTipo.addItem("Empresariales");
+		cbTipo.setPreferredSize(new Dimension(160, 35));
 
 		JLabel lblBuscar = new JLabel("Buscar (Nombre/RNC):");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
-		JTextField txtBuscar = new JTextField();
-		txtBuscar.setPreferredSize(new Dimension(200, 35));
+		RoundedTextField txtBuscar = new RoundedTextField(15);
+		txtBuscar.setPreferredSize(new Dimension(250, 35));
 		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtBuscar.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createLineBorder(new Color(200, 200, 200)), 
-			new EmptyBorder(0, 10, 0, 10)
-		));
 
 		topPanel.add(lblEstado);
 		topPanel.add(cbEstado);
@@ -622,6 +619,81 @@ public class Planes extends JFrame {
 		public int getIconHeight() { return 24; }
 	}
 
+	class RoundedComboBox<E> extends JComboBox<E> {
+		private int radius;
+
+		public RoundedComboBox(int radius) {
+			super();
+			this.radius = radius;
+			setOpaque(false);
+			setFont(new Font("Arial", Font.BOLD, 14));
+			setBackground(new Color(240, 240, 240));
+			setForeground(new Color(50, 50, 50));
+			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+			setUI(new BasicComboBoxUI() {
+				@Override
+				protected JButton createArrowButton() {
+					JButton button = new JButton("\u25BC");
+					button.setFont(new Font("Arial", Font.PLAIN, 10));
+					button.setForeground(new Color(150, 150, 150));
+					button.setContentAreaFilled(false);
+					button.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+					button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+					button.setFocusPainted(false);
+					button.setOpaque(false);
+					return button;
+				}
+				@Override
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {}
+			});
+
+			setRenderer(new DefaultListCellRenderer() {
+				@Override
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+					label.setBorder(new EmptyBorder(8, 10, 8, 10));
+					label.setFont(new Font("Arial", Font.BOLD, 14));
+					if (index == -1) {
+						label.setOpaque(false);
+						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
+						else label.setForeground(new Color(150, 150, 150));
+					} else {
+						label.setOpaque(true);
+						if (isSelected) {
+							label.setBackground(new Color(0, 60, 130));
+							label.setForeground(Color.WHITE);
+						} else {
+							label.setBackground(Color.WHITE);
+							label.setForeground(new Color(50, 50, 50));
+						}
+					}
+					return label;
+				}
+			});
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(200, 200, 200));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
+		}
+	}
+
 	class RoundedPanel extends JPanel {
 		private int radius;
 		public RoundedPanel(int radius) {
@@ -638,6 +710,33 @@ public class Planes extends JFrame {
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
+		}
+	}
+
+	class RoundedTextField extends JTextField {
+		private int radius;
+		public RoundedTextField(int radius) {
+			this.radius = radius;
+			setOpaque(false);
+			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+		}
+		@Override
+		protected void paintComponent(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(getBackground());
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
+			g2.dispose();
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(200, 200, 200));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
 		}
 	}
 
