@@ -118,7 +118,7 @@ public class Login extends JFrame {
 
 		RoundedButton btnLogin = new RoundedButton("INICIAR SESIÓN", 25);
 		btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnLogin.setBackground(new Color(0, 102, 204)); // Azul Altice
+		btnLogin.setBackground(new Color(0, 102, 204)); 
 		btnLogin.setForeground(Color.WHITE);
 		btnLogin.setFont(new Font("Arial", Font.BOLD, 15));
 		btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -128,11 +128,11 @@ public class Login extends JFrame {
 		btnLogin.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				btnLogin.setBackground(new Color(0, 80, 160)); // Azul más oscuro
+				btnLogin.setBackground(new Color(0, 80, 160));
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				btnLogin.setBackground(new Color(0, 102, 204)); // Vuelve al Azul Altice
+				btnLogin.setBackground(new Color(0, 102, 204)); 
 			}
 		});
 
@@ -216,7 +216,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(Color.WHITE);
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			g2.setColor(new Color(220, 220, 220)); // Borde más claro y moderno
+			g2.setColor(new Color(220, 220, 220)); 
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
@@ -238,7 +238,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(Color.WHITE);
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			g2.setColor(new Color(220, 220, 220)); // Borde más claro y moderno
+			g2.setColor(new Color(220, 220, 220)); 
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
@@ -262,7 +262,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
 			if (getModel().isPressed()) {
-				g2.setColor(new Color(0, 60, 120)); // Azul al presionar
+				g2.setColor(new Color(0, 60, 120)); 
 			} else {
 				g2.setColor(getBackground());
 			}
