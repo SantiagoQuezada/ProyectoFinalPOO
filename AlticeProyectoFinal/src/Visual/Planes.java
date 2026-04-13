@@ -434,7 +434,8 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuConsultas() {
 		JDialog dialog = new JDialog(this, "Control de Asignaciones", true);
-		dialog.setSize(1000, 650);
+		// Aumenté el ancho del modal de 1000 a 1100 para evitar que se corten los componentes
+		dialog.setSize(1100, 650);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
