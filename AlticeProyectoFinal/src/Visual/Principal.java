@@ -2,6 +2,7 @@ package Visual;
 
 import Logico.Empleado;
 import Logico.Altice;
+import Logico.ChatServidor; // Importamos el servidor
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -44,9 +45,10 @@ public class Principal extends JFrame {
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// Implementación del Shutdown Hook: 
-		// Esto garantiza que sin importar de qué ventana cierres el programa, 
-		// SIEMPRE se guardarán los datos antes de que la máquina virtual de Java muera.
+		
+		ChatServidor.iniciarServidor();
+
+		
 		if (!hookRegistrado) {
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				Altice.guardarDatos();
@@ -54,7 +56,6 @@ public class Principal extends JFrame {
 			hookRegistrado = true;
 		}
 
-		// Como tenemos el Hook, ya solo necesitamos la acción de cierre por defecto
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
@@ -132,7 +133,7 @@ public class Principal extends JFrame {
 
 		centerPanel.add(Box.createRigidArea(new Dimension(0, 50)));
 
-		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		cardsPanel.setOpaque(false);
 
 		RoundedPanel cardClientes = crearTarjetaModulo(
@@ -179,6 +180,19 @@ public class Principal extends JFrame {
 			}
 		);
 
+		// Tarjeta para el Nuevo Módulo de Chat
+		RoundedPanel cardChat = crearTarjetaModulo(
+			"💬", 
+			"Chat Interno", 
+			"Comunicación entre empleados", 
+			e -> {
+				ChatVentana chat = new ChatVentana(empleadoLogueado);
+				chat.setVisible(true);
+				// NOTA: No usamos dispose() aquí porque queremos que el chat 
+				// sea una ventana emergente sin cerrar el menú principal.
+			}
+		);
+
 		cardsPanel.add(cardClientes);
 		cardsPanel.add(cardPlanes);
 		cardsPanel.add(cardPagos);
@@ -188,6 +202,9 @@ public class Principal extends JFrame {
 			empleadoLogueado.getUsuario().getRol().toString().equals("ADMINISTRADOR")) {
 			cardsPanel.add(cardEmpleados);
 		}
+		
+		// Agregamos el módulo de Chat para que lo vean todos
+		cardsPanel.add(cardChat);
 
 		centerPanel.add(cardsPanel);
 		wrapperPanel.add(centerPanel);
@@ -232,23 +249,23 @@ public class Principal extends JFrame {
 	private RoundedPanel crearTarjetaModulo(String icono, String titulo, String desc, ActionListener accion) {
 		RoundedPanel tarjeta = new RoundedPanel(40);
 		tarjeta.setLayout(new BoxLayout(tarjeta, BoxLayout.Y_AXIS));
-		tarjeta.setPreferredSize(new Dimension(320, 380));
+		tarjeta.setPreferredSize(new Dimension(300, 360));
 		tarjeta.setBackground(Color.WHITE);
-		tarjeta.setBorder(new EmptyBorder(40, 30, 40, 30));
+		tarjeta.setBorder(new EmptyBorder(30, 20, 30, 20));
 
 		JLabel lblIcono = new JLabel(icono);
-		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 80));
+		lblIcono.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 70));
 		lblIcono.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblIcono.setHorizontalAlignment(JLabel.CENTER);
 
 		JLabel lblTitulo = new JLabel(titulo);
-		lblTitulo.setFont(new Font("Arial", Font.BOLD, 22));
+		lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
 		lblTitulo.setForeground(new Color(10, 10, 10));
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblTitulo.setHorizontalAlignment(JLabel.CENTER);
 
-		JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 220px;'>" + desc + "</div></html>");
-		lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
+		JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 200px;'>" + desc + "</div></html>");
+		lblDesc.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblDesc.setForeground(new Color(120, 120, 120));
 		lblDesc.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblDesc.setHorizontalAlignment(JLabel.CENTER);
@@ -257,10 +274,10 @@ public class Principal extends JFrame {
 		boton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		boton.setBackground(new Color(0, 102, 204)); 
 		boton.setForeground(Color.WHITE);
-		boton.setFont(new Font("Arial", Font.BOLD, 14));
+		boton.setFont(new Font("Arial", Font.BOLD, 13));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setMaximumSize(new Dimension(260, 50));
-		boton.setPreferredSize(new Dimension(260, 50));
+		boton.setMaximumSize(new Dimension(220, 45));
+		boton.setPreferredSize(new Dimension(220, 45));
 
 		boton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -277,11 +294,11 @@ public class Principal extends JFrame {
 
 		tarjeta.add(Box.createVerticalGlue());
 		tarjeta.add(lblIcono);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 25)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 20)));
 		tarjeta.add(lblTitulo);
 		tarjeta.add(Box.createRigidArea(new Dimension(0, 10)));
 		tarjeta.add(lblDesc);
-		tarjeta.add(Box.createRigidArea(new Dimension(0, 40)));
+		tarjeta.add(Box.createRigidArea(new Dimension(0, 30)));
 		tarjeta.add(boton);
 		tarjeta.add(Box.createVerticalGlue());
 
