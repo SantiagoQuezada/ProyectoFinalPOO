@@ -52,42 +52,10 @@ public class Empleados extends JFrame {
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
 		headerPanel.setBorder(new EmptyBorder(15, 40, 15, 40));
 
-		JPanel leftHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
-		leftHeaderPanel.setOpaque(false);
-
-		RoundedButton btnVolver = new RoundedButton("\u25C0 Volver al Inicio", 20);
-		btnVolver.setBackground(new Color(40, 40, 40));
-		btnVolver.setForeground(Color.WHITE);
-		btnVolver.setFont(new Font("Arial", Font.BOLD, 13));
-		btnVolver.setPreferredSize(new Dimension(150, 35));
-		btnVolver.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
-		btnVolver.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnVolver.setBackground(new Color(60, 60, 60));
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnVolver.setBackground(new Color(40, 40, 40));
-			}
-		});
-
-		btnVolver.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Principal principal = new Principal(empleadoLogueado);
-				principal.setVisible(true);
-				dispose();
-			}
-		});
-
-		JLabel lblLogo = new JLabel("  \u221E Altice");
-		lblLogo.setFont(new Font("Arial", Font.BOLD, 28));
+		JLabel lblLogo = new JLabel("\u221E Altice");
+		lblLogo.setFont(new Font("Arial", Font.BOLD, 32));
 		lblLogo.setForeground(Color.WHITE);
-
-		leftHeaderPanel.add(btnVolver);
-		leftHeaderPanel.add(lblLogo);
-		headerPanel.add(leftHeaderPanel, BorderLayout.WEST);
+		headerPanel.add(lblLogo, BorderLayout.WEST);
 
 		JPanel rightHeaderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
 		rightHeaderPanel.setOpaque(false);
@@ -108,7 +76,7 @@ public class Empleados extends JFrame {
 		
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
-		lblUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
 		
 		rightHeaderPanel.add(lblUser);
@@ -151,6 +119,7 @@ public class Empleados extends JFrame {
 		};
 		
 		tablaEmpleados = new JTable(modeloTabla);
+		tablaEmpleados.setFillsViewportHeight(true);
 		tablaEmpleados.setRowHeight(45);
 		tablaEmpleados.setFont(new Font("Arial", Font.PLAIN, 14));
 		tablaEmpleados.setForeground(new Color(15, 15, 15));
@@ -211,11 +180,11 @@ public class Empleados extends JFrame {
 
 		JScrollPane scrollPane = new JScrollPane(tablaEmpleados);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		scrollPane.getViewport().setBackground(new Color(240, 240, 240));
+		scrollPane.getViewport().setBackground(Color.WHITE);
 
 		RoundedPanel tableWrapper = new RoundedPanel(20);
 		tableWrapper.setLayout(new BorderLayout());
-		tableWrapper.setBackground(new Color(240, 240, 240));
+		tableWrapper.setBackground(Color.WHITE);
 		tableWrapper.setBorder(new EmptyBorder(10, 10, 10, 10));
 		tableWrapper.add(scrollPane, BorderLayout.CENTER);
 
@@ -223,6 +192,15 @@ public class Empleados extends JFrame {
 
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanel.setBackground(new Color(245, 247, 250));
+
+		RoundedButton btnVolver = crearBotonCRUD("\u25C0 Volver al Inicio", new Color(40, 40, 40), new Color(60, 60, 60));
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Principal principal = new Principal(empleadoLogueado);
+				principal.setVisible(true);
+				dispose();
+			}
+		});
 
 		RoundedButton btnCrear = crearBotonCRUD("Agregar Empleado", new Color(0, 102, 204), new Color(0, 80, 160));
 		btnCrear.addActionListener(new ActionListener() {
@@ -281,6 +259,8 @@ public class Empleados extends JFrame {
 			}
 		});
 
+		crudPanel.add(btnVolver);
+		crudPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Separador
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
 		crudPanel.add(btnActualizar);
@@ -351,22 +331,14 @@ public class Empleados extends JFrame {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
-			
-			g2.fillOval(x + 4, y, 8, 8);
-			g2.fillArc(x, y + 9, 16, 12, 0, 180);
-			
+			g2.fillOval(x + 6, y + 2, 12, 12);
+			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			g2.dispose();
 		}
-
 		@Override
-		public int getIconWidth() {
-			return 16;
-		}
-
+		public int getIconWidth() { return 24; }
 		@Override
-		public int getIconHeight() {
-			return 16;
-		}
+		public int getIconHeight() { return 24; }
 	}
 
 	class RoundedPanel extends JPanel {

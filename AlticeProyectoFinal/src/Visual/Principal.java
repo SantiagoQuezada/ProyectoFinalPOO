@@ -59,8 +59,8 @@ public class Principal extends JFrame {
 		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
 		
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
-		lblUser.setIcon(new UserIcon()); // Icono de personita generado nativamente
-		lblUser.setFont(new Font("Arial", Font.PLAIN, 15));
+		lblUser.setIcon(new UserIcon()); // Icono de personita más grande
+		lblUser.setFont(new Font("Arial", Font.BOLD, 17)); // Letras en Bold y más grandes
 		lblUser.setForeground(new Color(220, 220, 220));
 
 		RoundedButton btnLogout = new RoundedButton("Cerrar Sesión", 20);
@@ -219,7 +219,7 @@ public class Principal extends JFrame {
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblTitulo.setHorizontalAlignment(JLabel.CENTER);
 
-	
+		// Ancho fijo en HTML para forzar el centrado
 		JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 220px;'>" + desc + "</div></html>");
 		lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
 		lblDesc.setForeground(new Color(120, 120, 120));
@@ -261,6 +261,7 @@ public class Principal extends JFrame {
 		return tarjeta;
 	}
 
+	// Icono personalizado de usuario con tamaño y proporciones mejoradas
 	class UserIcon implements Icon {
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -268,22 +269,22 @@ public class Principal extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
 			
-			// Cabeza
-			g2.fillOval(x + 4, y, 8, 8);
-			// Cuerpo
-			g2.fillArc(x, y + 9, 16, 12, 0, 180);
+			// Cabeza más grande y centrada
+			g2.fillOval(x + 6, y + 2, 12, 12);
+			// Cuerpo proporcionado al nuevo tamaño
+			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			
 			g2.dispose();
 		}
 
 		@Override
 		public int getIconWidth() {
-			return 16;
+			return 24; // Ancho ajustado
 		}
 
 		@Override
 		public int getIconHeight() {
-			return 16;
+			return 24; // Altura ajustada
 		}
 	}
 
