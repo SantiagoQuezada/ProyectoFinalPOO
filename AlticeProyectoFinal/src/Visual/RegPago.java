@@ -266,6 +266,20 @@ public class RegPago extends JDialog {
 		txtMonto.setFont(new Font("Arial", Font.BOLD, 22));
 		txtMonto.setForeground(new Color(0, 150, 50));
 		txtMonto.setBounds(180, 560, 350, 45);
+		
+		// Validar que solo acepte números y un punto decimal
+		txtMonto.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c) && c != '.') {
+					e.consume();
+				}
+				if (c == '.' && txtMonto.getText().contains(".")) {
+					e.consume();
+				}
+			}
+		});
 		contentPanel.add(txtMonto);
 
 		listClientes.addListSelectionListener(e -> {
