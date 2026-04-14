@@ -47,7 +47,7 @@ public class Clientes extends JFrame {
 	private DefaultTableModel modeloTabla;
 	private JTable tablaClientes;
 	private Empleado empleadoLogueado;
-	
+
 	private RoundedTextField txtBuscar;
 	private RoundedComboBox<String> cbxFiltroTipo;
 	private RoundedComboBox<String> cbxFiltroEstado;
@@ -76,13 +76,15 @@ public class Clientes extends JFrame {
 		rightHeaderPanel.setOpaque(false);
 
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
-		
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null)
+				? empleadoLogueado.getUsuario().getRol().toString()
+				: "Admin";
+
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
 		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
-		
+
 		rightHeaderPanel.add(lblUser);
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
@@ -162,12 +164,15 @@ public class Clientes extends JFrame {
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
 		// --- Tabla ---
-		String[] columnas = {"ID", "Tipo", "Cédula / RNC", "Nombre o Empresa", "Teléfono", "Estado", "Plan Contratado", "Fecha Asignación"};
+		String[] columnas = { "ID", "Tipo", "Cédula / RNC", "Nombre o Empresa", "Teléfono", "Estado", "Plan Contratado",
+				"Fecha Asignación" };
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
-			public boolean isCellEditable(int row, int column) { return false; }
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
 		};
-		
+
 		tablaClientes = new JTable(modeloTabla);
 		tablaClientes.setFillsViewportHeight(true);
 		tablaClientes.setRowHeight(45);
@@ -184,8 +189,10 @@ public class Clientes extends JFrame {
 		JTableHeader header = tablaClientes.getTableHeader();
 		header.setDefaultRenderer(new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+						column);
 				label.setBackground(new Color(15, 15, 15));
 				label.setForeground(Color.WHITE);
 				label.setFont(new Font("Arial", Font.BOLD, 13));
@@ -199,14 +206,17 @@ public class Clientes extends JFrame {
 
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
 				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
-				
+
 				if (!isSelected) {
-					if (row % 2 == 0) c.setBackground(new Color(250, 250, 250));
-					else c.setBackground(new Color(240, 240, 240));
+					if (row % 2 == 0)
+						c.setBackground(new Color(250, 250, 250));
+					else
+						c.setBackground(new Color(240, 240, 240));
 					c.setForeground(new Color(15, 15, 15));
 				}
 				return c;
@@ -271,12 +281,14 @@ public class Clientes extends JFrame {
 					RegCliente modalReg = new RegCliente(cliente, true);
 					modalReg.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
 
-		RoundedButton btnActualizar = crearBotonCRUD("Editar Seleccionado", new Color(230, 126, 34), new Color(200, 100, 20));
+		RoundedButton btnActualizar = crearBotonCRUD("Editar Seleccionado", new Color(230, 126, 34),
+				new Color(200, 100, 20));
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaClientes.getSelectedRow();
@@ -287,7 +299,8 @@ public class Clientes extends JFrame {
 					modalReg.setVisible(true);
 					cargarClientes();
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -299,19 +312,23 @@ public class Clientes extends JFrame {
 				if (filaSeleccionada >= 0) {
 					String idCliente = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
 					String estadoActual = (String) modeloTabla.getValueAt(filaSeleccionada, 5);
-					
+
 					if (estadoActual.equalsIgnoreCase("Inactivo")) {
-						JOptionPane.showMessageDialog(null, "Este cliente ya se encuentra inactivo.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Este cliente ya se encuentra inactivo.", "Información",
+								JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
-					
-					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea dar de baja al cliente " + idCliente + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+					int confirm = JOptionPane.showConfirmDialog(null,
+							"¿Seguro que desea dar de baja al cliente " + idCliente + "?", "Confirmar",
+							JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
 						Altice.getInstance().eliminarCliente(idCliente);
 						cargarClientes();
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -340,7 +357,9 @@ public class Clientes extends JFrame {
 		// Eventos de Filtro
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) { cargarClientes(); }
+			public void keyReleased(KeyEvent e) {
+				cargarClientes();
+			}
 		});
 		cbxFiltroTipo.addActionListener(e -> cargarClientes());
 		cbxFiltroEstado.addActionListener(e -> cargarClientes());
@@ -354,27 +373,26 @@ public class Clientes extends JFrame {
 
 	private void cargarClientes() {
 		modeloTabla.setRowCount(0);
-		
+
 		String busq = txtBuscar != null ? txtBuscar.getText().toLowerCase() : "";
 		String fTipo = cbxFiltroTipo != null ? cbxFiltroTipo.getSelectedItem().toString() : "Todos";
 		String fEstado = cbxFiltroEstado != null ? cbxFiltroEstado.getSelectedItem().toString() : "Todos";
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		
+
 		for (Cliente c : Altice.getInstance().getClientes()) {
-			boolean matchBusq = c.getNombre().toLowerCase().contains(busq) || 
-								c.getCedula().toLowerCase().contains(busq) || 
-								(c.getRnc() != null && c.getRnc().toLowerCase().contains(busq));
-								
-			boolean matchTipo = fTipo.equals("Todos") || 
-								(fTipo.equals("Personales") && c.getTipoCliente().equalsIgnoreCase("Personal")) ||
-								(fTipo.equals("Empresariales") && c.getTipoCliente().equalsIgnoreCase("Empresarial"));
-								
+			boolean matchBusq = c.getNombre().toLowerCase().contains(busq) || c.getCedula().toLowerCase().contains(busq)
+					|| (c.getRnc() != null && c.getRnc().toLowerCase().contains(busq));
+
+			boolean matchTipo = fTipo.equals("Todos")
+					|| (fTipo.equals("Personales") && c.getTipoCliente().equalsIgnoreCase("Personal"))
+					|| (fTipo.equals("Empresariales") && c.getTipoCliente().equalsIgnoreCase("Empresarial"));
+
 			String estadoC = c.getEstado() != null ? c.getEstado() : "Activo";
-			boolean matchEstado = fEstado.equals("Todos") || 
-								  (fEstado.equals("Activos") && estadoC.equalsIgnoreCase("Activo")) ||
-								  (fEstado.equals("Inactivos") && estadoC.equalsIgnoreCase("Inactivo")) ||
-								  (fEstado.equals("Suspendidos") && estadoC.equalsIgnoreCase("Suspendido"));
+			boolean matchEstado = fEstado.equals("Todos")
+					|| (fEstado.equals("Activos") && estadoC.equalsIgnoreCase("Activo"))
+					|| (fEstado.equals("Inactivos") && estadoC.equalsIgnoreCase("Inactivo"))
+					|| (fEstado.equals("Suspendidos") && estadoC.equalsIgnoreCase("Suspendido"));
 
 			if (matchBusq && matchTipo && matchEstado) {
 				String nombrePlan = "Sin Plan";
@@ -385,9 +403,9 @@ public class Clientes extends JFrame {
 						fecha = sdf.format(c.getFechaAsignacionPlan());
 					}
 				}
-				
+
 				String identificacion = c.getTipoCliente().equals("Empresarial") ? c.getRnc() : c.getCedula();
-				
+
 				Object[] fila = new Object[8];
 				fila[0] = c.getIdCliente();
 				fila[1] = c.getTipoCliente();
@@ -412,9 +430,14 @@ public class Clientes extends JFrame {
 
 		boton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { boton.setBackground(bgHover); }
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(bgHover);
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) { boton.setBackground(bgDefault); }
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(bgDefault);
+			}
 		});
 
 		return boton;
@@ -430,10 +453,16 @@ public class Clientes extends JFrame {
 			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			g2.dispose();
 		}
+
 		@Override
-		public int getIconWidth() { return 24; }
+		public int getIconWidth() {
+			return 24;
+		}
+
 		@Override
-		public int getIconHeight() { return 24; }
+		public int getIconHeight() {
+			return 24;
+		}
 	}
 
 	class RoundedComboBox<E> extends JComboBox<E> {
@@ -461,20 +490,26 @@ public class Clientes extends JFrame {
 					button.setOpaque(false);
 					return button;
 				}
+
 				@Override
-				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {}
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+				}
 			});
 
 			setRenderer(new DefaultListCellRenderer() {
 				@Override
-				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+						boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
 					label.setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD en la lista
 					if (index == -1) {
 						label.setOpaque(false);
-						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
-						else label.setForeground(new Color(150, 150, 150));
+						if (RoundedComboBox.this.isEnabled())
+							label.setForeground(new Color(50, 50, 50));
+						else
+							label.setForeground(new Color(150, 150, 150));
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
@@ -513,10 +548,12 @@ public class Clientes extends JFrame {
 
 	class RoundedPanel extends JPanel {
 		private int radius;
+
 		public RoundedPanel(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -527,6 +564,7 @@ public class Clientes extends JFrame {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -539,11 +577,13 @@ public class Clientes extends JFrame {
 
 	class RoundedTextField extends JTextField {
 		private int radius;
+
 		public RoundedTextField(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -554,6 +594,7 @@ public class Clientes extends JFrame {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -566,6 +607,7 @@ public class Clientes extends JFrame {
 
 	class RoundedButton extends JButton {
 		private int radius;
+
 		public RoundedButton(String text, int radius) {
 			super(text);
 			this.radius = radius;
@@ -573,6 +615,7 @@ public class Clientes extends JFrame {
 			setFocusPainted(false);
 			setBorderPainted(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
