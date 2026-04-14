@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Cliente extends Persona implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String idCliente;
 	private String tipoCliente;
@@ -13,9 +13,10 @@ public class Cliente extends Persona implements Serializable {
 	private Contrato contrato;
 	private String estado;
 	private float deudaActiva;
-	private Date fechaAsignacionPlan; 
+	private Date fechaAsignacionPlan;
 
-	public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String tipoCliente, String rnc, Plan plan, Contrato contrato, String estado) {
+	public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente,
+			String tipoCliente, String rnc, Plan plan, Contrato contrato, String estado) {
 		super(cedula, nombre, telefono, direccion);
 		this.idCliente = idCliente;
 		this.tipoCliente = tipoCliente;
@@ -26,8 +27,8 @@ public class Cliente extends Persona implements Serializable {
 		this.deudaActiva = 0.0f;
 	}
 
-
-	public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado, Plan plan, String tipoCliente, String rnc) {
+	public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado,
+			Plan plan, String tipoCliente, String rnc) {
 		super(cedula, nombre, telefono, direccion);
 		this.idCliente = idCliente;
 		this.estado = estado;
@@ -39,7 +40,8 @@ public class Cliente extends Persona implements Serializable {
 
 	@Override
 	public String mostrarDetalles() {
-		return "ID: " + idCliente + " | Nombre: " + getNombre() + " | Cédula/RNC: " + (rnc != null && !rnc.isEmpty() ? rnc : getCedula());
+		return "ID: " + idCliente + " | Nombre: " + getNombre() + " | Cédula/RNC: "
+				+ (rnc != null && !rnc.isEmpty() ? rnc : getCedula());
 	}
 
 	public String getIdCliente() {
@@ -97,7 +99,7 @@ public class Cliente extends Persona implements Serializable {
 	public void setDeudaActiva(float deudaActiva) {
 		this.deudaActiva = deudaActiva;
 	}
-	
+
 	public Date getFechaAsignacionPlan() {
 		return fechaAsignacionPlan;
 	}
