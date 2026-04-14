@@ -55,12 +55,11 @@ public class RegEmpleado extends JDialog {
 		
 		setModal(true);
 		setResizable(false);
-		setSize(550, 800);
+		setSize(550, 750);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));
@@ -76,7 +75,6 @@ public class RegEmpleado extends JDialog {
 		headerPanel.add(lblDialogTitle);
 		getContentPane().add(headerPanel, BorderLayout.NORTH);
 
-		
 		JPanel centerContainer = new JPanel(new BorderLayout());
 		centerContainer.setBackground(new Color(245, 247, 250));
 		centerContainer.setBorder(new EmptyBorder(20, 25, 10, 25));
@@ -204,6 +202,20 @@ public class RegEmpleado extends JDialog {
 
 		txtSalario = new RoundedTextField(15);
 		txtSalario.setFont(new Font("Arial", Font.PLAIN, 14));
+		
+		// Validar que solo acepte números y un punto decimal
+		txtSalario.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c) && c != '.') {
+					e.consume();
+				}
+				if (c == '.' && txtSalario.getText().contains(".")) {
+					e.consume();
+				}
+			}
+		});
 		txtSalario.setBounds(180, 330, 280, 35);
 		contentPanel.add(txtSalario);
 
@@ -294,7 +306,6 @@ public class RegEmpleado extends JDialog {
 			cbxEstado.setBackground(colorDeshabilitado);
 		}
 
-	
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		buttonPane.setBackground(new Color(245, 247, 250));
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
@@ -420,7 +431,7 @@ public class RegEmpleado extends JDialog {
 		});
 	}
 
-
+	// --- Componentes Personalizados ---
 	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
@@ -429,7 +440,7 @@ public class RegEmpleado extends JDialog {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.PLAIN, 14));
+			setFont(new Font("Arial", Font.BOLD, 14));
 			setBackground(new Color(240, 240, 240)); 
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -604,10 +615,8 @@ public class RegEmpleado extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			
-			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
-			super.paintComponent(g2);
 			g2.dispose();
+			super.paintComponent(g);
 		}
 	}
 }
