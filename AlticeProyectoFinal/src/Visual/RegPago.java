@@ -76,11 +76,11 @@ public class RegPago extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(15, 15, 15));
 		headerPanel.setPreferredSize(new Dimension(620, 70));
 		
-		JLabel lblDialogTitle = new JLabel("💳 Procesar Nuevo Pago");
+		JLabel lblDialogTitle = new JLabel("Procesar Nuevo Pago");
 		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
 		lblDialogTitle.setForeground(Color.WHITE);
 		headerPanel.add(lblDialogTitle);
@@ -296,11 +296,17 @@ public class RegPago extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
-		btnCancelar.setBackground(new Color(200, 200, 200));
-		btnCancelar.setForeground(new Color(30, 30, 30));
+		btnCancelar.setBackground(new Color(220, 53, 69)); // Color Rojo
+		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
 		btnCancelar.setPreferredSize(new Dimension(130, 45));
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnCancelar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnCancelar.setBackground(new Color(180, 40, 50)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnCancelar.setBackground(new Color(220, 53, 69)); }
+		});
 		btnCancelar.addActionListener(e -> dispose());
 
 		RoundedButton btnRegistrar = new RoundedButton("Procesar Pago", 20);
@@ -607,12 +613,19 @@ public class RegPago extends JDialog {
 		bottomPanel.setBackground(new Color(230, 235, 240));
 		bottomPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
 
+		// Botón de Cerrar en el recibo (Rojo)
 		RoundedButton btnCerrar = new RoundedButton("Cerrar Comprobante", 25);
-		btnCerrar.setBackground(new Color(20, 20, 20)); 
+		btnCerrar.setBackground(new Color(220, 53, 69)); // Color Rojo
 		btnCerrar.setForeground(Color.WHITE);
 		btnCerrar.setFont(new Font("Arial", Font.BOLD, 16));
 		btnCerrar.setPreferredSize(new Dimension(300, 55));
 		btnCerrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		btnCerrar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnCerrar.setBackground(new Color(180, 40, 50)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnCerrar.setBackground(new Color(220, 53, 69)); }
+		});
 		btnCerrar.addActionListener(e -> dispose());
 		bottomPanel.add(btnCerrar);
 

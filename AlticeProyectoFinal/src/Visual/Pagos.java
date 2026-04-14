@@ -60,8 +60,9 @@ public class Pagos extends JFrame {
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
+		// --- Header Principal ---
 		JPanel headerPanel = new JPanel(new BorderLayout());
-		headerPanel.setBackground(new Color(15, 15, 15));
+		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
 		headerPanel.setBorder(new EmptyBorder(15, 40, 15, 40));
 
@@ -85,6 +86,7 @@ public class Pagos extends JFrame {
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
+		// --- Contenido Central ---
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout(0, 15));
 		centerPanel.setBackground(new Color(245, 247, 250));
@@ -97,12 +99,12 @@ public class Pagos extends JFrame {
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
 		panelTitulo.setBackground(new Color(245, 247, 250));
 
-		JLabel lblTituloPrincipal = new JLabel("💳 Historial de Pagos y Facturación");
+		JLabel lblTituloPrincipal = new JLabel("Historial de Pagos y Facturación");
 		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 32));
-		lblTituloPrincipal.setForeground(new Color(20, 20, 20));
+		lblTituloPrincipal.setForeground(new Color(10, 10, 10));
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		JLabel lblSubtitulo = new JLabel("Registro y consulta de todos los recibos y facturas en tiempo real.");
+		JLabel lblSubtitulo = new JLabel("Registro y consulta de todos los pagos realizados por los clientes.");
 		lblSubtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblSubtitulo.setForeground(new Color(100, 100, 100));
 		lblSubtitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -111,9 +113,10 @@ public class Pagos extends JFrame {
 		panelTitulo.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTitulo.add(lblSubtitulo);
 
-		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
+		// --- Panel de Filtros ---
+		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
 		filterPanel.setBackground(Color.WHITE);
-		filterPanel.setBorder(new EmptyBorder(5, 10, 5, 10));
+		filterPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		JLabel lblMetodo = new JLabel("Método:");
 		lblMetodo.setFont(new Font("Arial", Font.BOLD, 14));
@@ -134,19 +137,18 @@ public class Pagos extends JFrame {
 		cbxFiltroConcepto.addItem("Otros");
 		cbxFiltroConcepto.setPreferredSize(new Dimension(170, 40));
 
-		JLabel lblBuscar = new JLabel("Buscar en vivo (Cliente/ID/Cédula):");
+		JLabel lblBuscar = new JLabel("Buscar (Cliente/ID Pago):");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
-		lblBuscar.setForeground(new Color(0, 102, 204));
-		txtBuscar = new RoundedTextField(20);
-		txtBuscar.setPreferredSize(new Dimension(350, 40));
+		txtBuscar = new RoundedTextField(15);
+		txtBuscar.setPreferredSize(new Dimension(350, 40)); // Aumentado
 		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 15));
 
 		filterPanel.add(lblMetodo);
 		filterPanel.add(cbxFiltroMetodo);
-		filterPanel.add(Box.createRigidArea(new Dimension(15, 0)));
+		filterPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		filterPanel.add(lblConcepto);
 		filterPanel.add(cbxFiltroConcepto);
-		filterPanel.add(Box.createRigidArea(new Dimension(25, 0)));
+		filterPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		filterPanel.add(lblBuscar);
 		filterPanel.add(txtBuscar);
 
@@ -160,7 +162,8 @@ public class Pagos extends JFrame {
 
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
-		String[] columnas = {"ID Pago", "Cédula / RNC", "Cliente", "Fecha", "Monto", "Concepto/Comprobante", "Método de Pago"};
+		// --- Tabla ---
+		String[] columnas = {"ID Pago", "Cédula / RNC", "Cliente", "Fecha", "Monto", "Concepto", "Método de Pago"};
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
 			public boolean isCellEditable(int row, int column) { return false; }
@@ -168,10 +171,10 @@ public class Pagos extends JFrame {
 		
 		tablaPagos = new JTable(modeloTabla);
 		tablaPagos.setFillsViewportHeight(true);
-		tablaPagos.setRowHeight(50); // Filas más anchas y modernas
+		tablaPagos.setRowHeight(45);
 		tablaPagos.setFont(new Font("Arial", Font.PLAIN, 14));
-		tablaPagos.setForeground(new Color(40, 40, 40));
-		tablaPagos.setGridColor(new Color(230, 230, 230));
+		tablaPagos.setForeground(new Color(15, 15, 15));
+		tablaPagos.setGridColor(new Color(210, 210, 210));
 		tablaPagos.setSelectionBackground(new Color(0, 102, 204));
 		tablaPagos.setSelectionForeground(Color.WHITE);
 		tablaPagos.setShowVerticalLines(false);
@@ -184,9 +187,9 @@ public class Pagos extends JFrame {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				label.setBackground(new Color(20, 20, 20)); 
+				label.setBackground(new Color(15, 15, 15));
 				label.setForeground(Color.WHITE);
-				label.setFont(new Font("Arial", Font.BOLD, 14));
+				label.setFont(new Font("Arial", Font.BOLD, 13));
 				label.setHorizontalAlignment(JLabel.CENTER);
 				label.setBorder(new EmptyBorder(10, 10, 10, 10));
 				return label;
@@ -203,22 +206,17 @@ public class Pagos extends JFrame {
 				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
 				
 				if (!isSelected) {
-					if (row % 2 == 0) c.setBackground(Color.WHITE);
-					else c.setBackground(new Color(248, 250, 252));
-					c.setForeground(new Color(40, 40, 40));
+					if (row % 2 == 0) c.setBackground(new Color(250, 250, 250));
+					else c.setBackground(new Color(240, 240, 240));
+					c.setForeground(new Color(15, 15, 15));
 				}
 				
-			
-				if (column == 0) {
-					c.setFont(new Font("Arial", Font.BOLD, 14));
-				}
-				
-		
+				// Resaltar montos en verde
 				if (column == 4 && !isSelected) {
 				    c.setForeground(new Color(0, 150, 50));
-				    c.setFont(new Font("Arial", Font.BOLD, 16));
+				    c.setFont(new Font("Arial", Font.BOLD, 14));
 				} else if (column == 4 && isSelected) {
-				    c.setFont(new Font("Arial", Font.BOLD, 16));
+				    c.setFont(new Font("Arial", Font.BOLD, 14));
 				}
 				return c;
 			}
@@ -229,12 +227,12 @@ public class Pagos extends JFrame {
 		}
 
 		tablaPagos.getColumnModel().getColumn(0).setPreferredWidth(100);
-		tablaPagos.getColumnModel().getColumn(1).setPreferredWidth(120);
+		tablaPagos.getColumnModel().getColumn(1).setPreferredWidth(130);
 		tablaPagos.getColumnModel().getColumn(2).setPreferredWidth(220);
-		tablaPagos.getColumnModel().getColumn(3).setPreferredWidth(160);
-		tablaPagos.getColumnModel().getColumn(4).setPreferredWidth(110);
-		tablaPagos.getColumnModel().getColumn(5).setPreferredWidth(230);
-		tablaPagos.getColumnModel().getColumn(6).setPreferredWidth(130);
+		tablaPagos.getColumnModel().getColumn(3).setPreferredWidth(140);
+		tablaPagos.getColumnModel().getColumn(4).setPreferredWidth(100);
+		tablaPagos.getColumnModel().getColumn(5).setPreferredWidth(150);
+		tablaPagos.getColumnModel().getColumn(6).setPreferredWidth(150);
 
 		JScrollPane scrollPane = new JScrollPane(tablaPagos);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -248,10 +246,11 @@ public class Pagos extends JFrame {
 
 		centerPanel.add(tableWrapper, BorderLayout.CENTER);
 
+		// --- Botones CRUD ---
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanel.setBackground(new Color(245, 247, 250));
 
-		RoundedButton btnVolver = crearBotonCRUD("\u25C0 Volver al Inicio", new Color(108, 117, 125), new Color(130, 140, 150));
+		RoundedButton btnVolver = crearBotonCRUD("Volver al Inicio", new Color(0, 150, 136), new Color(0, 120, 110));
 		btnVolver.addActionListener(e -> {
 			Principal principal = new Principal(empleadoLogueado);
 			principal.setVisible(true);
@@ -262,10 +261,10 @@ public class Pagos extends JFrame {
 		btnCrear.addActionListener(e -> {
 			RegPago modalReg = new RegPago(null, false);
 			modalReg.setVisible(true);
-			cargarPagos(); 
+			cargarPagos();
 		});
 
-		RoundedButton btnLeer = crearBotonCRUD("Ver Factura", new Color(20, 20, 20), new Color(50, 50, 50));
+		RoundedButton btnLeer = crearBotonCRUD("Ver Recibo", new Color(60, 60, 60), new Color(80, 80, 80));
 		btnLeer.addActionListener(e -> {
 			int filaSeleccionada = tablaPagos.getSelectedRow();
 			if (filaSeleccionada >= 0) {
@@ -279,7 +278,7 @@ public class Pagos extends JFrame {
 			        modalReg.setVisible(true);
 			    }
 			} else {
-				javax.swing.JOptionPane.showMessageDialog(null, "Debe seleccionar un pago de la tabla para ver su factura.", "Atención", javax.swing.JOptionPane.WARNING_MESSAGE);
+				javax.swing.JOptionPane.showMessageDialog(null, "Debe seleccionar un pago de la tabla.", "Atención", javax.swing.JOptionPane.WARNING_MESSAGE);
 			}
 		});
 
@@ -295,14 +294,14 @@ public class Pagos extends JFrame {
 		JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		footerPanel.setBackground(new Color(245, 247, 250));
 		footerPanel.setBorder(new EmptyBorder(15, 0, 15, 0));
-		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Pagos y Facturación");
+		JLabel lblFooter = new JLabel("Altice \u00A9 2024 | Módulo de Pagos");
 		lblFooter.setFont(new Font("Arial", Font.PLAIN, 14));
 		lblFooter.setForeground(new Color(150, 150, 150));
 		footerPanel.add(lblFooter);
 
 		add(footerPanel, BorderLayout.SOUTH);
 
-		// Listeners para FILTRADO EN VIVO
+		// Eventos de Filtro
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) { cargarPagos(); }
@@ -324,7 +323,7 @@ public class Pagos extends JFrame {
 		String fMetodo = cbxFiltroMetodo != null ? cbxFiltroMetodo.getSelectedItem().toString() : "Todos";
 		String fConcepto = cbxFiltroConcepto != null ? cbxFiltroConcepto.getSelectedItem().toString() : "Todos";
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
 		for (Pago p : Altice.getInstance().getPagos()) {
 		    String identificacion = p.getCliente().getTipoCliente().equals("Empresarial") ? p.getCliente().getRnc() : p.getCliente().getCedula();
@@ -334,7 +333,7 @@ public class Pagos extends JFrame {
 								identificacion.contains(busq);
 								
 			boolean matchMetodo = fMetodo.equals("Todos") || p.getMetodoPago().equalsIgnoreCase(fMetodo);
-			boolean matchConcepto = fConcepto.equals("Todos") || p.getConcepto().toLowerCase().contains(fConcepto.toLowerCase());
+			boolean matchConcepto = fConcepto.equals("Todos") || p.getConcepto().equalsIgnoreCase(fConcepto);
 
 			if (matchBusq && matchMetodo && matchConcepto) {
 				Object[] fila = new Object[7];
@@ -343,7 +342,7 @@ public class Pagos extends JFrame {
 				fila[2] = p.getCliente().getNombre();
 				fila[3] = sdf.format(p.getFecha());
 				fila[4] = String.format("$%.2f", p.getMonto());
-				fila[5] = p.getConcepto(); // Muestra Concepto + Tipo Comprobante
+				fila[5] = p.getConcepto();
 				fila[6] = p.getMetodoPago();
 				modeloTabla.addRow(fila);
 			}
@@ -354,9 +353,9 @@ public class Pagos extends JFrame {
 		RoundedButton boton = new RoundedButton(texto, 25);
 		boton.setBackground(bgDefault);
 		boton.setForeground(Color.WHITE);
-		boton.setFont(new Font("Arial", Font.BOLD, 15));
+		boton.setFont(new Font("Arial", Font.BOLD, 14));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		boton.setPreferredSize(new Dimension(200, 45));
+		boton.setPreferredSize(new Dimension(190, 45));
 
 		boton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -391,7 +390,7 @@ public class Pagos extends JFrame {
 			this.radius = radius;
 			setOpaque(false);
 			setFont(new Font("Arial", Font.BOLD, 14));
-			setBackground(new Color(245, 247, 250));
+			setBackground(new Color(240, 240, 240));
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
@@ -468,13 +467,10 @@ public class Pagos extends JFrame {
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
-			// Sombra ligera
-			g2.setColor(new Color(0, 0, 0, 10));
-			g2.fillRoundRect(2, 2, getWidth() - 2, getHeight() - 2, radius, radius);
-			
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth() - 4, getHeight() - 4, radius, radius);
+			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.setColor(new Color(220, 220, 220));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
 		}
@@ -501,7 +497,7 @@ public class Pagos extends JFrame {
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2.setColor(new Color(150, 150, 150));
+			g2.setColor(new Color(200, 200, 200));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 		}
