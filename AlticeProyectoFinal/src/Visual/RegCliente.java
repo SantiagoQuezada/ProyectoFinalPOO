@@ -574,7 +574,6 @@ public class RegCliente extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			// El borde se dibuja al final para enmascarar cualquier imperfección en las esquinas
 			g2.setColor(new Color(200, 200, 200));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			
