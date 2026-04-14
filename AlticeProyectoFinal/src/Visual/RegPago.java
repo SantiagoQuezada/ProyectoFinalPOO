@@ -58,7 +58,7 @@ public class RegPago extends JDialog {
 	private RoundedTextField txtMonto;
 	private Pago pagoActual;
 	
-	// Variable para evitar perder la selección al buscar
+
 	private String idClienteSeleccionado = null;
 
 	public RegPago(Pago pago, boolean soloLectura) {
@@ -176,7 +176,7 @@ public class RegPago extends JDialog {
 				} else {
 					label.setBackground(Color.WHITE);
 					if (tieneDeuda) {
-						label.setForeground(new Color(200, 50, 50)); // Rojo oscuro para los deudores
+						label.setForeground(new Color(200, 50, 50));
 					} else {
 						label.setForeground(new Color(30, 30, 30));
 					}
@@ -235,7 +235,7 @@ public class RegPago extends JDialog {
 		txtRncPersonal.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtRncPersonal.setBounds(180, 495, 350, 35);
 		txtRncPersonal.setEnabled(false);
-		aplicarFormatoRNC(txtRncPersonal); // Aplicando formato de guiones automáticamente
+		aplicarFormatoRNC(txtRncPersonal); 
 		contentPanel.add(txtRncPersonal);
 
 		cbxComprobante.addActionListener(e -> {
@@ -244,7 +244,7 @@ public class RegPago extends JDialog {
 			if (!isFiscal) {
 				txtRncPersonal.setText("");
 			} else if (idClienteSeleccionado != null) {
-			    // Autocompletar el RNC/Cedula si se cambia a fiscal y hay cliente seleccionado
+		
 			    Cliente c = Altice.getInstance().getClienteById(idClienteSeleccionado);
 			    if (c != null) {
 			        txtRncPersonal.setText(c.getTipoCliente().equals("Empresarial") ? c.getRnc() : c.getCedula());
@@ -290,7 +290,7 @@ public class RegPago extends JDialog {
 		txtMonto.setForeground(new Color(0, 150, 50));
 		txtMonto.setBounds(180, 660, 350, 45);
 		
-		// Validar que solo acepte números y un punto decimal
+	
 		txtMonto.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -320,7 +320,7 @@ public class RegPago extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); // Color Rojo
+		btnCancelar.setBackground(new Color(220, 53, 69)); 
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
 		btnCancelar.setPreferredSize(new Dimension(130, 45));
@@ -361,7 +361,7 @@ public class RegPago extends JDialog {
 						JOptionPane.showMessageDialog(null, "Debe ingresar un RNC/Cédula válido para generar el Comprobante Fiscal.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					// Validación de longitud (RNC 9 digitos o Cedula 11) quitando guiones
+			
 					String rncLimpio = rncIngresado.replaceAll("-", "");
 					if (rncLimpio.length() != 9 && rncLimpio.length() != 11) {
 						JOptionPane.showMessageDialog(null, "Dato '" + rncIngresado + "' no válido.\nUn RNC debe tener 9 dígitos y una Cédula 11 dígitos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
@@ -369,7 +369,7 @@ public class RegPago extends JDialog {
 					}
 				}
 
-				// Validación del Monto con Try-Catch
+		
 				float monto = 0;
 				try {
 					monto = Float.parseFloat(txtMonto.getText().trim());
@@ -395,7 +395,7 @@ public class RegPago extends JDialog {
 				Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, conceptoFinal);
 				Altice.getInstance().registrarPago(nuevoPago);
 				
-				// Reducir la deuda del cliente con el nuevo método
+			
 				cliente.reducirDeuda(monto);
 				
 				dispose();
@@ -420,9 +420,9 @@ public class RegPago extends JDialog {
 				String text = textField.getText().replaceAll("[^0-9]", "");
 				String formatted = "";
 				
-				// Formato inteligente que se adapta a RNC (9) o Cedula (11)
+			
 				if (text.length() <= 9) {
-				    // Formato RNC
+				
     				if (text.length() > 1 && text.length() <= 3) {
     					formatted = text.substring(0, 1) + "-" + text.substring(1);
     				} else if (text.length() > 3 && text.length() <= 8) {
@@ -433,7 +433,7 @@ public class RegPago extends JDialog {
     					formatted = text;
     				}
 				} else {
-				    // Formato Cedula
+				
 				    if (text.length() > 3 && text.length() <= 10) {
 						formatted = text.substring(0, 3) + "-" + text.substring(3);
 					} else if (text.length() > 10) {
@@ -460,7 +460,7 @@ public class RegPago extends JDialog {
 				} else {
 					txtMonto.setText("");
 					JOptionPane.showMessageDialog(this, "El cliente seleccionado no tiene un plan asignado para cobrarle mensualidad.", "Atención", JOptionPane.WARNING_MESSAGE);
-					cbxConcepto.setSelectedIndex(3); // Cambiar a "Otros"
+					cbxConcepto.setSelectedIndex(3); 
 				}
 			} else {
 				txtMonto.setText("");

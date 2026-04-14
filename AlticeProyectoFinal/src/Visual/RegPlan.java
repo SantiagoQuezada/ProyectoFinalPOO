@@ -147,7 +147,7 @@ public class RegPlan extends JDialog {
 		if (planActual != null) {
 			cbxCategoria.setSelectedItem(planActual.getCategoria());
 			txtNombre.setText(planActual.getNombre());
-			txtPrecio.setText(String.valueOf((int) planActual.getPrecio())); // Mostrado en formato int
+			txtPrecio.setText(String.valueOf((int) planActual.getPrecio())); 
 		}
 
 		if (soloLectura) {
@@ -166,7 +166,7 @@ public class RegPlan extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); // Rojo
+		btnCancelar.setBackground(new Color(220, 53, 69)); 
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 40));
