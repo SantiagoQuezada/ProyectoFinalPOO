@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.Timer;
 import javax.swing.Icon;
@@ -240,7 +241,39 @@ public class Principal extends JFrame {
 			btnRespaldo.setFont(new Font("Arial", Font.BOLD, 10));
 			btnRespaldo.setPreferredSize(new Dimension(100, 30));
 			btnRespaldo.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			btnRespaldo.addActionListener(e -> {});
+			btnRespaldo.addActionListener(e -> {
+				Altice sistema = Altice.getInstance();
+				
+				if (sistema.getPlanes().isEmpty()) {
+					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Hogar", "Internet Fibra 100Mbps", 1200.0f));
+					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Móvil", "Plan Pospago 15GB", 600.0f));
+					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Empresarial", "Internet Dedicado 500Mbps", 9500.0f));
+				}
+				
+				if (sistema.getEmpleados().size() <= 1) {
+					Logico.Usuario u1 = new Logico.Usuario("lgomez", "1234", Logico.Rol.VENDEDOR);
+					sistema.registrarEmpleado(new Logico.Empleado("001-0000000-1", "Luis Gomez", "809-555-0001", "Santiago", sistema.generarIdEmpleado(), "Ventas", 25000.0f, u1, "Activo"));
+					
+					Logico.Usuario u2 = new Logico.Usuario("mrodriguez", "1234", Logico.Rol.SOPORTE_TECNICO);
+					sistema.registrarEmpleado(new Logico.Empleado("001-0000000-2", "Maria Rodriguez", "809-555-0002", "Santo Domingo", sistema.generarIdEmpleado(), "Soporte", 30000.0f, u2, "Activo"));
+				}
+				
+				if (sistema.getClientes().isEmpty() && !sistema.getPlanes().isEmpty()) {
+					Logico.Contrato c1 = new Logico.Contrato("CON-001", new java.util.Date(), new java.util.Date(), "Activo", null, 12);
+					sistema.registrarCliente(new Logico.Cliente("402-1234567-8", "Juan Perez", "829-555-1234", "La Vega", sistema.generarIdCliente(), "Personal", "", sistema.getPlanes().get(0), c1, "Activo"));
+					
+					Logico.Contrato c2 = new Logico.Contrato("CON-002", new java.util.Date(), new java.util.Date(), "Activo", null, 24);
+					sistema.registrarCliente(new Logico.Cliente("031-9876543-2", "Tech Solutions", "809-111-2222", "Santiago", sistema.generarIdCliente(), "Empresarial", "1-30-12345-6", sistema.getPlanes().get(2), c2, "Activo"));
+				}
+				
+				if (sistema.getPagos().isEmpty() && !sistema.getClientes().isEmpty()) {
+					sistema.registrarPago(new Logico.Pago(sistema.generarIdPago(), sistema.getClientes().get(0), new java.util.Date(), 1200.0f, "Efectivo", "Mensualidad"));
+					sistema.registrarPago(new Logico.Pago(sistema.generarIdPago(), sistema.getClientes().get(1), new java.util.Date(), 9500.0f, "Transferencia Bancaria", "Instalacion"));
+				}
+
+				Altice.guardarDatos();
+				JOptionPane.showMessageDialog(Principal.this, "Datos de prueba insertados y archivo de respaldo generado exitosamente.", "Respaldo Completado", JOptionPane.INFORMATION_MESSAGE);
+			});
 			footerLeft.add(btnRespaldo);
 		}
 

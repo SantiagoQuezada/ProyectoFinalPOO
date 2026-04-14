@@ -51,7 +51,7 @@ public class RegPlan extends JDialog {
 		getContentPane().setBackground(new Color(245, 247, 250));
 
 		// --- Header Panel ---
-		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(500, 70));
 		
@@ -60,7 +60,7 @@ public class RegPlan extends JDialog {
 			tituloHeader = soloLectura ? "Detalles del Plan" : "Modificar Plan";
 		}
 		
-		JLabel lblDialogTitle = new JLabel((soloLectura ? "👁 " : "📝 ") + tituloHeader);
+		JLabel lblDialogTitle = new JLabel(tituloHeader);
 		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
 		lblDialogTitle.setForeground(Color.WHITE);
 		headerPanel.add(lblDialogTitle);
@@ -166,11 +166,19 @@ public class RegPlan extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
-		btnCancelar.setBackground(new Color(200, 200, 200));
-		btnCancelar.setForeground(new Color(30, 30, 30));
+		btnCancelar.setBackground(new Color(220, 53, 69)); // Rojo
+		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 40));
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		btnCancelar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnCancelar.setBackground(new Color(180, 40, 50)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnCancelar.setBackground(new Color(220, 53, 69)); }
+		});
+		
 		btnCancelar.addActionListener(e -> dispose());
 
 		if (!soloLectura) {
@@ -353,6 +361,7 @@ public class RegPlan extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
 			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
 			super.paintComponent(g2);
 			g2.dispose();
