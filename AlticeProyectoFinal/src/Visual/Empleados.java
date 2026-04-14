@@ -98,7 +98,7 @@ public class Empleados extends JFrame {
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
 		panelTitulo.setBackground(new Color(245, 247, 250));
 
-		JLabel lblTituloPrincipal = new JLabel("👔 Nómina de Empleados");
+		JLabel lblTituloPrincipal = new JLabel("Nómina de Empleados");
 		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 32));
 		lblTituloPrincipal.setForeground(new Color(10, 10, 10));
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -241,8 +241,8 @@ public class Empleados extends JFrame {
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanel.setBackground(new Color(245, 247, 250));
 
-		// Botón de Volver con un Gris metálico diferente
-		RoundedButton btnVolver = crearBotonCRUD("\u25C0 Volver al Inicio", new Color(108, 117, 125), new Color(130, 140, 150));
+		// Botón de Volver con un color vibrante y llamativo (Turquesa / Teal oscuro)
+		RoundedButton btnVolver = crearBotonCRUD("\u25C0 Volver al Inicio", new Color(0, 150, 136), new Color(0, 120, 110));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Principal principal = new Principal(empleadoLogueado);

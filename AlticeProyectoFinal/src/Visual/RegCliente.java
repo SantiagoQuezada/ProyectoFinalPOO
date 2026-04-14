@@ -59,7 +59,6 @@ public class RegCliente extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Panel ---
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));

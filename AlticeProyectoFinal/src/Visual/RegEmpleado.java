@@ -46,8 +46,6 @@ public class RegEmpleado extends JDialog {
 	private RoundedComboBox<String> cbxDepartamento;
 	private RoundedTextField txtUsername;
 	private RoundedPasswordField txtPassword;
-	private RoundedComboBox<Rol> cbxRol;
-	private RoundedComboBox<String> cbxEstado;
 	private Empleado empleadoActual;
 
 	public RegEmpleado(Empleado empleado, boolean soloLectura) {
@@ -55,12 +53,13 @@ public class RegEmpleado extends JDialog {
 		
 		setModal(true);
 		setResizable(false);
-		setSize(550, 750);
+		// Aumenté el tamaño a 750 para asegurar que nada quede cortado
+		setSize(550, 750); 
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
+		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));
 		
@@ -69,7 +68,7 @@ public class RegEmpleado extends JDialog {
 			tituloHeader = soloLectura ? "Detalles del Empleado" : "Modificar Empleado";
 		}
 		
-		JLabel lblDialogTitle = new JLabel((soloLectura ? "👁 " : "📝 ") + tituloHeader);
+		JLabel lblDialogTitle = new JLabel(tituloHeader);
 		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
 		lblDialogTitle.setForeground(Color.WHITE);
 		headerPanel.add(lblDialogTitle);
@@ -203,7 +202,6 @@ public class RegEmpleado extends JDialog {
 		txtSalario = new RoundedTextField(15);
 		txtSalario.setFont(new Font("Arial", Font.PLAIN, 14));
 		
-		// Validar que solo acepte números y un punto decimal
 		txtSalario.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -241,31 +239,6 @@ public class RegEmpleado extends JDialog {
 		txtPassword.setBounds(180, 430, 280, 35);
 		contentPanel.add(txtPassword);
 
-		JLabel lblRol = new JLabel("Rol de Sistema:");
-		lblRol.setFont(labelFont);
-		lblRol.setForeground(labelColor);
-		lblRol.setBounds(30, 480, 140, 35);
-		contentPanel.add(lblRol);
-
-		cbxRol = new RoundedComboBox<Rol>(15);
-		for (Rol rol : Rol.values()) {
-			cbxRol.addItem(rol);
-		}
-		cbxRol.setBounds(180, 480, 280, 35);
-		contentPanel.add(cbxRol);
-
-		JLabel lblEstado = new JLabel("Estado:");
-		lblEstado.setFont(labelFont);
-		lblEstado.setForeground(labelColor);
-		lblEstado.setBounds(30, 530, 140, 35);
-		contentPanel.add(lblEstado);
-
-		cbxEstado = new RoundedComboBox<String>(15);
-		cbxEstado.addItem("Activo");
-		cbxEstado.addItem("Inactivo");
-		cbxEstado.setBounds(180, 530, 280, 35);
-		contentPanel.add(cbxEstado);
-
 		if (empleadoActual != null) {
 			txtCedula.setText(empleadoActual.getCedula());
 			txtNombre.setText(empleadoActual.getNombre());
@@ -275,10 +248,6 @@ public class RegEmpleado extends JDialog {
 			txtSalario.setText(String.valueOf(empleadoActual.getSalario()));
 			txtUsername.setText(empleadoActual.getUsuario().getUsername());
 			txtPassword.setText(empleadoActual.getUsuario().getPassword());
-			cbxRol.setSelectedItem(empleadoActual.getUsuario().getRol());
-			if (empleadoActual.getEstado() != null) {
-				cbxEstado.setSelectedItem(empleadoActual.getEstado());
-			}
 		}
 
 		if (soloLectura) {
@@ -290,8 +259,6 @@ public class RegEmpleado extends JDialog {
 			txtSalario.setEditable(false);
 			txtUsername.setEditable(false);
 			txtPassword.setEditable(false);
-			cbxRol.setEnabled(false);
-			cbxEstado.setEnabled(false);
 			
 			Color colorDeshabilitado = new Color(245, 245, 245);
 			txtCedula.setBackground(colorDeshabilitado);
@@ -302,8 +269,6 @@ public class RegEmpleado extends JDialog {
 			txtUsername.setBackground(colorDeshabilitado);
 			txtPassword.setBackground(colorDeshabilitado);
 			cbxDepartamento.setBackground(colorDeshabilitado);
-			cbxRol.setBackground(colorDeshabilitado);
-			cbxEstado.setBackground(colorDeshabilitado);
 		}
 
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
@@ -312,11 +277,19 @@ public class RegEmpleado extends JDialog {
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
-		btnCancelar.setBackground(new Color(200, 200, 200));
-		btnCancelar.setForeground(new Color(30, 30, 30));
+		btnCancelar.setBackground(new Color(220, 53, 69));
+		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 40));
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		
+		btnCancelar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { btnCancelar.setBackground(new Color(180, 40, 50)); }
+			@Override
+			public void mouseExited(MouseEvent e) { btnCancelar.setBackground(new Color(220, 53, 69)); }
+		});
+		
 		btnCancelar.addActionListener(e -> dispose());
 
 		if (!soloLectura) {
@@ -352,8 +325,9 @@ public class RegEmpleado extends JDialog {
 						
 						String username = txtUsername.getText();
 						String password = new String(txtPassword.getPassword());
-						Rol rol = (Rol) cbxRol.getSelectedItem();
-						String estado = cbxEstado.getSelectedItem().toString();
+						
+						Rol rol = (empleadoActual != null) ? empleadoActual.getUsuario().getRol() : Rol.SOPORTE_TECNICO;
+						String estado = (empleadoActual == null) ? "Activo" : empleadoActual.getEstado();
 
 						if (empleadoActual == null) {
 							Usuario nuevoUsuario = new Usuario(username, password, rol);
@@ -431,8 +405,6 @@ public class RegEmpleado extends JDialog {
 		});
 	}
 
-	// --- Componentes Personalizados ---
-	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
 
