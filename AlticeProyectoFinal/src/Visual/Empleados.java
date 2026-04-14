@@ -242,7 +242,7 @@ public class Empleados extends JFrame {
 		crudPanel.setBackground(new Color(245, 247, 250));
 
 		// Botón de Volver con un color vibrante y llamativo (Turquesa / Teal oscuro)
-		RoundedButton btnVolver = crearBotonCRUD("\u25C0 Volver al Inicio", new Color(0, 150, 136), new Color(0, 120, 110));
+		RoundedButton btnVolver = crearBotonCRUD("Volver al Inicio", new Color(0, 150, 136), new Color(0, 120, 110));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Principal principal = new Principal(empleadoLogueado);
