@@ -75,14 +75,15 @@ public class RegPago extends JDialog {
     private void construirUI_Formulario() {
         setModal(true);
         setResizable(false);
-        setSize(820, 800); // ← aumentado de 740 a 800
+        // Ampliado a 900x960 para evitar que se corte la parte inferior
+        setSize(900, 960); 
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(245, 247, 250));
 
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
         headerPanel.setBackground(new Color(15, 15, 15));
-        headerPanel.setPreferredSize(new Dimension(820, 70));
+        headerPanel.setPreferredSize(new Dimension(900, 70));
 
         JLabel lblDialogTitle = new JLabel("Punto de Pago - Altice");
         lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 24));
@@ -103,16 +104,17 @@ public class RegPago extends JDialog {
         Font labelFont = new Font("Arial", Font.BOLD, 13);
         Color labelColor = new Color(120, 120, 120);
 
-        int leftX = 30;
-        int rightX = 410;
-        int colWidth = 340;
-        int fullWidth = 720;
-        int fieldHeight = 35;
+        // Nuevas medidas adaptadas al tamaño 900x960
+        int leftX = 35;
+        int rightX = 445;
+        int colWidth = 380;
+        int fullWidth = 790;
+        int fieldHeight = 40; // Campos un poco más altos para mejor toque/clic
 
         JLabel lblIdPago = new JLabel("No. Transacción / Recibo");
         lblIdPago.setFont(labelFont);
         lblIdPago.setForeground(labelColor);
-        lblIdPago.setBounds(leftX, 15, colWidth, 20);
+        lblIdPago.setBounds(leftX, 20, colWidth, 20);
         contentPanel.add(lblIdPago);
 
         txtIdPago = new RoundedTextField(15);
@@ -120,20 +122,20 @@ public class RegPago extends JDialog {
         txtIdPago.setText(Altice.getInstance().generarIdPago());
         txtIdPago.setEditable(false);
         txtIdPago.setBackground(new Color(240, 240, 240));
-        txtIdPago.setBounds(leftX, 35, colWidth, fieldHeight);
+        txtIdPago.setBounds(leftX, 45, colWidth, fieldHeight);
         contentPanel.add(txtIdPago);
 
         JLabel lblFecha = new JLabel("Fecha y Hora Actual");
         lblFecha.setFont(labelFont);
         lblFecha.setForeground(labelColor);
-        lblFecha.setBounds(rightX, 15, colWidth, 20);
+        lblFecha.setBounds(rightX, 20, colWidth, 20);
         contentPanel.add(lblFecha);
 
         txtFecha = new RoundedTextField(15);
         txtFecha.setFont(new Font("Arial", Font.PLAIN, 14));
         txtFecha.setEditable(false);
         txtFecha.setBackground(new Color(240, 240, 240));
-        txtFecha.setBounds(rightX, 35, colWidth, fieldHeight);
+        txtFecha.setBounds(rightX, 45, colWidth, fieldHeight);
         contentPanel.add(txtFecha);
 
         Timer timer = new Timer(1000, e -> {
@@ -144,12 +146,12 @@ public class RegPago extends JDialog {
         JLabel lblBuscarCliente = new JLabel("Búsqueda Rápida de Cliente (Nombre, Cédula o RNC)");
         lblBuscarCliente.setFont(labelFont);
         lblBuscarCliente.setForeground(labelColor);
-        lblBuscarCliente.setBounds(leftX, 80, fullWidth, 20);
+        lblBuscarCliente.setBounds(leftX, 100, fullWidth, 20);
         contentPanel.add(lblBuscarCliente);
 
         txtBuscarCliente = new RoundedTextField(15);
         txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtBuscarCliente.setBounds(leftX, 100, fullWidth, fieldHeight);
+        txtBuscarCliente.setBounds(leftX, 125, fullWidth, fieldHeight);
         contentPanel.add(txtBuscarCliente);
 
         String[] columnas = {"ID", "Identificación", "Nombre del Cliente", "Deuda"};
@@ -195,6 +197,7 @@ public class RegPago extends JDialog {
 
                 String idCli = table.getValueAt(row, 0).toString();
                 Cliente clienteDeTabla = Altice.getInstance().getClienteById(idCli);
+                // Si aquí siempre es 0.0, el problema reside en Logico.Cliente (no se le asigna la deuda)
                 float deuda = clienteDeTabla != null ? clienteDeTabla.getDeudaActiva() : 0;
 
                 if (isSelected) {
@@ -221,10 +224,11 @@ public class RegPago extends JDialog {
             tablaClientes.getColumnModel().getColumn(i).setCellRenderer(tableRenderer);
         }
 
-        tablaClientes.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tablaClientes.getColumnModel().getColumn(1).setPreferredWidth(140);
-        tablaClientes.getColumnModel().getColumn(2).setPreferredWidth(280);
-        tablaClientes.getColumnModel().getColumn(3).setPreferredWidth(100);
+        // Ajuste de columnas proporcional al nuevo ancho
+        tablaClientes.getColumnModel().getColumn(0).setPreferredWidth(80);
+        tablaClientes.getColumnModel().getColumn(1).setPreferredWidth(160);
+        tablaClientes.getColumnModel().getColumn(2).setPreferredWidth(400);
+        tablaClientes.getColumnModel().getColumn(3).setPreferredWidth(150);
 
         JScrollPane scrollPaneClientes = new JScrollPane(tablaClientes);
         scrollPaneClientes.setBorder(BorderFactory.createEmptyBorder());
@@ -234,7 +238,8 @@ public class RegPago extends JDialog {
         tableWrapper.setLayout(new BorderLayout());
         tableWrapper.setBackground(Color.WHITE);
         tableWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
-        tableWrapper.setBounds(leftX, 145, fullWidth, 150);
+        // Tabla más alta (200px)
+        tableWrapper.setBounds(leftX, 180, fullWidth, 200);
         tableWrapper.add(scrollPaneClientes, BorderLayout.CENTER);
         contentPanel.add(tableWrapper);
 
@@ -250,7 +255,7 @@ public class RegPago extends JDialog {
         JLabel lblDeudaActiva = new JLabel("Deuda Activa en el Sistema");
         lblDeudaActiva.setFont(labelFont);
         lblDeudaActiva.setForeground(new Color(200, 50, 50));
-        lblDeudaActiva.setBounds(leftX, 305, colWidth, 20);
+        lblDeudaActiva.setBounds(leftX, 400, colWidth, 20);
         contentPanel.add(lblDeudaActiva);
 
         txtDeudaActiva = new RoundedTextField(15);
@@ -258,30 +263,30 @@ public class RegPago extends JDialog {
         txtDeudaActiva.setForeground(new Color(200, 50, 50));
         txtDeudaActiva.setBackground(new Color(255, 235, 235));
         txtDeudaActiva.setEditable(false);
-        txtDeudaActiva.setBounds(leftX, 325, colWidth, fieldHeight);
+        txtDeudaActiva.setBounds(leftX, 425, colWidth, fieldHeight);
         contentPanel.add(txtDeudaActiva);
 
         JLabel lblComprobante = new JLabel("Tipo de Comprobante");
         lblComprobante.setFont(labelFont);
         lblComprobante.setForeground(labelColor);
-        lblComprobante.setBounds(rightX, 305, colWidth, 20);
+        lblComprobante.setBounds(rightX, 400, colWidth, 20);
         contentPanel.add(lblComprobante);
 
         cbxComprobante = new RoundedComboBox<String>(15);
         cbxComprobante.addItem("Normal (Consumidor Final)");
         cbxComprobante.addItem("Comprobante Fiscal (Empresarial)");
-        cbxComprobante.setBounds(rightX, 325, colWidth, fieldHeight);
+        cbxComprobante.setBounds(rightX, 425, colWidth, fieldHeight);
         contentPanel.add(cbxComprobante);
 
         JLabel lblRncPersonal = new JLabel("RNC / Cédula para Facturar");
         lblRncPersonal.setFont(labelFont);
         lblRncPersonal.setForeground(labelColor);
-        lblRncPersonal.setBounds(leftX, 370, colWidth, 20);
+        lblRncPersonal.setBounds(leftX, 480, colWidth, 20);
         contentPanel.add(lblRncPersonal);
 
         txtRncPersonal = new RoundedTextField(15);
         txtRncPersonal.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtRncPersonal.setBounds(leftX, 390, colWidth, fieldHeight);
+        txtRncPersonal.setBounds(leftX, 505, colWidth, fieldHeight);
         txtRncPersonal.setEnabled(false);
         txtRncPersonal.setBackground(new Color(240, 240, 240));
         aplicarFormatoRNC(txtRncPersonal);
@@ -307,7 +312,7 @@ public class RegPago extends JDialog {
         JLabel lblConcepto = new JLabel("Concepto del Cobro");
         lblConcepto.setFont(labelFont);
         lblConcepto.setForeground(labelColor);
-        lblConcepto.setBounds(rightX, 370, colWidth, 20);
+        lblConcepto.setBounds(rightX, 480, colWidth, 20);
         contentPanel.add(lblConcepto);
 
         cbxConcepto = new RoundedComboBox<String>(15);
@@ -315,34 +320,34 @@ public class RegPago extends JDialog {
         cbxConcepto.addItem("Instalación");
         cbxConcepto.addItem("Compra de Equipo");
         cbxConcepto.addItem("Otros");
-        cbxConcepto.setBounds(rightX, 390, colWidth, fieldHeight);
+        cbxConcepto.setBounds(rightX, 505, colWidth, fieldHeight);
         contentPanel.add(cbxConcepto);
 
         JLabel lblMetodo = new JLabel("Método de Pago Autorizado");
         lblMetodo.setFont(labelFont);
         lblMetodo.setForeground(labelColor);
-        lblMetodo.setBounds(leftX, 435, fullWidth, 20);
+        lblMetodo.setBounds(leftX, 560, fullWidth, 20);
         contentPanel.add(lblMetodo);
 
         cbxMetodo = new RoundedComboBox<String>(15);
         cbxMetodo.addItem("Efectivo");
         cbxMetodo.addItem("Tarjeta de Crédito / Débito");
         cbxMetodo.addItem("Transferencia Bancaria");
-        cbxMetodo.setBounds(leftX, 455, fullWidth, fieldHeight);
+        cbxMetodo.setBounds(leftX, 585, fullWidth, fieldHeight);
         contentPanel.add(cbxMetodo);
 
         JLabel lblMonto = new JLabel("MONTO TOTAL A PAGAR (RD$)");
         lblMonto.setFont(new Font("Arial", Font.BOLD, 16));
         lblMonto.setForeground(new Color(0, 102, 204));
         lblMonto.setHorizontalAlignment(SwingConstants.CENTER);
-        lblMonto.setBounds(leftX, 505, fullWidth, 20); // ← bajado 5px
+        lblMonto.setBounds(leftX, 645, fullWidth, 20); 
         contentPanel.add(lblMonto);
 
         txtMonto = new RoundedTextField(20);
-        txtMonto.setFont(new Font("Arial", Font.BOLD, 42));
+        txtMonto.setFont(new Font("Arial", Font.BOLD, 46)); // Fuente un poco más grande
         txtMonto.setForeground(new Color(0, 150, 50));
         txtMonto.setHorizontalAlignment(JTextField.CENTER);
-        txtMonto.setBounds(leftX, 530, fullWidth, 70); // ← alto aumentado de 60 a 70
+        txtMonto.setBounds(leftX, 670, fullWidth, 75); // Monto aún más alto
         txtMonto.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -444,6 +449,7 @@ public class RegPago extends JDialog {
                 Pago nuevoPago = new Pago(idPago, cliente, new Date(), monto, metodo, conceptoFinal);
                 Altice.getInstance().registrarPago(nuevoPago);
 
+                // IMPORTANTE: Aquí estás reduciendo la deuda con el monto pagado.
                 cliente.reducirDeuda(monto);
 
                 dispose();
@@ -525,7 +531,7 @@ public class RegPago extends JDialog {
             if (c != null) {
                 txtDeudaActiva.setText("RD$ " + String.format("%.2f", c.getDeudaActiva()));
 
-                // ← refrescar columna Deuda en la tabla con el valor real del objeto
+                // Refrescar columna Deuda en la tabla con el valor real del objeto
                 modeloTablaClientes.setValueAt("$" + String.format("%.2f", c.getDeudaActiva()), selectedRow, 3);
 
                 if (c.getTipoCliente().equals("Empresarial")) {
@@ -560,7 +566,7 @@ public class RegPago extends JDialog {
                     fila[0] = c.getIdCliente();
                     fila[1] = identificacion;
                     fila[2] = c.getNombre();
-                    fila[3] = "$" + String.format("%.2f", c.getDeudaActiva()); // ← valor real
+                    fila[3] = "$" + String.format("%.2f", c.getDeudaActiva()); // Valor leído del Cliente
                     modeloTablaClientes.addRow(fila);
 
                     if (idClienteSeleccionado != null && c.getIdCliente().equals(idClienteSeleccionado)) {
@@ -578,7 +584,7 @@ public class RegPago extends JDialog {
     private void construirUI_Recibo() {
         setModal(true);
         setResizable(true);
-        setSize(680, 960);
+        setSize(700, 960);
         setLocationRelativeTo(null);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(230, 235, 240));
