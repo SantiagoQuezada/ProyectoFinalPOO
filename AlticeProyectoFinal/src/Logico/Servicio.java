@@ -3,38 +3,38 @@ package Logico;
 import java.io.Serializable;
 
 public class Servicio implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private String idServicio;
-    private String nombre;
-    private String descripcion;
+	private static final long serialVersionUID = 1L;
+	private String idServicio;
+	private String nombre;
+	private String descripcion;
 
-    public Servicio(String idServicio, String nombre, String descripcion) {
-        this.idServicio = idServicio;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-    }
+	public Servicio(String idServicio, String nombre, String descripcion) {
+		this.idServicio = idServicio;
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+	}
 
-    public String getIdServicio() {
-        return idServicio;
-    }
+	public String getIdServicio() {
+		return idServicio;
+	}
 
-    public void setIdServicio(String idServicio) {
-        this.idServicio = idServicio;
-    }
+	public void setIdServicio(String idServicio) {
+		this.idServicio = idServicio;
+	}
 
-    public String getNombre() {
-        return nombre;
-    }
+	public String getNombre() {
+		return nombre;
+	}
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	public String getDescripcion() {
+		return descripcion;
+	}
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
 }
