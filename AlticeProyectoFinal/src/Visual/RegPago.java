@@ -474,7 +474,7 @@ public class RegPago extends JDialog {
 		String selectedClient = listClientes.getSelectedValue();
 		if (selectedClient != null && !selectedClient.isEmpty()) {
 			String idCliente = selectedClient.split(" - ")[0];
-			idClienteSeleccionado = idCliente; // Guardar id
+			idClienteSeleccionado = idCliente; 
 			Cliente c = Altice.getInstance().getClienteById(idCliente);
 			
 			if(c != null && c.getTipoCliente().equals("Empresarial")) {
@@ -511,7 +511,7 @@ public class RegPago extends JDialog {
 				    String itemText = c.getIdCliente() + " - " + c.getNombre() + " (" + (c.getTipoCliente().equals("Empresarial") ? "RNC" : "Cédula") + ": " + identificacion + ")";
 					listModelClientes.addElement(itemText);
 					
-					// Restaurar seleccion si estaba seleccionado previamente
+				
 					if (idClienteSeleccionado != null && c.getIdCliente().equals(idClienteSeleccionado)) {
 					    selectIndexToRestore = listModelClientes.size() - 1;
 					}
@@ -630,7 +630,7 @@ public class RegPago extends JDialog {
 		String conceptoLimpio = pagoActual.getConcepto().split("\\|")[0].trim();
 		ticketPanel.add(crearFilaDetalle("Concepto", conceptoLimpio));
 		
-		// MOSTRAR TIPO DE PLAN Y CONTRATO
+		
 		String tipoPlan = "N/A";
 		String planAsignado = "Sin Plan Asignado";
 		if (pagoActual.getCliente() != null && pagoActual.getCliente().getPlan() != null) {
@@ -680,9 +680,9 @@ public class RegPago extends JDialog {
 		bottomPanel.setBackground(new Color(230, 235, 240));
 		bottomPanel.setBorder(new EmptyBorder(0, 0, 30, 0));
 
-		// Botón de Cerrar en el recibo (Rojo)
+		
 		RoundedButton btnCerrar = new RoundedButton("Cerrar Comprobante", 25);
-		btnCerrar.setBackground(new Color(220, 53, 69)); // Color Rojo
+		btnCerrar.setBackground(new Color(220, 53, 69)); 
 		btnCerrar.setForeground(Color.WHITE);
 		btnCerrar.setFont(new Font("Arial", Font.BOLD, 16));
 		btnCerrar.setPreferredSize(new Dimension(300, 55));
@@ -841,6 +841,7 @@ public class RegPago extends JDialog {
 		}
 	}
 
+	
 	class RoundedButton extends JButton {
 		private int radius;
 		public RoundedButton(String text, int radius) {
