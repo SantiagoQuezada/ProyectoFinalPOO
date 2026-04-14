@@ -17,23 +17,16 @@ import java.util.Date;
 public class Altice implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
 	private ArrayList<Cliente> misClientes;
-
 	private ArrayList<Plan> misPlanes;
 
 	private ArrayList<Empleado> misEmpleados;
-
 	private ArrayList<Pago> misPagos;
-
+	
 	private int contadorClientes = 1;
-
 	private int contadorEmpleados = 1;
-
 	private int contadorPagos = 1;
-
 	private int contadorPlanes = 1;
-
 	private static Altice altice = null;
 
 	private Altice() {
@@ -84,11 +77,11 @@ public class Altice implements Serializable {
 
 			fileIn.close();
 
-			System.out.println("✅ Datos cargados correctamente de AlticeData.dat");
+			System.out.println("Datos cargados correctamente de AlticeData.dat");
 
 		} catch (Exception e) {
 
-			System.out.println("⚠️ Archivo corrupto o no encontrado. Creando datos por defecto.");
+			System.out.println("Archivo corrupto o no encontrado. Creando datos por defecto.");
 
 		}
 
@@ -113,11 +106,11 @@ public class Altice implements Serializable {
 
 			fileOut.close();
 
-			System.out.println("💾 Datos guardados exitosamente.");
+			System.out.println("Datos guardados exitosamente.");
 
 		} catch (Exception e) {
 
-			System.err.println("❌ ERROR GRAVE AL GUARDAR LOS DATOS: " + e.getMessage());
+			System.err.println("ERROR GRAVE AL GUARDAR LOS DATOS: " + e.getMessage());
 
 			e.printStackTrace();
 

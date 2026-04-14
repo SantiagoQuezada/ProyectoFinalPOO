@@ -152,7 +152,7 @@ public class CatalogoPlanes extends JFrame {
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbFiltroEstado);
 
-		topPanel.add(Box.createHorizontalGlue()); // Empuja el buscador a la derecha
+		topPanel.add(Box.createHorizontalGlue());
 
 		topPanel.add(lblBuscar);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -489,7 +489,7 @@ public class CatalogoPlanes extends JFrame {
 		panelBotones.setBorder(new EmptyBorder(0, 20, 20, 20));
 
 		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); // Rojo
+		btnCancelar.setBackground(new Color(220, 53, 69)); 
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 45));
