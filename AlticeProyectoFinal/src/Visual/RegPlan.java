@@ -12,6 +12,8 @@ import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
@@ -130,12 +132,22 @@ public class RegPlan extends JDialog {
 		txtPrecio = new RoundedTextField(15);
 		txtPrecio.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtPrecio.setBounds(160, 180, 250, 35);
+		// Filtro para aceptar solo números enteros
+		txtPrecio.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				if (!Character.isDigit(c)) {
+					e.consume();
+				}
+			}
+		});
 		contentPanel.add(txtPrecio);
 
 		if (planActual != null) {
 			cbxCategoria.setSelectedItem(planActual.getCategoria());
 			txtNombre.setText(planActual.getNombre());
-			txtPrecio.setText(String.valueOf(planActual.getPrecio()));
+			txtPrecio.setText(String.valueOf((int) planActual.getPrecio())); // Mostrado en formato int
 		}
 
 		if (soloLectura) {
@@ -178,38 +190,32 @@ public class RegPlan extends JDialog {
 
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String nombre = txtNombre.getText().trim();
-					
-					if (nombre.isEmpty() || txtPrecio.getText().trim().isEmpty()) {
+					if (txtNombre.getText().isEmpty() || txtPrecio.getText().isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
-					// Validación de Precio con Try-Catch
-					float precio = 0;
 					try {
-						precio = Float.parseFloat(txtPrecio.getText().trim());
-						if (precio < 0) throw new NumberFormatException();
+						String id = txtIdPlan.getText();
+						String categoria = cbxCategoria.getSelectedItem().toString();
+						String nombre = txtNombre.getText();
+						float precio = Float.parseFloat(txtPrecio.getText());
+
+						if (planActual == null) {
+							Plan nuevoPlan = new Plan(id, categoria, nombre, precio);
+							Altice.getInstance().registrarPlan(nuevoPlan);
+							JOptionPane.showMessageDialog(null, "Plan registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							planActual.setCategoria(categoria);
+							planActual.setNombre(nombre);
+							planActual.setPrecio(precio);
+							JOptionPane.showMessageDialog(null, "Plan actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						}
+						
+						dispose();
 					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(null, "Dato '" + txtPrecio.getText() + "' no válido en la parte de Precio.\nSolo se permiten números positivos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
-						return;
+						JOptionPane.showMessageDialog(null, "El precio debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-
-					String id = txtIdPlan.getText();
-					String categoria = cbxCategoria.getSelectedItem().toString();
-
-					if (planActual == null) {
-						Plan nuevoPlan = new Plan(id, categoria, nombre, precio);
-						Altice.getInstance().registrarPlan(nuevoPlan);
-						JOptionPane.showMessageDialog(null, "Plan registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-					} else {
-						planActual.setCategoria(categoria);
-						planActual.setNombre(nombre);
-						planActual.setPrecio(precio);
-						JOptionPane.showMessageDialog(null, "Plan actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-					}
-					
-					dispose();
 				}
 			});
 			buttonPane.add(btnCancelar);
@@ -237,15 +243,15 @@ public class RegPlan extends JDialog {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.PLAIN, 14));
-			setBackground(new Color(240, 240, 240)); 
+			setFont(new Font("Arial", Font.BOLD, 14)); // Cambiado a BOLD
+			setBackground(new Color(240, 240, 240)); // Fondo gris claro
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); 
+					JButton button = new JButton("\u25BC"); // Flecha minimalista
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -258,6 +264,7 @@ public class RegPlan extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+					// Previene el dibujado del fondo cuadrado por defecto
 				}
 			});
 
@@ -266,6 +273,7 @@ public class RegPlan extends JDialog {
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
+					label.setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD
 					
 					if (index == -1) {
 						label.setOpaque(false);
@@ -277,7 +285,7 @@ public class RegPlan extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); 
+							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
@@ -324,19 +332,11 @@ public class RegPlan extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			
-			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
-			super.paintComponent(g2);
-			g2.dispose();
-		}
-		@Override
-		protected void paintBorder(Graphics g) {
-			Graphics2D g2 = (Graphics2D) g.create();
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
+			super.paintComponent(g);
 		}
 	}
 
@@ -353,7 +353,6 @@ public class RegPlan extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			
 			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
 			super.paintComponent(g2);
 			g2.dispose();
@@ -383,10 +382,8 @@ public class RegPlan extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			
-			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
-			super.paintComponent(g2);
 			g2.dispose();
+			super.paintComponent(g);
 		}
 	}
 }
