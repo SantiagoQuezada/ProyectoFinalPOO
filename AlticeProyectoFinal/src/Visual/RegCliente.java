@@ -48,7 +48,7 @@ public class RegCliente extends JDialog {
 
 	public RegCliente(Cliente cliente, boolean soloLectura) {
 		this.clienteActual = cliente;
-		
+
 		setModal(true);
 		setResizable(false);
 		setSize(550, 650);
@@ -56,16 +56,16 @@ public class RegCliente extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// Título centrado y sin emojis
+		
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));
-		
+
 		String tituloHeader = "Registrar Nuevo Cliente";
 		if (clienteActual != null) {
 			tituloHeader = soloLectura ? "Detalles del Cliente" : "Modificar Cliente";
 		}
-		
+
 		JLabel lblDialogTitle = new JLabel(tituloHeader);
 		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
 		lblDialogTitle.setForeground(Color.WHITE);
@@ -136,7 +136,7 @@ public class RegCliente extends JDialog {
 		txtRnc = new RoundedTextField(15);
 		txtRnc.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtRnc.setBounds(180, 180, 280, 35);
-		txtRnc.setEnabled(false); // Inhabilitado por defecto (Personal)
+		txtRnc.setEnabled(false);
 		txtRnc.setBackground(new Color(240, 240, 240));
 		aplicarFormato(txtRnc, "RNC");
 		contentPanel.add(txtRnc);
@@ -214,7 +214,7 @@ public class RegCliente extends JDialog {
 			txtNombre.setText(clienteActual.getNombre());
 			txtTelefono.setText(clienteActual.getTelefono());
 			txtDireccion.setText(clienteActual.getDireccion());
-			
+
 			if (clienteActual.getPlan() != null) {
 				for (int i = 0; i < cbxPlanes.getItemCount(); i++) {
 					if (cbxPlanes.getItemAt(i).startsWith(clienteActual.getPlan().getNombre())) {
@@ -233,7 +233,7 @@ public class RegCliente extends JDialog {
 			txtTelefono.setEditable(false);
 			txtDireccion.setEditable(false);
 			cbxPlanes.setEnabled(false);
-			
+
 			Color colorDeshabilitado = new Color(245, 245, 245);
 			txtCedula.setBackground(colorDeshabilitado);
 			txtRnc.setBackground(colorDeshabilitado);
@@ -249,21 +249,26 @@ public class RegCliente extends JDialog {
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
-		// Botón Cancelar en color Rojo
+		
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); 
+		btnCancelar.setBackground(new Color(220, 53, 69));
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 40));
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		btnCancelar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { btnCancelar.setBackground(new Color(180, 40, 50)); }
+			public void mouseEntered(MouseEvent e) {
+				btnCancelar.setBackground(new Color(180, 40, 50));
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) { btnCancelar.setBackground(new Color(220, 53, 69)); }
+			public void mouseExited(MouseEvent e) {
+				btnCancelar.setBackground(new Color(220, 53, 69));
+			}
 		});
-		
+
 		btnCancelar.addActionListener(e -> dispose());
 
 		if (!soloLectura) {
@@ -273,30 +278,38 @@ public class RegCliente extends JDialog {
 			btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
 			btnRegistrar.setPreferredSize(new Dimension(160, 40));
 			btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			
+
 			btnRegistrar.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 80, 160)); }
+				public void mouseEntered(MouseEvent e) {
+					btnRegistrar.setBackground(new Color(0, 80, 160));
+				}
+
 				@Override
-				public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 102, 204)); }
+				public void mouseExited(MouseEvent e) {
+					btnRegistrar.setBackground(new Color(0, 102, 204));
+				}
 			});
 
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					String tipoCliente = cbxTipoCliente.getSelectedItem().toString();
-					
+
 					if (txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Complete los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Complete los campos obligatorios.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					
+
 					if (tipoCliente.equals("Personal") && txtCedula.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "La cédula es obligatoria para clientes personales.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "La cédula es obligatoria para clientes personales.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					
+
 					if (tipoCliente.equals("Empresarial") && txtRnc.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "El RNC es obligatorio para clientes empresariales.", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "El RNC es obligatorio para clientes empresariales.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
@@ -306,27 +319,29 @@ public class RegCliente extends JDialog {
 					String nombre = txtNombre.getText();
 					String telefono = txtTelefono.getText();
 					String direccion = txtDireccion.getText();
-					
+
 					Plan planSeleccionado = null;
 					if (cbxPlanes.getSelectedIndex() > 0) {
 						String nombrePlan = ((String) cbxPlanes.getSelectedItem()).split(" - \\$")[0];
-						for(Plan p : Altice.getInstance().getPlanes()) {
-							if(p.getNombre().equals(nombrePlan)) {
+						for (Plan p : Altice.getInstance().getPlanes()) {
+							if (p.getNombre().equals(nombrePlan)) {
 								planSeleccionado = p;
 								break;
 							}
 						}
 					}
-					
+
 					String estado = (clienteActual == null) ? "Activo" : clienteActual.getEstado();
 
 					if (clienteActual == null) {
-						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, planSeleccionado, tipoCliente, rnc);
+						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado,
+								planSeleccionado, tipoCliente, rnc);
 						if (planSeleccionado != null) {
 							nuevoCliente.setFechaAsignacionPlan(new Date());
 						}
 						Altice.getInstance().registrarCliente(nuevoCliente);
-						JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información",
+								JOptionPane.INFORMATION_MESSAGE);
 					} else {
 						clienteActual.setTipoCliente(tipoCliente);
 						clienteActual.setCedula(cedula);
@@ -334,15 +349,16 @@ public class RegCliente extends JDialog {
 						clienteActual.setNombre(nombre);
 						clienteActual.setTelefono(telefono);
 						clienteActual.setDireccion(direccion);
-						
+
 						if (clienteActual.getPlan() != planSeleccionado) {
 							clienteActual.setPlan(planSeleccionado);
 							clienteActual.setFechaAsignacionPlan(planSeleccionado != null ? new Date() : null);
 						}
-						
-						JOptionPane.showMessageDialog(null, "Cliente actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+						JOptionPane.showMessageDialog(null, "Cliente actualizado exitosamente.", "Información",
+								JOptionPane.INFORMATION_MESSAGE);
 					}
-					
+
 					dispose();
 				}
 			});
@@ -355,8 +371,8 @@ public class RegCliente extends JDialog {
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowOpened(java.awt.event.WindowEvent e) {
-				if(!soloLectura) {
-					if(cbxTipoCliente.getSelectedItem().equals("Personal")) {
+				if (!soloLectura) {
+					if (cbxTipoCliente.getSelectedItem().equals("Personal")) {
 						txtCedula.requestFocus();
 					} else {
 						txtRnc.requestFocus();
@@ -379,8 +395,8 @@ public class RegCliente extends JDialog {
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE || 
-					e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE
+						|| e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
 					return;
 				}
 				String text = textField.getText().replaceAll("[^0-9]", "");
@@ -389,7 +405,8 @@ public class RegCliente extends JDialog {
 					if (text.length() > 3 && text.length() <= 10) {
 						formatted = text.substring(0, 3) + "-" + text.substring(3);
 					} else if (text.length() > 10) {
-						formatted = text.substring(0, 3) + "-" + text.substring(3, 10) + "-" + text.substring(10, Math.min(text.length(), 11));
+						formatted = text.substring(0, 3) + "-" + text.substring(3, 10) + "-"
+								+ text.substring(10, Math.min(text.length(), 11));
 					} else {
 						formatted = text;
 					}
@@ -399,7 +416,8 @@ public class RegCliente extends JDialog {
 					} else if (text.length() > 3 && text.length() <= 8) {
 						formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3);
 					} else if (text.length() > 8) {
-						formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3, 8) + "-" + text.substring(8, Math.min(text.length(), 9));
+						formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3, 8) + "-"
+								+ text.substring(8, Math.min(text.length(), 9));
 					} else {
 						formatted = text;
 					}
@@ -407,12 +425,13 @@ public class RegCliente extends JDialog {
 					if (text.length() > 3 && text.length() <= 6) {
 						formatted = text.substring(0, 3) + "-" + text.substring(3);
 					} else if (text.length() > 6) {
-						formatted = text.substring(0, 3) + "-" + text.substring(3, 6) + "-" + text.substring(6, Math.min(text.length(), 10));
+						formatted = text.substring(0, 3) + "-" + text.substring(3, 6) + "-"
+								+ text.substring(6, Math.min(text.length(), 10));
 					} else {
 						formatted = text;
 					}
 				}
-				
+
 				if (!formatted.equals(textField.getText())) {
 					textField.setText(formatted);
 				}
@@ -420,8 +439,6 @@ public class RegCliente extends JDialog {
 		});
 	}
 
-	
-	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
 
@@ -429,7 +446,7 @@ public class RegCliente extends JDialog {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.BOLD, 14)); 
+			setFont(new Font("Arial", Font.BOLD, 14));
 			setBackground(new Color(240, 240, 240));
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -437,7 +454,7 @@ public class RegCliente extends JDialog {
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); 
+					JButton button = new JButton("\u25BC");
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -447,19 +464,21 @@ public class RegCliente extends JDialog {
 					button.setOpaque(false);
 					return button;
 				}
-				
+
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					
+
 				}
 			});
 
 			setRenderer(new DefaultListCellRenderer() {
 				@Override
-				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+						boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					
+
 					if (index == -1) {
 						label.setOpaque(false);
 						if (RoundedComboBox.this.isEnabled()) {
@@ -470,7 +489,7 @@ public class RegCliente extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); 
+							label.setBackground(new Color(0, 60, 130));
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
@@ -486,13 +505,13 @@ public class RegCliente extends JDialog {
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
+
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			
+
 			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
 			super.paintComponent(g2);
-			
+
 			g2.dispose();
 		}
 
@@ -508,10 +527,12 @@ public class RegCliente extends JDialog {
 
 	class RoundedPanel extends JPanel {
 		private int radius;
+
 		public RoundedPanel(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -527,11 +548,13 @@ public class RegCliente extends JDialog {
 
 	class RoundedTextField extends JTextField {
 		private int radius;
+
 		public RoundedTextField(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -542,6 +565,7 @@ public class RegCliente extends JDialog {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -554,6 +578,7 @@ public class RegCliente extends JDialog {
 
 	class RoundedButton extends JButton {
 		private int radius;
+
 		public RoundedButton(String text, int radius) {
 			super(text);
 			this.radius = radius;
@@ -561,6 +586,7 @@ public class RegCliente extends JDialog {
 			setFocusPainted(false);
 			setBorderPainted(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();

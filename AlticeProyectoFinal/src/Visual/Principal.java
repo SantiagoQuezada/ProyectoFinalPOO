@@ -58,9 +58,9 @@ public class Principal extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		boolean isAdmin = false;
-		if (empleadoLogueado == null || empleadoLogueado.getUsuario() == null || 
-			empleadoLogueado.getUsuario().getRol().toString().equals("GERENTE") || 
-			empleadoLogueado.getUsuario().getRol().toString().equals("ADMINISTRADOR")) {
+		if (empleadoLogueado == null || empleadoLogueado.getUsuario() == null
+				|| empleadoLogueado.getUsuario().getRol().toString().equals("GERENTE")
+				|| empleadoLogueado.getUsuario().getRol().toString().equals("ADMINISTRADOR")) {
 			isAdmin = true;
 		}
 
@@ -78,8 +78,10 @@ public class Principal extends JFrame {
 		rightHeaderPanel.setOpaque(false);
 
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
-		
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null)
+				? empleadoLogueado.getUsuario().getRol().toString()
+				: "Admin";
+
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
 		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
@@ -91,12 +93,13 @@ public class Principal extends JFrame {
 		btnLogout.setFont(new Font("Arial", Font.BOLD, 13));
 		btnLogout.setPreferredSize(new Dimension(140, 35));
 		btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		
+
 		btnLogout.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				btnLogout.setBackground(new Color(220, 50, 50));
 			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				btnLogout.setBackground(new Color(40, 40, 40));
@@ -142,79 +145,52 @@ public class Principal extends JFrame {
 		JPanel cardsGrid = new JPanel(new GridLayout(0, 3, 30, 30));
 		cardsGrid.setOpaque(false);
 
-		RoundedPanel cardClientes = crearTarjetaModulo(
-			"\uD83D\uDC65", 
-			"Módulo Clientes", 
-			"Gestión de cartera y registros", 
-			e -> {
-				Clientes clientes = new Clientes(empleadoLogueado);
-				clientes.setVisible(true);
-				dispose();
-			}
-		);
+		RoundedPanel cardClientes = crearTarjetaModulo("\uD83D\uDC65", "Módulo Clientes",
+				"Gestión de cartera y registros", e -> {
+					Clientes clientes = new Clientes(empleadoLogueado);
+					clientes.setVisible(true);
+					dispose();
+				});
 
-		RoundedPanel cardPlanes = crearTarjetaModulo(
-			"\uD83D\uDCE1", 
-			"Módulo Planes", 
-			"Asignación y catálogo de planes", 
-			e -> {
-				Planes planes = new Planes(empleadoLogueado);
-				planes.setVisible(true);
-				dispose();
-			}
-		);
+		RoundedPanel cardPlanes = crearTarjetaModulo("\uD83D\uDCE1", "Módulo Planes", "Asignación y catálogo de planes",
+				e -> {
+					Planes planes = new Planes(empleadoLogueado);
+					planes.setVisible(true);
+					dispose();
+				});
 
-		RoundedPanel cardEmpleados = crearTarjetaModulo(
-			"\uD83D\uDCBC", 
-			"Nómina y Staff", 
-			"Administración de empleados", 
-			e -> {
-				Empleados empleados = new Empleados(empleadoLogueado);
-				empleados.setVisible(true);
-				dispose();
-			}
-		);
+		RoundedPanel cardEmpleados = crearTarjetaModulo("\uD83D\uDCBC", "Nómina y Staff", "Administración de empleados",
+				e -> {
+					Empleados empleados = new Empleados(empleadoLogueado);
+					empleados.setVisible(true);
+					dispose();
+				});
 
-		RoundedPanel cardPagos = crearTarjetaModulo(
-			"💳", 
-			"Módulo Pagos", 
-			"Facturación y cobros", 
-			e -> {
-				Pagos pagos = new Pagos(empleadoLogueado);
-				pagos.setVisible(true);
-				dispose();
-			}
-		);
+		RoundedPanel cardPagos = crearTarjetaModulo("💳", "Módulo Pagos", "Facturación y cobros", e -> {
+			Pagos pagos = new Pagos(empleadoLogueado);
+			pagos.setVisible(true);
+			dispose();
+		});
 
-		RoundedPanel cardChat = crearTarjetaModulo(
-			"💬", 
-			"Chat Interno", 
-			"Comunicación entre empleados", 
-			e -> {
-				Visual.ChatVentana chat = new Visual.ChatVentana(empleadoLogueado);
-				chat.setVisible(true);
-			}
-		);
+		RoundedPanel cardChat = crearTarjetaModulo("💬", "Chat Interno", "Comunicación entre empleados", e -> {
+			Visual.ChatVentana chat = new Visual.ChatVentana(empleadoLogueado);
+			chat.setVisible(true);
+		});
 
-		RoundedPanel cardGraficos = crearTarjetaModulo(
-			"📊", 
-			"Estadísticas", 
-			"Planes más usados por clientes", 
-			e -> {
-				GraficoPlanes graficos = new GraficoPlanes();
-				graficos.setVisible(true);
-			}
-		);
+		RoundedPanel cardGraficos = crearTarjetaModulo("📊", "Estadísticas", "Planes más usados por clientes", e -> {
+			GraficoPlanes graficos = new GraficoPlanes();
+			graficos.setVisible(true);
+		});
 
 		cardsGrid.add(cardClientes);
 		cardsGrid.add(cardPlanes);
 		cardsGrid.add(cardPagos);
-		
+
 		if (isAdmin) {
 			cardsGrid.add(cardEmpleados);
-			cardsGrid.add(cardGraficos); 
+			cardsGrid.add(cardGraficos);
 		}
-		
+
 		cardsGrid.add(cardChat);
 
 		JPanel cardsWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -243,36 +219,51 @@ public class Principal extends JFrame {
 			btnRespaldo.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			btnRespaldo.addActionListener(e -> {
 				Altice sistema = Altice.getInstance();
-				
+
 				if (sistema.getPlanes().isEmpty()) {
-					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Hogar", "Internet Fibra 100Mbps", 1200.0f));
-					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Móvil", "Plan Pospago 15GB", 600.0f));
-					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Empresarial", "Internet Dedicado 500Mbps", 9500.0f));
+					sistema.registrarPlan(
+							new Logico.Plan(sistema.generarIdPlan(), "Hogar", "Internet Fibra 100Mbps", 1200.0f));
+					sistema.registrarPlan(
+							new Logico.Plan(sistema.generarIdPlan(), "Móvil", "Plan Pospago 15GB", 600.0f));
+					sistema.registrarPlan(new Logico.Plan(sistema.generarIdPlan(), "Empresarial",
+							"Internet Dedicado 500Mbps", 9500.0f));
 				}
-				
+
 				if (sistema.getEmpleados().size() <= 1) {
 					Logico.Usuario u1 = new Logico.Usuario("lgomez", "1234", Logico.Rol.VENDEDOR);
-					sistema.registrarEmpleado(new Logico.Empleado("001-0000000-1", "Luis Gomez", "809-555-0001", "Santiago", sistema.generarIdEmpleado(), "Ventas", 25000.0f, u1, "Activo"));
-					
+					sistema.registrarEmpleado(new Logico.Empleado("001-0000000-1", "Luis Gomez", "809-555-0001",
+							"Santiago", sistema.generarIdEmpleado(), "Ventas", 25000.0f, u1, "Activo"));
+
 					Logico.Usuario u2 = new Logico.Usuario("mrodriguez", "1234", Logico.Rol.SOPORTE_TECNICO);
-					sistema.registrarEmpleado(new Logico.Empleado("001-0000000-2", "Maria Rodriguez", "809-555-0002", "Santo Domingo", sistema.generarIdEmpleado(), "Soporte", 30000.0f, u2, "Activo"));
+					sistema.registrarEmpleado(new Logico.Empleado("001-0000000-2", "Maria Rodriguez", "809-555-0002",
+							"Santo Domingo", sistema.generarIdEmpleado(), "Soporte", 30000.0f, u2, "Activo"));
 				}
-				
+
 				if (sistema.getClientes().isEmpty() && !sistema.getPlanes().isEmpty()) {
-					Logico.Contrato c1 = new Logico.Contrato("CON-001", new java.util.Date(), new java.util.Date(), "Activo", null, 12);
-					sistema.registrarCliente(new Logico.Cliente("402-1234567-8", "Juan Perez", "829-555-1234", "La Vega", sistema.generarIdCliente(), "Personal", "", sistema.getPlanes().get(0), c1, "Activo"));
-					
-					Logico.Contrato c2 = new Logico.Contrato("CON-002", new java.util.Date(), new java.util.Date(), "Activo", null, 24);
-					sistema.registrarCliente(new Logico.Cliente("031-9876543-2", "Tech Solutions", "809-111-2222", "Santiago", sistema.generarIdCliente(), "Empresarial", "1-30-12345-6", sistema.getPlanes().get(2), c2, "Activo"));
+					Logico.Contrato c1 = new Logico.Contrato("CON-001", new java.util.Date(), new java.util.Date(),
+							"Activo", null, 12);
+					sistema.registrarCliente(new Logico.Cliente("402-1234567-8", "Juan Perez", "829-555-1234",
+							"La Vega", sistema.generarIdCliente(), "Personal", "", sistema.getPlanes().get(0), c1,
+							"Activo"));
+
+					Logico.Contrato c2 = new Logico.Contrato("CON-002", new java.util.Date(), new java.util.Date(),
+							"Activo", null, 24);
+					sistema.registrarCliente(new Logico.Cliente("031-9876543-2", "Tech Solutions", "809-111-2222",
+							"Santiago", sistema.generarIdCliente(), "Empresarial", "1-30-12345-6",
+							sistema.getPlanes().get(2), c2, "Activo"));
 				}
-				
+
 				if (sistema.getPagos().isEmpty() && !sistema.getClientes().isEmpty()) {
-					sistema.registrarPago(new Logico.Pago(sistema.generarIdPago(), sistema.getClientes().get(0), new java.util.Date(), 1200.0f, "Efectivo", "Mensualidad"));
-					sistema.registrarPago(new Logico.Pago(sistema.generarIdPago(), sistema.getClientes().get(1), new java.util.Date(), 9500.0f, "Transferencia Bancaria", "Instalacion"));
+					sistema.registrarPago(new Logico.Pago(sistema.generarIdPago(), sistema.getClientes().get(0),
+							new java.util.Date(), 1200.0f, "Efectivo", "Mensualidad"));
+					sistema.registrarPago(new Logico.Pago(sistema.generarIdPago(), sistema.getClientes().get(1),
+							new java.util.Date(), 9500.0f, "Transferencia Bancaria", "Instalacion"));
 				}
 
 				Altice.guardarDatos();
-				JOptionPane.showMessageDialog(Principal.this, "Datos de prueba insertados y archivo de respaldo generado exitosamente.", "Respaldo Completado", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(Principal.this,
+						"Datos de prueba insertados y archivo de respaldo generado exitosamente.",
+						"Respaldo Completado", JOptionPane.INFORMATION_MESSAGE);
 			});
 			footerLeft.add(btnRespaldo);
 		}
@@ -283,7 +274,7 @@ public class Principal extends JFrame {
 
 		JLabel lblReloj = new JLabel();
 		lblReloj.setFont(new Font("Arial", Font.BOLD, 18));
-		lblReloj.setForeground(new Color(0, 102, 204)); 
+		lblReloj.setForeground(new Color(0, 102, 204));
 		lblReloj.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		Timer timer = new Timer(1000, new ActionListener() {
@@ -345,7 +336,7 @@ public class Principal extends JFrame {
 
 		RoundedButton boton = new RoundedButton("ACCEDER", 20);
 		boton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		boton.setBackground(new Color(0, 102, 204)); 
+		boton.setBackground(new Color(0, 102, 204));
 		boton.setForeground(Color.WHITE);
 		boton.setFont(new Font("Arial", Font.BOLD, 12));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -357,6 +348,7 @@ public class Principal extends JFrame {
 			public void mouseEntered(MouseEvent e) {
 				boton.setBackground(new Color(0, 80, 160));
 			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				boton.setBackground(new Color(0, 102, 204));
@@ -384,10 +376,10 @@ public class Principal extends JFrame {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(new Color(220, 220, 220));
-			
+
 			g2.fillOval(x + 6, y + 2, 12, 12);
 			g2.fillArc(x, y + 15, 24, 18, 0, 180);
-			
+
 			g2.dispose();
 		}
 
@@ -414,16 +406,16 @@ public class Principal extends JFrame {
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
+
 			g2.setColor(new Color(235, 235, 235));
-			g2.fillRoundRect(2, 2, getWidth()-2, getHeight()-2, radius, radius);
-			
+			g2.fillRoundRect(2, 2, getWidth() - 2, getHeight() - 2, radius, radius);
+
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth() - 4, getHeight() - 4, radius, radius);
-			
+
 			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 4, getHeight() - 4, radius, radius);
-			
+
 			g2.dispose();
 			super.paintComponent(g);
 		}
