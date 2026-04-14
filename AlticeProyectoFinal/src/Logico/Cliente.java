@@ -15,7 +15,6 @@ public class Cliente extends Persona implements Serializable {
 	private float deudaActiva;
 	private Date fechaAsignacionPlan; 
 
-	// Constructor Nuevo (Con Contrato)
 	public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String tipoCliente, String rnc, Plan plan, Contrato contrato, String estado) {
 		super(cedula, nombre, telefono, direccion);
 		this.idCliente = idCliente;
@@ -27,7 +26,7 @@ public class Cliente extends Persona implements Serializable {
 		this.deudaActiva = 0.0f;
 	}
 
-	// Constructor Antiguo CORREGIDO (Orden exacto para tus datos de prueba en Altice.java)
+
 	public Cliente(String cedula, String nombre, String telefono, String direccion, String idCliente, String estado, Plan plan, String tipoCliente, String rnc) {
 		super(cedula, nombre, telefono, direccion);
 		this.idCliente = idCliente;
@@ -38,7 +37,6 @@ public class Cliente extends Persona implements Serializable {
 		this.deudaActiva = 0.0f;
 	}
 
-	// --- MÉTODO OBLIGATORIO DE LA CLASE ABSTRACTA PERSONA CORREGIDO ---
 	@Override
 	public String mostrarDetalles() {
 		return "ID: " + idCliente + " | Nombre: " + getNombre() + " | Cédula/RNC: " + (rnc != null && !rnc.isEmpty() ? rnc : getCedula());

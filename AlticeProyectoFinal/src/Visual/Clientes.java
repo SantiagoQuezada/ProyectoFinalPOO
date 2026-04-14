@@ -61,7 +61,6 @@ public class Clientes extends JFrame {
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Principal ---
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
@@ -87,7 +86,6 @@ public class Clientes extends JFrame {
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
-		// --- Contenido Central ---
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout(0, 15));
 		centerPanel.setBackground(new Color(245, 247, 250));
@@ -114,7 +112,6 @@ public class Clientes extends JFrame {
 		panelTitulo.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTitulo.add(lblSubtitulo);
 
-		// --- Panel de Filtros ---
 		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
 		filterPanel.setBackground(Color.WHITE);
 		filterPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -161,7 +158,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
-		// --- Tabla ---
+
 		String[] columnas = {"ID", "Tipo", "Cédula / RNC", "Nombre o Empresa", "Teléfono", "Estado", "Plan Contratado", "Fecha Asignación"};
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
@@ -336,8 +333,7 @@ public class Clientes extends JFrame {
 		footerPanel.add(lblFooter);
 
 		add(footerPanel, BorderLayout.SOUTH);
-
-		// Eventos de Filtro
+		
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) { cargarClientes(); }

@@ -37,7 +37,7 @@ public class ChatVentana extends JFrame {
         headerPanel.setBackground(new Color(10, 10, 10));
         headerPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
         
-        JLabel lblTitulo = new JLabel("💬 Chat Interno de Empleados");
+        JLabel lblTitulo = new JLabel("Chat Interno de Empleados");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitulo.setForeground(Color.WHITE);
         headerPanel.add(lblTitulo, BorderLayout.WEST);
