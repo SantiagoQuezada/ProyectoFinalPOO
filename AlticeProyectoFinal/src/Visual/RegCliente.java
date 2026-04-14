@@ -9,13 +9,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Cursor;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Calendar;
-import java.util.Date;
-import java.awt.Rectangle; 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -29,7 +29,6 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.DefaultListCellRenderer;
 import java.awt.Component;
-import Logico.Contrato;
 import Logico.Cliente;
 import Logico.Plan;
 import Logico.Altice;
@@ -37,41 +36,46 @@ import Logico.Altice;
 public class RegCliente extends JDialog {
 
 	private RoundedTextField txtIdCliente;
-	private RoundedTextField txtNombre;
-	private RoundedTextField txtCedula;
-	private RoundedTextField txtTelefono;
-	private RoundedTextField txtDireccion;
 	private RoundedComboBox<String> cbxTipoCliente;
 	private RoundedTextField txtRnc;
-	private RoundedComboBox<String> cbxPlan;
-	private RoundedComboBox<String> cbxDuracion;
-	
+	private RoundedTextField txtCedula;
+	private RoundedTextField txtNombre;
+	private RoundedTextField txtTelefono;
+	private RoundedTextField txtDireccion;
+	private RoundedComboBox<String> cbxEstado;
+	private RoundedComboBox<String> cbxPlanes;
 	private Cliente clienteActual;
 
-	public RegCliente() {
-		this(null, false);
-	}
+	private JLabel lblCedula;
+	private JLabel lblNombre;
 
 	public RegCliente(Cliente cliente, boolean soloLectura) {
 		this.clienteActual = cliente;
 		
 		setModal(true);
 		setResizable(false);
-		setSize(800, 550);
+		setSize(550, 700);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
+		// --- Header Panel ---
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 20));
-		headerPanel.setBackground(new Color(15, 15, 15));
-		headerPanel.setPreferredSize(new Dimension(800, 70));
+		headerPanel.setBackground(new Color(10, 10, 10));
+		headerPanel.setPreferredSize(new Dimension(550, 70));
 		
-		JLabel lblDialogTitle = new JLabel(clienteActual == null ? "👤 Registrar Nuevo Cliente" : "👤 Información de Cliente");
+		String tituloHeader = "Registrar Nuevo Cliente";
+		if (clienteActual != null) {
+			tituloHeader = soloLectura ? "Detalles del Cliente" : "Modificar Cliente";
+		}
+		
+		JLabel lblDialogTitle = new JLabel((soloLectura ? "👁 " : "📝 ") + tituloHeader);
 		lblDialogTitle.setFont(new Font("Arial", Font.BOLD, 22));
 		lblDialogTitle.setForeground(Color.WHITE);
 		headerPanel.add(lblDialogTitle);
 		getContentPane().add(headerPanel, BorderLayout.NORTH);
 
+		// --- Main Content ---
 		JPanel centerContainer = new JPanel(new BorderLayout());
 		centerContainer.setBackground(new Color(245, 247, 250));
 		centerContainer.setBorder(new EmptyBorder(20, 25, 10, 25));
@@ -83,173 +87,194 @@ public class RegCliente extends JDialog {
 		getContentPane().add(centerContainer, BorderLayout.CENTER);
 
 		Font labelFont = new Font("Arial", Font.BOLD, 14);
-		Color labelColor = new Color(70, 70, 70);
+		Color labelColor = new Color(50, 50, 50);
 
 		JLabel lblIdCliente = new JLabel("ID Cliente:");
 		lblIdCliente.setFont(labelFont);
 		lblIdCliente.setForeground(labelColor);
-		lblIdCliente.setBounds(30, 30, 110, 35);
+		lblIdCliente.setBounds(30, 30, 140, 35);
 		contentPanel.add(lblIdCliente);
 
 		txtIdCliente = new RoundedTextField(15);
 		txtIdCliente.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtIdCliente.setText(clienteActual == null ? "CLI-" + String.format("%04d", Altice.getInstance().getClientes().size() + 1) : clienteActual.getIdCliente());
+		if (clienteActual == null) {
+			txtIdCliente.setText(Altice.getInstance().generarIdCliente());
+		} else {
+			txtIdCliente.setText(clienteActual.getIdCliente());
+		}
 		txtIdCliente.setEditable(false);
 		txtIdCliente.setBackground(new Color(240, 240, 240));
-		txtIdCliente.setBounds(140, 30, 210, 35);
+		txtIdCliente.setBounds(180, 30, 280, 35);
 		contentPanel.add(txtIdCliente);
 
 		JLabel lblTipoCliente = new JLabel("Tipo Cliente:");
 		lblTipoCliente.setFont(labelFont);
 		lblTipoCliente.setForeground(labelColor);
-		lblTipoCliente.setBounds(390, 30, 120, 35);
+		lblTipoCliente.setBounds(30, 80, 140, 35);
 		contentPanel.add(lblTipoCliente);
 
 		cbxTipoCliente = new RoundedComboBox<String>(15);
 		cbxTipoCliente.addItem("Personal");
 		cbxTipoCliente.addItem("Empresarial");
-		cbxTipoCliente.setBounds(510, 30, 210, 35);
+		cbxTipoCliente.setBounds(180, 80, 280, 35);
 		contentPanel.add(cbxTipoCliente);
-
-		JLabel lblNombre = new JLabel("Nombre:");
-		lblNombre.setFont(labelFont);
-		lblNombre.setForeground(labelColor);
-		lblNombre.setBounds(30, 90, 110, 35);
-		contentPanel.add(lblNombre);
-
-		txtNombre = new RoundedTextField(15);
-		txtNombre.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtNombre.setBounds(140, 90, 210, 35);
-		contentPanel.add(txtNombre);
 
 		JLabel lblRnc = new JLabel("RNC:");
 		lblRnc.setFont(labelFont);
 		lblRnc.setForeground(labelColor);
-		lblRnc.setBounds(390, 90, 120, 35);
+		lblRnc.setBounds(30, 130, 140, 35);
 		contentPanel.add(lblRnc);
 
 		txtRnc = new RoundedTextField(15);
 		txtRnc.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtRnc.setBounds(510, 90, 210, 35);
+		txtRnc.setBounds(180, 130, 280, 35);
 		txtRnc.setEnabled(false);
 		txtRnc.setBackground(new Color(240, 240, 240));
+		aplicarFormato(txtRnc, "RNC");
 		contentPanel.add(txtRnc);
 
-		cbxTipoCliente.addActionListener(e -> {
-			if (cbxTipoCliente.getSelectedIndex() == 1) {
-				txtRnc.setEnabled(true);
-				txtRnc.setBackground(Color.WHITE);
-			} else {
-				txtRnc.setEnabled(false);
-				txtRnc.setBackground(new Color(240, 240, 240));
-				txtRnc.setText("");
-			}
-		});
-
-		JLabel lblCedula = new JLabel("Cédula:");
+		lblCedula = new JLabel("Cédula:");
 		lblCedula.setFont(labelFont);
 		lblCedula.setForeground(labelColor);
-		lblCedula.setBounds(30, 150, 110, 35);
+		lblCedula.setBounds(30, 180, 140, 35);
 		contentPanel.add(lblCedula);
 
 		txtCedula = new RoundedTextField(15);
 		txtCedula.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtCedula.setBounds(140, 150, 210, 35);
+		txtCedula.setBounds(180, 180, 280, 35);
+		aplicarFormato(txtCedula, "Cedula");
 		contentPanel.add(txtCedula);
 
-		JLabel lblPlan = new JLabel("Plan a Contratar:");
-		lblPlan.setFont(labelFont);
-		lblPlan.setForeground(labelColor);
-		lblPlan.setBounds(390, 150, 120, 35);
-		contentPanel.add(lblPlan);
-
-		cbxPlan = new RoundedComboBox<String>(15);
-		if (Altice.getInstance().getPlanes().isEmpty()) {
-			cbxPlan.addItem("Sin planes disponibles");
-			cbxPlan.setEnabled(false);
-		} else {
-			for (Plan p : Altice.getInstance().getPlanes()) {
-				cbxPlan.addItem(p.getNombre() + " - $" + p.getPrecio());
+		txtCedula.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) txtNombre.requestFocus();
 			}
-		}
-		cbxPlan.setBounds(510, 150, 210, 35);
-		contentPanel.add(cbxPlan);
+		});
+
+		lblNombre = new JLabel("Nombre Completo:");
+		lblNombre.setFont(labelFont);
+		lblNombre.setForeground(labelColor);
+		lblNombre.setBounds(30, 230, 140, 35);
+		contentPanel.add(lblNombre);
+
+		txtNombre = new RoundedTextField(15);
+		txtNombre.setFont(new Font("Arial", Font.PLAIN, 14));
+		txtNombre.setBounds(180, 230, 280, 35);
+		contentPanel.add(txtNombre);
+
+		txtNombre.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) txtTelefono.requestFocus();
+			}
+		});
 
 		JLabel lblTelefono = new JLabel("Teléfono:");
 		lblTelefono.setFont(labelFont);
 		lblTelefono.setForeground(labelColor);
-		lblTelefono.setBounds(30, 210, 110, 35);
+		lblTelefono.setBounds(30, 280, 140, 35);
 		contentPanel.add(lblTelefono);
 
 		txtTelefono = new RoundedTextField(15);
 		txtTelefono.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtTelefono.setBounds(140, 210, 210, 35);
+		txtTelefono.setBounds(180, 280, 280, 35);
+		aplicarFormato(txtTelefono, "Telefono");
 		contentPanel.add(txtTelefono);
 
-		JLabel lblDuracion = new JLabel("Tiempo Contrato:");
-		lblDuracion.setFont(labelFont);
-		lblDuracion.setForeground(labelColor);
-		lblDuracion.setBounds(390, 210, 130, 35);
-		contentPanel.add(lblDuracion);
-
-		cbxDuracion = new RoundedComboBox<String>(15);
-		cbxDuracion.addItem("12 Meses");
-		cbxDuracion.addItem("18 Meses");
-		cbxDuracion.addItem("24 Meses");
-		cbxDuracion.setBounds(520, 210, 200, 35);
-		contentPanel.add(cbxDuracion);
+		txtTelefono.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) txtDireccion.requestFocus();
+			}
+		});
 
 		JLabel lblDireccion = new JLabel("Dirección:");
 		lblDireccion.setFont(labelFont);
 		lblDireccion.setForeground(labelColor);
-		lblDireccion.setBounds(30, 270, 110, 35);
+		lblDireccion.setBounds(30, 330, 140, 35);
 		contentPanel.add(lblDireccion);
 
 		txtDireccion = new RoundedTextField(15);
 		txtDireccion.setFont(new Font("Arial", Font.PLAIN, 14));
-		txtDireccion.setBounds(140, 270, 580, 35);
+		txtDireccion.setBounds(180, 330, 280, 35);
 		contentPanel.add(txtDireccion);
 
+		JLabel lblEstado = new JLabel("Estado:");
+		lblEstado.setFont(labelFont);
+		lblEstado.setForeground(labelColor);
+		lblEstado.setBounds(30, 380, 140, 35);
+		contentPanel.add(lblEstado);
+
+		cbxEstado = new RoundedComboBox<String>(15);
+		cbxEstado.addItem("Activo");
+		cbxEstado.addItem("Inactivo");
+		cbxEstado.addItem("Suspendido");
+		cbxEstado.setBounds(180, 380, 280, 35);
+		contentPanel.add(cbxEstado);
+
+		JLabel lblPlan = new JLabel("Plan Inicial:");
+		lblPlan.setFont(labelFont);
+		lblPlan.setForeground(labelColor);
+		lblPlan.setBounds(30, 430, 140, 35);
+		contentPanel.add(lblPlan);
+
+		cbxPlanes = new RoundedComboBox<String>(15);
+		cbxPlanes.setBounds(180, 430, 280, 35);
+		cargarPlanes();
+		contentPanel.add(cbxPlanes);
+
+		cbxTipoCliente.addActionListener(e -> {
+			if (cbxTipoCliente.getSelectedItem().toString().equals("Empresarial")) {
+				txtRnc.setEnabled(true);
+				txtRnc.setBackground(Color.WHITE);
+				lblNombre.setText("Razón Social:");
+				lblCedula.setText("Cédula Representante:");
+			} else {
+				txtRnc.setEnabled(false);
+				txtRnc.setBackground(new Color(240, 240, 240));
+				txtRnc.setText("");
+				lblNombre.setText("Nombre Completo:");
+				lblCedula.setText("Cédula:");
+			}
+		});
+
 		if (clienteActual != null) {
-			txtNombre.setText(clienteActual.getNombre());
+			cbxTipoCliente.setSelectedItem(clienteActual.getTipoCliente());
+			txtRnc.setText(clienteActual.getRnc());
 			txtCedula.setText(clienteActual.getCedula());
+			txtNombre.setText(clienteActual.getNombre());
 			txtTelefono.setText(clienteActual.getTelefono());
 			txtDireccion.setText(clienteActual.getDireccion());
-			if (clienteActual.getTipoCliente() != null && clienteActual.getTipoCliente().equalsIgnoreCase("Empresarial")) {
-				cbxTipoCliente.setSelectedIndex(1);
-				txtRnc.setText(clienteActual.getRnc());
-			} else {
-				cbxTipoCliente.setSelectedIndex(0);
-			}
+			cbxEstado.setSelectedItem(clienteActual.getEstado());
 			
-			if (clienteActual.getPlan() != null && cbxPlan.isEnabled()) {
-				for (int i = 0; i < Altice.getInstance().getPlanes().size(); i++) {
-					if (Altice.getInstance().getPlanes().get(i).getIdPlan().equals(clienteActual.getPlan().getIdPlan())) {
-						cbxPlan.setSelectedIndex(i);
-						break;
-					}
-				}
-			}
-			
-			if (clienteActual.getContrato() != null) {
-				int duracion = clienteActual.getContrato().getDuracionMeses();
-				if (duracion == 12) cbxDuracion.setSelectedIndex(0);
-				else if (duracion == 18) cbxDuracion.setSelectedIndex(1);
-				else if (duracion == 24) cbxDuracion.setSelectedIndex(2);
-			}
-			
-			if (soloLectura) {
-				txtNombre.setEditable(false);
-				txtCedula.setEditable(false);
-				txtTelefono.setEditable(false);
-				txtDireccion.setEditable(false);
-				txtRnc.setEditable(false);
-				cbxTipoCliente.setEnabled(false);
-				cbxPlan.setEnabled(false);
-				cbxDuracion.setEnabled(false);
+			if (clienteActual.getPlan() != null) {
+				cbxPlanes.setSelectedItem(clienteActual.getPlan().getNombre() + " - $" + clienteActual.getPlan().getPrecio());
 			}
 		}
 
+		if (soloLectura) {
+			cbxTipoCliente.setEnabled(false);
+			txtRnc.setEditable(false);
+			txtCedula.setEditable(false);
+			txtNombre.setEditable(false);
+			txtTelefono.setEditable(false);
+			txtDireccion.setEditable(false);
+			cbxEstado.setEnabled(false);
+			cbxPlanes.setEnabled(false);
+			
+			Color colorDeshabilitado = new Color(245, 245, 245);
+			txtRnc.setBackground(colorDeshabilitado);
+			txtCedula.setBackground(colorDeshabilitado);
+			txtNombre.setBackground(colorDeshabilitado);
+			txtTelefono.setBackground(colorDeshabilitado);
+			txtDireccion.setBackground(colorDeshabilitado);
+			cbxTipoCliente.setBackground(colorDeshabilitado);
+			cbxEstado.setBackground(colorDeshabilitado);
+			cbxPlanes.setBackground(colorDeshabilitado);
+		}
+
+		// --- Footer Buttons ---
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		buttonPane.setBackground(new Color(245, 247, 250));
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
@@ -258,124 +283,149 @@ public class RegCliente extends JDialog {
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
 		btnCancelar.setBackground(new Color(200, 200, 200));
 		btnCancelar.setForeground(new Color(30, 30, 30));
-		btnCancelar.setFont(new Font("Arial", Font.BOLD, 14));
-		btnCancelar.setPreferredSize(new Dimension(130, 45));
+		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
+		btnCancelar.setPreferredSize(new Dimension(120, 40));
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnCancelar.addActionListener(e -> dispose());
-		buttonPane.add(btnCancelar);
 
 		if (!soloLectura) {
-			RoundedButton btnRegistrar = new RoundedButton(clienteActual == null ? "Registrar Cliente" : "Guardar Cambios", 20);
-			btnRegistrar.setBackground(new Color(0, 102, 204)); 
+			RoundedButton btnRegistrar = new RoundedButton(clienteActual == null ? "Registrar" : "Guardar Cambios", 20);
+			btnRegistrar.setBackground(new Color(0, 102, 204));
 			btnRegistrar.setForeground(Color.WHITE);
-			btnRegistrar.setFont(new Font("Arial", Font.BOLD, 14));
-			btnRegistrar.setPreferredSize(new Dimension(180, 45));
+			btnRegistrar.setFont(new Font("Arial", Font.BOLD, 13));
+			btnRegistrar.setPreferredSize(new Dimension(160, 40));
 			btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			
 			btnRegistrar.addMouseListener(new MouseAdapter() {
 				@Override
-				public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 80, 180)); }
+				public void mouseEntered(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 80, 160)); }
 				@Override
 				public void mouseExited(MouseEvent e) { btnRegistrar.setBackground(new Color(0, 102, 204)); }
 			});
-	
+
 			btnRegistrar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					String nombre = txtNombre.getText().trim();
-					String cedula = txtCedula.getText().trim();
-					String telefono = txtTelefono.getText().trim();
-					String direccion = txtDireccion.getText().trim();
-					String rnc = cbxTipoCliente.getSelectedIndex() == 1 ? txtRnc.getText().trim() : "";
-
-					// 1. Validar campos vacíos
-					if (nombre.isEmpty() || cedula.isEmpty() || telefono.isEmpty() || direccion.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Debe completar todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					if (cbxTipoCliente.getSelectedIndex() == 1 && rnc.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Debe ingresar el RNC para clientes empresariales.", "Error", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					if (Altice.getInstance().getPlanes().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "No puede registrar un cliente sin planes disponibles en el sistema.", "Error", JOptionPane.ERROR_MESSAGE);
+					if (txtCedula.getText().isEmpty() || txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty() || txtDireccion.getText().isEmpty() || cbxPlanes.getSelectedIndex() == 0) {
+						JOptionPane.showMessageDialog(null, "Por favor, complete todos los campos obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 
-					// 2. Validaciones con Regex para evitar números en texto y letras en números
-					if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
-						JOptionPane.showMessageDialog(null, "Dato '" + nombre + "' no válido en la parte de Nombre.\nNo se permiten números ni caracteres especiales.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					if (!cedula.matches("^[0-9\\-]+$")) {
-						JOptionPane.showMessageDialog(null, "Dato '" + cedula + "' no válido en la parte de Cédula.\nSolo se permiten números y guiones.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					if (!telefono.matches("^[0-9\\-\\+\\s]+$")) {
-						JOptionPane.showMessageDialog(null, "Dato '" + telefono + "' no válido en la parte de Teléfono.\nSolo se permiten números, guiones y el signo +.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					if (cbxTipoCliente.getSelectedIndex() == 1 && !rnc.matches("^[0-9\\-]+$")) {
-						JOptionPane.showMessageDialog(null, "Dato '" + rnc + "' no válido en la parte de RNC.\nSolo se permiten números y guiones.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-	
-					String idCliente = txtIdCliente.getText();
+					String id = txtIdCliente.getText();
 					String tipoCliente = cbxTipoCliente.getSelectedItem().toString();
-					Plan planSeleccionado = Altice.getInstance().getPlanes().get(cbxPlan.getSelectedIndex());
-					int duracion = Integer.parseInt(cbxDuracion.getSelectedItem().toString().split(" ")[0]);
-	
+					String rnc = txtRnc.getText();
+					String cedula = txtCedula.getText();
+					String nombre = txtNombre.getText();
+					String telefono = txtTelefono.getText();
+					String direccion = txtDireccion.getText();
+					String estado = cbxEstado.getSelectedItem().toString();
+					String nombrePlan = ((String) cbxPlanes.getSelectedItem()).split(" - \\$")[0];
+
 					if (clienteActual == null) {
-						Date fechaInicio = new Date();
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(fechaInicio);
-						cal.add(Calendar.MONTH, duracion);
-						Date fechaFin = cal.getTime();
-		
-						String idContrato = "CON-" + String.format("%04d", Altice.getInstance().getClientes().size() + 1);
-						Contrato nuevoContrato = new Contrato(idContrato, fechaInicio, fechaFin, "Activo", null, duracion);
-						
-						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, idCliente, tipoCliente, rnc, planSeleccionado, nuevoContrato, "Activo");
-						nuevoCliente.agregarDeuda(planSeleccionado.getPrecio());
-		
-						Altice.getInstance().getClientes().add(nuevoCliente);
-						JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente con una deuda inicial de $" + planSeleccionado.getPrecio(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+						Cliente nuevoCliente = new Cliente(cedula, nombre, telefono, direccion, id, estado, null, tipoCliente, rnc);
+						Altice.getInstance().registrarCliente(nuevoCliente);
+						Altice.getInstance().asignarPlanACliente(id, nombrePlan);
+						JOptionPane.showMessageDialog(null, "Cliente registrado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 					} else {
-						clienteActual.setNombre(nombre);
-						clienteActual.setCedula(cedula);
-						clienteActual.setTelefono(telefono);
-						clienteActual.setDireccion(direccion);
 						clienteActual.setTipoCliente(tipoCliente);
 						clienteActual.setRnc(rnc);
-						clienteActual.setPlan(planSeleccionado);
-						if (clienteActual.getContrato() != null) {
-							clienteActual.getContrato().setDuracionMeses(duracion);
-						}
-						JOptionPane.showMessageDialog(null, "Cliente actualizado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+						clienteActual.setCedula(cedula);
+						clienteActual.setNombre(nombre);
+						clienteActual.setTelefono(telefono);
+						clienteActual.setDireccion(direccion);
+						clienteActual.setEstado(estado);
+						Altice.getInstance().asignarPlanACliente(id, nombrePlan);
+						JOptionPane.showMessageDialog(null, "Cliente actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 					}
 					
 					dispose();
 				}
 			});
+			buttonPane.add(btnCancelar);
 			buttonPane.add(btnRegistrar);
 			getRootPane().setDefaultButton(btnRegistrar);
+		} else {
+			buttonPane.add(btnCancelar);
+		}
+
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowOpened(java.awt.event.WindowEvent e) {
+				if(!soloLectura) {
+					txtCedula.requestFocus();
+				}
+			}
+		});
+	}
+
+	private void cargarPlanes() {
+		cbxPlanes.addItem("<Seleccione un plan>");
+		for (Plan plan : Altice.getInstance().getPlanes()) {
+			cbxPlanes.addItem(plan.getNombre() + " - $" + plan.getPrecio());
 		}
 	}
 
+	private void aplicarFormato(JTextField textField, String tipo) {
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE || 
+					e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					return;
+				}
+				String text = textField.getText().replaceAll("[^0-9]", "");
+				String formatted = "";
+				if (tipo.equals("Cedula")) {
+					if (text.length() > 3 && text.length() <= 10) {
+						formatted = text.substring(0, 3) + "-" + text.substring(3);
+					} else if (text.length() > 10) {
+						formatted = text.substring(0, 3) + "-" + text.substring(3, 10) + "-" + text.substring(10, Math.min(text.length(), 11));
+					} else {
+						formatted = text;
+					}
+				} else if (tipo.equals("RNC")) {
+					if (text.length() > 1 && text.length() <= 3) {
+						formatted = text.substring(0, 1) + "-" + text.substring(1);
+					} else if (text.length() > 3 && text.length() <= 8) {
+						formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3);
+					} else if (text.length() > 8) {
+						formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3, 8) + "-" + text.substring(8, Math.min(text.length(), 9));
+					} else {
+						formatted = text;
+					}
+				} else if (tipo.equals("Telefono")) {
+					if (text.length() > 3 && text.length() <= 6) {
+						formatted = text.substring(0, 3) + "-" + text.substring(3);
+					} else if (text.length() > 6) {
+						formatted = text.substring(0, 3) + "-" + text.substring(3, 6) + "-" + text.substring(6, Math.min(text.length(), 10));
+					} else {
+						formatted = text;
+					}
+				}
+				
+				if (!formatted.equals(textField.getText())) {
+					textField.setText(formatted);
+				}
+			}
+		});
+	}
+
+	// --- Componentes Personalizados ---
+	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
+
 		public RoundedComboBox(int radius) {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.BOLD, 14));
-			setBackground(new Color(240, 240, 240));
+			setFont(new Font("Arial", Font.PLAIN, 14));
+			setBackground(new Color(240, 240, 240)); // Fondo gris claro
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC");
+					JButton button = new JButton("\u25BC"); // Flecha minimalista
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -385,8 +435,11 @@ public class RegCliente extends JDialog {
 					button.setOpaque(false);
 					return button;
 				}
+				
 				@Override
-				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {}
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+					// Previene que se dibuje el fondo cuadrado nativo
+				}
 			});
 
 			setRenderer(new DefaultListCellRenderer() {
@@ -394,15 +447,21 @@ public class RegCliente extends JDialog {
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					label.setFont(new Font("Arial", Font.BOLD, 14));
+					
+					// Si el index es -1 significa que es el texto mostrado DENTRO del ComboBox cerrado
 					if (index == -1) {
 						label.setOpaque(false);
-						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
-						else label.setForeground(new Color(150, 150, 150));
+						// Mantiene el color correcto si está habilitado o deshabilitado
+						if (RoundedComboBox.this.isEnabled()) {
+							label.setForeground(new Color(50, 50, 50));
+						} else {
+							label.setForeground(new Color(150, 150, 150));
+						}
 					} else {
+						// Renderizado para los items de la lista desplegada
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130));
+							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
@@ -418,10 +477,15 @@ public class RegCliente extends JDialog {
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			// Se dibuja el fondo redondeado
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			// Se recorta el área gráfica para que el contenido no sobresalga de la curva
 			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
 			super.paintComponent(g2);
+			
 			g2.dispose();
 		}
 
@@ -429,8 +493,11 @@ public class RegCliente extends JDialog {
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			// El borde se dibuja al final para enmascarar cualquier imperfección en las esquinas
 			g2.setColor(new Color(200, 200, 200));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			
 			g2.dispose();
 		}
 	}
@@ -445,12 +512,20 @@ public class RegCliente extends JDialog {
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2.setColor(new Color(0, 0, 0, 15));
-			g2.fillRoundRect(2, 2, getWidth() - 2, getHeight() - 2, radius, radius);
 			g2.setColor(getBackground());
-			g2.fillRoundRect(0, 0, getWidth() - 4, getHeight() - 4, radius, radius);
+			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
 			g2.dispose();
-			super.paintComponent(g);
+		}
+		@Override
+		protected void paintBorder(Graphics g) {
+			Graphics2D g2 = (Graphics2D) g.create();
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setColor(new Color(220, 220, 220));
+			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+			g2.dispose();
 		}
 	}
 
@@ -467,6 +542,7 @@ public class RegCliente extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
 			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
 			super.paintComponent(g2);
 			g2.dispose();
@@ -496,8 +572,10 @@ public class RegCliente extends JDialog {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+			
+			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+			super.paintComponent(g2);
 			g2.dispose();
-			super.paintComponent(g);
 		}
 	}
 }
