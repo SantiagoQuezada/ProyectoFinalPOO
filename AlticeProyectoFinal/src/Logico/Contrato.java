@@ -4,7 +4,7 @@ import java.util.Date;
 import java.io.Serializable;
 
 public class Contrato implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String idContrato;
 	private Date fechaInicio;
@@ -13,7 +13,8 @@ public class Contrato implements Serializable {
 	private Servicio servicio;
 	private int duracionMeses;
 
-	public Contrato(String idContrato, Date fechaInicio, Date fechaFin, String estado, Servicio servicio, int duracionMeses) {
+	public Contrato(String idContrato, Date fechaInicio, Date fechaFin, String estado, Servicio servicio,
+			int duracionMeses) {
 		this.idContrato = idContrato;
 		this.fechaInicio = fechaInicio;
 		this.fechaFin = fechaFin;
