@@ -46,7 +46,7 @@ public class Pagos extends JFrame {
 	private DefaultTableModel modeloTabla;
 	private JTable tablaPagos;
 	private Empleado empleadoLogueado;
-	
+
 	private RoundedTextField txtBuscar;
 	private RoundedComboBox<String> cbxFiltroMetodo;
 	private RoundedComboBox<String> cbxFiltroConcepto;
@@ -60,7 +60,6 @@ public class Pagos extends JFrame {
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Principal ---
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
@@ -75,18 +74,19 @@ public class Pagos extends JFrame {
 		rightHeaderPanel.setOpaque(false);
 
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
-		
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null)
+				? empleadoLogueado.getUsuario().getRol().toString()
+				: "Admin";
+
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
 		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
-		
+
 		rightHeaderPanel.add(lblUser);
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
-		// --- Contenido Central ---
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout(0, 15));
 		centerPanel.setBackground(new Color(245, 247, 250));
@@ -163,12 +163,14 @@ public class Pagos extends JFrame {
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
 		// --- Tabla ---
-		String[] columnas = {"ID Pago", "Cédula / RNC", "Cliente", "Fecha", "Monto", "Concepto", "Método de Pago"};
+		String[] columnas = { "ID Pago", "Cédula / RNC", "Cliente", "Fecha", "Monto", "Concepto", "Método de Pago" };
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
-			public boolean isCellEditable(int row, int column) { return false; }
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
 		};
-		
+
 		tablaPagos = new JTable(modeloTabla);
 		tablaPagos.setFillsViewportHeight(true);
 		tablaPagos.setRowHeight(45);
@@ -185,8 +187,10 @@ public class Pagos extends JFrame {
 		JTableHeader header = tablaPagos.getTableHeader();
 		header.setDefaultRenderer(new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+						column);
 				label.setBackground(new Color(15, 15, 15));
 				label.setForeground(Color.WHITE);
 				label.setFont(new Font("Arial", Font.BOLD, 13));
@@ -200,23 +204,25 @@ public class Pagos extends JFrame {
 
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
 				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
-				
+
 				if (!isSelected) {
-					if (row % 2 == 0) c.setBackground(new Color(250, 250, 250));
-					else c.setBackground(new Color(240, 240, 240));
+					if (row % 2 == 0)
+						c.setBackground(new Color(250, 250, 250));
+					else
+						c.setBackground(new Color(240, 240, 240));
 					c.setForeground(new Color(15, 15, 15));
 				}
-				
-				// Resaltar montos en verde
+
 				if (column == 4 && !isSelected) {
-				    c.setForeground(new Color(0, 150, 50));
-				    c.setFont(new Font("Arial", Font.BOLD, 14));
+					c.setForeground(new Color(0, 150, 50));
+					c.setFont(new Font("Arial", Font.BOLD, 14));
 				} else if (column == 4 && isSelected) {
-				    c.setFont(new Font("Arial", Font.BOLD, 14));
+					c.setFont(new Font("Arial", Font.BOLD, 14));
 				}
 				return c;
 			}
@@ -268,22 +274,26 @@ public class Pagos extends JFrame {
 		btnLeer.addActionListener(e -> {
 			int filaSeleccionada = tablaPagos.getSelectedRow();
 			if (filaSeleccionada >= 0) {
-			    String idPago = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
-			    Pago pago = null;
-			    for(Pago p : Altice.getInstance().getPagos()){
-			        if(p.getIdPago().equals(idPago)) { pago = p; break; }
-			    }
-			    if (pago != null) {
-			        RegPago modalReg = new RegPago(pago, true);
-			        modalReg.setVisible(true);
-			    }
+				String idPago = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
+				Pago pago = null;
+				for (Pago p : Altice.getInstance().getPagos()) {
+					if (p.getIdPago().equals(idPago)) {
+						pago = p;
+						break;
+					}
+				}
+				if (pago != null) {
+					RegPago modalReg = new RegPago(pago, true);
+					modalReg.setVisible(true);
+				}
 			} else {
-				javax.swing.JOptionPane.showMessageDialog(null, "Debe seleccionar un pago de la tabla.", "Atención", javax.swing.JOptionPane.WARNING_MESSAGE);
+				javax.swing.JOptionPane.showMessageDialog(null, "Debe seleccionar un pago de la tabla.", "Atención",
+						javax.swing.JOptionPane.WARNING_MESSAGE);
 			}
 		});
 
 		crudPanel.add(btnVolver);
-		crudPanel.add(Box.createRigidArea(new Dimension(30, 0))); 
+		crudPanel.add(Box.createRigidArea(new Dimension(30, 0)));
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
 
@@ -304,7 +314,9 @@ public class Pagos extends JFrame {
 		// Eventos de Filtro
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) { cargarPagos(); }
+			public void keyReleased(KeyEvent e) {
+				cargarPagos();
+			}
 		});
 		cbxFiltroMetodo.addActionListener(e -> cargarPagos());
 		cbxFiltroConcepto.addActionListener(e -> cargarPagos());
@@ -318,20 +330,20 @@ public class Pagos extends JFrame {
 
 	private void cargarPagos() {
 		modeloTabla.setRowCount(0);
-		
+
 		String busq = txtBuscar != null ? txtBuscar.getText().toLowerCase() : "";
 		String fMetodo = cbxFiltroMetodo != null ? cbxFiltroMetodo.getSelectedItem().toString() : "Todos";
 		String fConcepto = cbxFiltroConcepto != null ? cbxFiltroConcepto.getSelectedItem().toString() : "Todos";
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		
+
 		for (Pago p : Altice.getInstance().getPagos()) {
-		    String identificacion = p.getCliente().getTipoCliente().equals("Empresarial") ? p.getCliente().getRnc() : p.getCliente().getCedula();
-		    
-			boolean matchBusq = p.getCliente().getNombre().toLowerCase().contains(busq) || 
-								p.getIdPago().toLowerCase().contains(busq) || 
-								identificacion.contains(busq);
-								
+			String identificacion = p.getCliente().getTipoCliente().equals("Empresarial") ? p.getCliente().getRnc()
+					: p.getCliente().getCedula();
+
+			boolean matchBusq = p.getCliente().getNombre().toLowerCase().contains(busq)
+					|| p.getIdPago().toLowerCase().contains(busq) || identificacion.contains(busq);
+
 			boolean matchMetodo = fMetodo.equals("Todos") || p.getMetodoPago().equalsIgnoreCase(fMetodo);
 			boolean matchConcepto = fConcepto.equals("Todos") || p.getConcepto().equalsIgnoreCase(fConcepto);
 
@@ -359,9 +371,14 @@ public class Pagos extends JFrame {
 
 		boton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { boton.setBackground(bgHover); }
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(bgHover);
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) { boton.setBackground(bgDefault); }
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(bgDefault);
+			}
 		});
 
 		return boton;
@@ -377,14 +394,21 @@ public class Pagos extends JFrame {
 			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			g2.dispose();
 		}
+
 		@Override
-		public int getIconWidth() { return 24; }
+		public int getIconWidth() {
+			return 24;
+		}
+
 		@Override
-		public int getIconHeight() { return 24; }
+		public int getIconHeight() {
+			return 24;
+		}
 	}
 
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
+
 		public RoundedComboBox(int radius) {
 			super();
 			this.radius = radius;
@@ -407,20 +431,26 @@ public class Pagos extends JFrame {
 					button.setOpaque(false);
 					return button;
 				}
+
 				@Override
-				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {}
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+				}
 			});
 
 			setRenderer(new DefaultListCellRenderer() {
 				@Override
-				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+						boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					label.setFont(new Font("Arial", Font.BOLD, 14)); 
+					label.setFont(new Font("Arial", Font.BOLD, 14));
 					if (index == -1) {
 						label.setOpaque(false);
-						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
-						else label.setForeground(new Color(150, 150, 150));
+						if (RoundedComboBox.this.isEnabled())
+							label.setForeground(new Color(50, 50, 50));
+						else
+							label.setForeground(new Color(150, 150, 150));
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
@@ -459,10 +489,12 @@ public class Pagos extends JFrame {
 
 	class RoundedPanel extends JPanel {
 		private int radius;
+
 		public RoundedPanel(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -478,11 +510,13 @@ public class Pagos extends JFrame {
 
 	class RoundedTextField extends JTextField {
 		private int radius;
+
 		public RoundedTextField(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -493,6 +527,7 @@ public class Pagos extends JFrame {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -505,6 +540,7 @@ public class Pagos extends JFrame {
 
 	class RoundedButton extends JButton {
 		private int radius;
+
 		public RoundedButton(String text, int radius) {
 			super(text);
 			this.radius = radius;
@@ -512,6 +548,7 @@ public class Pagos extends JFrame {
 			setFocusPainted(false);
 			setBorderPainted(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();

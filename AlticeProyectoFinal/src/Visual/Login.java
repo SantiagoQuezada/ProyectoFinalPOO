@@ -87,7 +87,7 @@ public class Login extends JFrame {
 		txtUsername.setPreferredSize(new Dimension(320, 50));
 		txtUsername.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
+
 		txtUsername.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -118,7 +118,7 @@ public class Login extends JFrame {
 
 		RoundedButton btnLogin = new RoundedButton("INICIAR SESIÓN", 25);
 		btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-		btnLogin.setBackground(new Color(0, 102, 204)); 
+		btnLogin.setBackground(new Color(0, 102, 204));
 		btnLogin.setForeground(Color.WHITE);
 		btnLogin.setFont(new Font("Arial", Font.BOLD, 15));
 		btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -130,9 +130,10 @@ public class Login extends JFrame {
 			public void mouseEntered(MouseEvent e) {
 				btnLogin.setBackground(new Color(0, 80, 160));
 			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
-				btnLogin.setBackground(new Color(0, 102, 204)); 
+				btnLogin.setBackground(new Color(0, 102, 204));
 			}
 		});
 
@@ -142,7 +143,8 @@ public class Login extends JFrame {
 				String pass = new String(txtPassword.getPassword());
 
 				if (user.isEmpty() || pass.isEmpty()) {
-					JOptionPane.showMessageDialog(Login.this, "Por favor, ingrese sus credenciales.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(Login.this, "Por favor, ingrese sus credenciales.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 
@@ -153,7 +155,8 @@ public class Login extends JFrame {
 					principal.setVisible(true);
 					dispose();
 				} else {
-					JOptionPane.showMessageDialog(Login.this, "Usuario o contraseña incorrectos.", "Error de Autenticación", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Login.this, "Usuario o contraseña incorrectos.",
+							"Error de Autenticación", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		};
@@ -216,7 +219,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(Color.WHITE);
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			g2.setColor(new Color(220, 220, 220)); 
+			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
@@ -238,7 +241,7 @@ public class Login extends JFrame {
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.setColor(Color.WHITE);
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			g2.setColor(new Color(220, 220, 220)); 
+			g2.setColor(new Color(220, 220, 220));
 			g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
@@ -260,13 +263,13 @@ public class Login extends JFrame {
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			
+
 			if (getModel().isPressed()) {
-				g2.setColor(new Color(0, 60, 120)); 
+				g2.setColor(new Color(0, 60, 120));
 			} else {
 				g2.setColor(getBackground());
 			}
-			
+
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
 			g2.dispose();
 			super.paintComponent(g);
