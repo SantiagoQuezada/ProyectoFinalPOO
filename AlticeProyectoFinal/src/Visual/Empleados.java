@@ -45,7 +45,7 @@ public class Empleados extends JFrame {
 	private DefaultTableModel modeloTabla;
 	private JTable tablaEmpleados;
 	private Empleado empleadoLogueado;
-	
+
 	private RoundedTextField txtBuscar;
 	private RoundedComboBox<String> cbxFiltroDepto;
 	private RoundedComboBox<String> cbxFiltroEstado;
@@ -59,7 +59,7 @@ public class Empleados extends JFrame {
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Principal ---
+		
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
@@ -74,18 +74,20 @@ public class Empleados extends JFrame {
 		rightHeaderPanel.setOpaque(false);
 
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
-		
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null)
+				? empleadoLogueado.getUsuario().getRol().toString()
+				: "Admin";
+
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
 		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
-		
+
 		rightHeaderPanel.add(lblUser);
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
-		// --- Contenido Central ---
+		
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout(0, 15));
 		centerPanel.setBackground(new Color(245, 247, 250));
@@ -112,7 +114,7 @@ public class Empleados extends JFrame {
 		panelTitulo.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTitulo.add(lblSubtitulo);
 
-		// --- Panel de Filtros ---
+
 		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
 		filterPanel.setBackground(Color.WHITE);
 		filterPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -160,13 +162,16 @@ public class Empleados extends JFrame {
 
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
-		// --- Tabla ---
-		String[] columnas = {"ID", "Cédula", "Nombre Completo", "Teléfono", "Departamento", "Rol de Sistema", "Salario", "Estado"};
+	
+		String[] columnas = { "ID", "Cédula", "Nombre Completo", "Teléfono", "Departamento", "Rol de Sistema",
+				"Salario", "Estado" };
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
-			public boolean isCellEditable(int row, int column) { return false; }
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
 		};
-		
+
 		tablaEmpleados = new JTable(modeloTabla);
 		tablaEmpleados.setFillsViewportHeight(true);
 		tablaEmpleados.setRowHeight(45);
@@ -183,8 +188,10 @@ public class Empleados extends JFrame {
 		JTableHeader header = tablaEmpleados.getTableHeader();
 		header.setDefaultRenderer(new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+						column);
 				label.setBackground(new Color(15, 15, 15));
 				label.setForeground(Color.WHITE);
 				label.setFont(new Font("Arial", Font.BOLD, 13));
@@ -198,14 +205,17 @@ public class Empleados extends JFrame {
 
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
 				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
-				
+
 				if (!isSelected) {
-					if (row % 2 == 0) c.setBackground(new Color(245, 245, 245));
-					else c.setBackground(new Color(235, 235, 235));
+					if (row % 2 == 0)
+						c.setBackground(new Color(245, 245, 245));
+					else
+						c.setBackground(new Color(235, 235, 235));
 					c.setForeground(new Color(15, 15, 15));
 				}
 				return c;
@@ -237,11 +247,11 @@ public class Empleados extends JFrame {
 
 		centerPanel.add(tableWrapper, BorderLayout.CENTER);
 
-		// --- Botones CRUD ---
+		
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanel.setBackground(new Color(245, 247, 250));
 
-		// Botón de Volver con un color vibrante y llamativo (Turquesa / Teal oscuro)
+	
 		RoundedButton btnVolver = crearBotonCRUD("Volver al Inicio", new Color(0, 150, 136), new Color(0, 120, 110));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -270,12 +280,14 @@ public class Empleados extends JFrame {
 					RegEmpleado modalReg = new RegEmpleado(empleado, true);
 					modalReg.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
 
-		RoundedButton btnActualizar = crearBotonCRUD("Editar Seleccionado", new Color(230, 126, 34), new Color(200, 100, 20));
+		RoundedButton btnActualizar = crearBotonCRUD("Editar Seleccionado", new Color(230, 126, 34),
+				new Color(200, 100, 20));
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int filaSeleccionada = tablaEmpleados.getSelectedRow();
@@ -286,7 +298,8 @@ public class Empleados extends JFrame {
 					modalReg.setVisible(true);
 					cargarEmpleados();
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -298,19 +311,23 @@ public class Empleados extends JFrame {
 				if (filaSeleccionada >= 0) {
 					String idEmpleado = (String) modeloTabla.getValueAt(filaSeleccionada, 0);
 					String estadoActual = (String) modeloTabla.getValueAt(filaSeleccionada, 7);
-					
-					if(estadoActual.equalsIgnoreCase("Inactivo")) {
-						JOptionPane.showMessageDialog(null, "Este empleado ya se encuentra inactivo.", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+					if (estadoActual.equalsIgnoreCase("Inactivo")) {
+						JOptionPane.showMessageDialog(null, "Este empleado ya se encuentra inactivo.", "Información",
+								JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
 
-					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea dar de baja al empleado " + idEmpleado + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+					int confirm = JOptionPane.showConfirmDialog(null,
+							"¿Seguro que desea dar de baja al empleado " + idEmpleado + "?", "Confirmar",
+							JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
 						Altice.getInstance().eliminarEmpleado(idEmpleado);
 						cargarEmpleados();
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un empleado de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -336,10 +353,12 @@ public class Empleados extends JFrame {
 
 		add(footerPanel, BorderLayout.SOUTH);
 
-		// Eventos de Filtro
+	
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) { cargarEmpleados(); }
+			public void keyReleased(KeyEvent e) {
+				cargarEmpleados();
+			}
 		});
 		cbxFiltroDepto.addActionListener(e -> cargarEmpleados());
 		cbxFiltroEstado.addActionListener(e -> cargarEmpleados());
@@ -353,19 +372,20 @@ public class Empleados extends JFrame {
 
 	private void cargarEmpleados() {
 		modeloTabla.setRowCount(0);
-		
+
 		String busq = txtBuscar != null ? txtBuscar.getText().toLowerCase() : "";
 		String fDepto = cbxFiltroDepto != null ? cbxFiltroDepto.getSelectedItem().toString() : "Todos";
 		String fEstado = cbxFiltroEstado != null ? cbxFiltroEstado.getSelectedItem().toString() : "Todos";
 
 		for (Empleado e : Altice.getInstance().getEmpleados()) {
-			boolean matchBusq = e.getNombre().toLowerCase().contains(busq) || e.getCedula().toLowerCase().contains(busq);
+			boolean matchBusq = e.getNombre().toLowerCase().contains(busq)
+					|| e.getCedula().toLowerCase().contains(busq);
 			boolean matchDepto = fDepto.equals("Todos") || e.getDepartamento().equalsIgnoreCase(fDepto);
-			
+
 			String estadoE = e.getEstado() != null ? e.getEstado() : "Activo";
-			boolean matchEstado = fEstado.equals("Todos") || 
-								  (fEstado.equals("Activos") && estadoE.equalsIgnoreCase("Activo")) ||
-								  (fEstado.equals("Inactivos") && estadoE.equalsIgnoreCase("Inactivo"));
+			boolean matchEstado = fEstado.equals("Todos")
+					|| (fEstado.equals("Activos") && estadoE.equalsIgnoreCase("Activo"))
+					|| (fEstado.equals("Inactivos") && estadoE.equalsIgnoreCase("Inactivo"));
 
 			if (matchBusq && matchDepto && matchEstado) {
 				Object[] fila = new Object[8];
@@ -392,9 +412,14 @@ public class Empleados extends JFrame {
 
 		boton.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { boton.setBackground(bgHover); }
+			public void mouseEntered(MouseEvent e) {
+				boton.setBackground(bgHover);
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) { boton.setBackground(bgDefault); }
+			public void mouseExited(MouseEvent e) {
+				boton.setBackground(bgDefault);
+			}
 		});
 
 		return boton;
@@ -410,10 +435,16 @@ public class Empleados extends JFrame {
 			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			g2.dispose();
 		}
+
 		@Override
-		public int getIconWidth() { return 24; }
+		public int getIconWidth() {
+			return 24;
+		}
+
 		@Override
-		public int getIconHeight() { return 24; }
+		public int getIconHeight() {
+			return 24;
+		}
 	}
 
 	class RoundedComboBox<E> extends JComboBox<E> {
@@ -423,7 +454,7 @@ public class Empleados extends JFrame {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD
+			setFont(new Font("Arial", Font.BOLD, 14)); 
 			setBackground(new Color(240, 240, 240));
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -441,20 +472,26 @@ public class Empleados extends JFrame {
 					button.setOpaque(false);
 					return button;
 				}
+
 				@Override
-				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {}
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+				}
 			});
 
 			setRenderer(new DefaultListCellRenderer() {
 				@Override
-				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+						boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
 					label.setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD en la lista
 					if (index == -1) {
 						label.setOpaque(false);
-						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
-						else label.setForeground(new Color(150, 150, 150));
+						if (RoundedComboBox.this.isEnabled())
+							label.setForeground(new Color(50, 50, 50));
+						else
+							label.setForeground(new Color(150, 150, 150));
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
@@ -493,10 +530,12 @@ public class Empleados extends JFrame {
 
 	class RoundedPanel extends JPanel {
 		private int radius;
+
 		public RoundedPanel(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -507,6 +546,7 @@ public class Empleados extends JFrame {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -519,11 +559,13 @@ public class Empleados extends JFrame {
 
 	class RoundedTextField extends JTextField {
 		private int radius;
+
 		public RoundedTextField(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -534,6 +576,7 @@ public class Empleados extends JFrame {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -546,6 +589,7 @@ public class Empleados extends JFrame {
 
 	class RoundedButton extends JButton {
 		private int radius;
+
 		public RoundedButton(String text, int radius) {
 			super(text);
 			this.radius = radius;
@@ -553,6 +597,7 @@ public class Empleados extends JFrame {
 			setFocusPainted(false);
 			setBorderPainted(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
