@@ -59,7 +59,7 @@ public class RegCliente extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Panel ---
+	
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));
@@ -75,7 +75,7 @@ public class RegCliente extends JDialog {
 		headerPanel.add(lblDialogTitle);
 		getContentPane().add(headerPanel, BorderLayout.NORTH);
 
-		// --- Main Content ---
+		
 		JPanel centerContainer = new JPanel(new BorderLayout());
 		centerContainer.setBackground(new Color(245, 247, 250));
 		centerContainer.setBorder(new EmptyBorder(20, 25, 10, 25));
@@ -274,14 +274,14 @@ public class RegCliente extends JDialog {
 			cbxPlanes.setBackground(colorDeshabilitado);
 		}
 
-		// --- Footer Buttons ---
+	
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		buttonPane.setBackground(new Color(245, 247, 250));
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); // Rojo
+		btnCancelar.setBackground(new Color(220, 53, 69)); 
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 40));
@@ -338,7 +338,7 @@ public class RegCliente extends JDialog {
 					String direccion = txtDireccion.getText();
 					String estado = cbxEstado.getSelectedItem().toString();
 
-					// --- VALIDACIONES DE LONGITUD ---
+			
 					String telefonoRaw = telefono.replaceAll("-", "");
 					if (telefonoRaw.length() != 10) {
 						JOptionPane.showMessageDialog(null, "El teléfono debe contener exactamente 10 dígitos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
@@ -359,10 +359,10 @@ public class RegCliente extends JDialog {
 						}
 					}
 
-					// --- VALIDACIONES DE UNICIDAD ---
+				
 					for (Cliente c : Altice.getInstance().getClientes()) {
 						if (clienteActual != null && c.getIdCliente().equals(clienteActual.getIdCliente())) {
-							continue; // Ignorar el mismo cliente si estamos editando
+							continue; 
 						}
 
 						if (c.getTelefono().equals(telefono)) {
@@ -493,8 +493,6 @@ public class RegCliente extends JDialog {
 		});
 	}
 
-	// --- Componentes Personalizados ---
-	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
 
@@ -503,14 +501,14 @@ public class RegCliente extends JDialog {
 			this.radius = radius;
 			setOpaque(false);
 			setFont(new Font("Arial", Font.PLAIN, 14));
-			setBackground(new Color(240, 240, 240)); // Fondo gris claro
+			setBackground(new Color(240, 240, 240)); 
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); // Flecha minimalista
+					JButton button = new JButton("\u25BC");
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -523,7 +521,7 @@ public class RegCliente extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					// Previene que se dibuje el fondo cuadrado nativo
+			
 				}
 			});
 
@@ -533,20 +531,20 @@ public class RegCliente extends JDialog {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
 					
-					// Si el index es -1 significa que es el texto mostrado DENTRO del ComboBox cerrado
+				
 					if (index == -1) {
 						label.setOpaque(false);
-						// Mantiene el color correcto si está habilitado o deshabilitado
+					
 						if (RoundedComboBox.this.isEnabled()) {
 							label.setForeground(new Color(50, 50, 50));
 						} else {
 							label.setForeground(new Color(150, 150, 150));
 						}
 					} else {
-						// Renderizado para los items de la lista desplegada
+						
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
+							label.setBackground(new Color(0, 60, 130)); 
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
@@ -563,14 +561,11 @@ public class RegCliente extends JDialog {
 			Graphics2D g2 = (Graphics2D) g.create();
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
-			// Se dibuja el fondo redondeado
 			g2.setColor(getBackground());
 			g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-			
-			// Se recorta el área gráfica para que el contenido no sobresalga de la curva
+					
 			g2.setClip(new java.awt.geom.RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
-			super.paintComponent(g2);
-			
+			super.paintComponent(g2);	
 			g2.dispose();
 		}
 
