@@ -109,7 +109,7 @@ public class Planes extends JFrame {
 		JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		actionPanel.setOpaque(false);
 
-		// Botón de Volver en Turquesa sin emoji
+		
 		RoundedButton btnVolver = new RoundedButton("Volver al Inicio", 25);
 		btnVolver.setBackground(new Color(0, 150, 136));
 		btnVolver.setForeground(Color.WHITE);
@@ -185,7 +185,7 @@ public class Planes extends JFrame {
 		JPanel cardsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 20));
 		cardsPanel.setOpaque(false);
 
-		// Devolviendo los emojis a las tarjetas
+	
 		RoundedPanel cardCombinados = crearTarjetaPlan("\uD83D\uDCFA", "COMBINADOS", "Tripleplay (TV + Internet + Voz)",
 				"Combinado");
 		RoundedPanel cardHogar = crearTarjetaPlan("\uD83C\uDFE0", "HOGAR", "Internet Fibra Óptica", "Hogar");
@@ -283,7 +283,7 @@ public class Planes extends JFrame {
 
 	private void mostrarMenuAsignacion(String categoriaTitulo, String categoriaReal) {
 		JDialog dialog = new JDialog(this, "Asignación de Plan", true);
-		dialog.setSize(1200, 750); // Modal expandido
+		dialog.setSize(1200, 750); 
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -296,7 +296,7 @@ public class Planes extends JFrame {
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		// Layout en X_AXIS para que los elementos nunca salten de línea
+		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 		topPanel.setOpaque(false);
@@ -307,7 +307,7 @@ public class Planes extends JFrame {
 		lblSeleccionarPlan.setForeground(new Color(30, 30, 30));
 
 		RoundedComboBox<String> cbPlanes = new RoundedComboBox<>(15);
-		cbPlanes.setMaximumSize(new Dimension(350, 40)); // Aumentado
+		cbPlanes.setMaximumSize(new Dimension(350, 40)); 
 		cbPlanes.setPreferredSize(new Dimension(350, 40));
 		cbPlanes.addItem("<Seleccione un plan>");
 
@@ -322,7 +322,7 @@ public class Planes extends JFrame {
 		lblBuscar.setForeground(new Color(30, 30, 30));
 
 		RoundedTextField txtBuscarCliente = new RoundedTextField(15);
-		txtBuscarCliente.setMaximumSize(new Dimension(450, 40)); // Aumentado significativamente
+		txtBuscarCliente.setMaximumSize(new Dimension(450, 40)); 
 		txtBuscarCliente.setPreferredSize(new Dimension(450, 40));
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 15));
 
@@ -330,7 +330,7 @@ public class Planes extends JFrame {
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbPlanes);
 
-		topPanel.add(Box.createHorizontalGlue()); // Empuja hacia la derecha el buscador
+		topPanel.add(Box.createHorizontalGlue()); 
 
 		topPanel.add(lblBuscar);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -409,7 +409,7 @@ public class Planes extends JFrame {
 		panelBotones.setBorder(new EmptyBorder(0, 20, 20, 20));
 
 		RoundedButton btnCancelar = new RoundedButton("Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); // Rojo
+		btnCancelar.setBackground(new Color(220, 53, 69)); 
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 45));
@@ -480,8 +480,7 @@ public class Planes extends JFrame {
 		lblDialogTitle.setForeground(Color.WHITE);
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
-
-		// Layout en X_AXIS para que los elementos nunca salten de línea
+		
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 		topPanel.setOpaque(false);
@@ -506,7 +505,7 @@ public class Planes extends JFrame {
 		JLabel lblBuscar = new JLabel("Buscar (Nombre/RNC):");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		RoundedTextField txtBuscar = new RoundedTextField(15);
-		txtBuscar.setMaximumSize(new Dimension(450, 40)); // Aumentado significativamente
+		txtBuscar.setMaximumSize(new Dimension(450, 40)); 
 		txtBuscar.setPreferredSize(new Dimension(450, 40));
 		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 15));
 
@@ -518,7 +517,7 @@ public class Planes extends JFrame {
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbTipo);
 
-		topPanel.add(Box.createHorizontalGlue()); // Empuja hacia la derecha
+		topPanel.add(Box.createHorizontalGlue()); 
 
 		topPanel.add(lblBuscar);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));

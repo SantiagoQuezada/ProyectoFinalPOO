@@ -140,7 +140,7 @@ public class Pagos extends JFrame {
 		JLabel lblBuscar = new JLabel("Buscar (Cliente/ID Pago):");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		txtBuscar = new RoundedTextField(15);
-		txtBuscar.setPreferredSize(new Dimension(350, 40)); // Aumentado
+		txtBuscar.setPreferredSize(new Dimension(350, 40)); 
 		txtBuscar.setFont(new Font("Arial", Font.PLAIN, 15));
 
 		filterPanel.add(lblMetodo);
@@ -162,7 +162,7 @@ public class Pagos extends JFrame {
 
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
-		// --- Tabla ---
+		
 		String[] columnas = { "ID Pago", "Cédula / RNC", "Cliente", "Fecha", "Monto", "Concepto", "Método de Pago" };
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
@@ -252,7 +252,7 @@ public class Pagos extends JFrame {
 
 		centerPanel.add(tableWrapper, BorderLayout.CENTER);
 
-		// --- Botones CRUD ---
+		
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanel.setBackground(new Color(245, 247, 250));
 
@@ -311,7 +311,7 @@ public class Pagos extends JFrame {
 
 		add(footerPanel, BorderLayout.SOUTH);
 
-		// Eventos de Filtro
+
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {

@@ -54,12 +54,11 @@ public class RegEmpleado extends JDialog {
 		
 		setModal(true);
 		setResizable(false);
-		setSize(550, 760); // Ventana más grande para que no se corte el Rol
+		setSize(550, 760); 
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Panel ---
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(550, 70));
@@ -204,7 +203,7 @@ public class RegEmpleado extends JDialog {
 		txtSalario = new RoundedTextField(15);
 		txtSalario.setFont(new Font("Arial", Font.PLAIN, 14));
 		
-		// Validar que solo acepte números y un punto decimal
+	
 		txtSalario.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -290,14 +289,14 @@ public class RegEmpleado extends JDialog {
 			cbxRol.setBackground(colorDeshabilitado);
 		}
 
-		// --- Footer Buttons ---
+	
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		buttonPane.setBackground(new Color(245, 247, 250));
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 
 		RoundedButton btnCancelar = new RoundedButton(soloLectura ? "Cerrar" : "Cancelar", 20);
-		btnCancelar.setBackground(new Color(220, 53, 69)); // Rojo
+		btnCancelar.setBackground(new Color(220, 53, 69));
 		btnCancelar.setForeground(Color.WHITE);
 		btnCancelar.setFont(new Font("Arial", Font.BOLD, 13));
 		btnCancelar.setPreferredSize(new Dimension(120, 40));
@@ -347,7 +346,7 @@ public class RegEmpleado extends JDialog {
 						Rol rol = (Rol) cbxRol.getSelectedItem();
 						String estado = (empleadoActual == null) ? "Activo" : empleadoActual.getEstado();
 
-						// --- VALIDACIONES DE LONGITUD ---
+					
 						String cedulaRaw = cedula.replaceAll("-", "");
 						if (cedulaRaw.length() != 11) {
 							JOptionPane.showMessageDialog(null, "La cédula debe contener exactamente 11 dígitos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
@@ -360,10 +359,10 @@ public class RegEmpleado extends JDialog {
 							return;
 						}
 
-						// --- VALIDACIONES DE UNICIDAD ---
+					
 						for (Empleado emp : Altice.getInstance().getEmpleados()) {
 							if (empleadoActual != null && emp.getIdEmpleado().equals(empleadoActual.getIdEmpleado())) {
-								continue; // Saltar el empleado actual si estamos modificando
+								continue;
 							}
 
 							if (emp.getCedula().equals(cedula)) {
@@ -458,7 +457,7 @@ public class RegEmpleado extends JDialog {
 		});
 	}
 
-	// --- Componentes Personalizados ---
+
 	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
@@ -468,14 +467,14 @@ public class RegEmpleado extends JDialog {
 			this.radius = radius;
 			setOpaque(false);
 			setFont(new Font("Arial", Font.PLAIN, 14));
-			setBackground(new Color(240, 240, 240)); // Fondo gris claro
+			setBackground(new Color(240, 240, 240)); 
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); // Flecha minimalista
+					JButton button = new JButton("\u25BC"); 
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -488,7 +487,7 @@ public class RegEmpleado extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					// Previene el dibujado del fondo cuadrado por defecto
+					
 				}
 			});
 
@@ -508,7 +507,7 @@ public class RegEmpleado extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
+							label.setBackground(new Color(0, 60, 130)); 
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);

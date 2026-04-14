@@ -333,7 +333,7 @@ public class Empleados extends JFrame {
 		});
 
 		crudPanel.add(btnVolver);
-		crudPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Separador
+		crudPanel.add(Box.createRigidArea(new Dimension(30, 0))); 
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
 		crudPanel.add(btnActualizar);
@@ -485,7 +485,7 @@ public class Empleados extends JFrame {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
 							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					label.setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD en la lista
+					label.setFont(new Font("Arial", Font.BOLD, 14)); 
 					if (index == -1) {
 						label.setOpaque(false);
 						if (RoundedComboBox.this.isEnabled())

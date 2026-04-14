@@ -333,7 +333,7 @@ public class Clientes extends JFrame {
 		});
 
 		crudPanel.add(btnVolver);
-		crudPanel.add(Box.createRigidArea(new Dimension(30, 0))); // Separador
+		crudPanel.add(Box.createRigidArea(new Dimension(30, 0))); 
 		crudPanel.add(btnCrear);
 		crudPanel.add(btnLeer);
 		crudPanel.add(btnActualizar);
@@ -353,7 +353,7 @@ public class Clientes extends JFrame {
 
 		add(footerPanel, BorderLayout.SOUTH);
 
-		// Eventos de Filtro
+		
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -471,7 +471,7 @@ public class Clientes extends JFrame {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD
+			setFont(new Font("Arial", Font.BOLD, 14)); 
 			setBackground(new Color(240, 240, 240));
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -502,7 +502,7 @@ public class Clientes extends JFrame {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
 							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					label.setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD en la lista
+					label.setFont(new Font("Arial", Font.BOLD, 14)); 
 					if (index == -1) {
 						label.setOpaque(false);
 						if (RoundedComboBox.this.isEnabled())

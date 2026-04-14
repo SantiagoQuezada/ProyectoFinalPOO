@@ -103,7 +103,7 @@ public class ChatVentana extends JFrame {
 					String mensajeServidor;
 					while ((mensajeServidor = in.readLine()) != null) {
 						areaMensajes.append(mensajeServidor + "\n");
-						areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength()); // Auto-scroll
+						areaMensajes.setCaretPosition(areaMensajes.getDocument().getLength()); 
 					}
 				} catch (Exception e) {
 					areaMensajes.append("\n[Conexión con el servidor perdida]\n");
