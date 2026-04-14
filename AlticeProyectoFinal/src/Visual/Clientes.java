@@ -61,6 +61,7 @@ public class Clientes extends JFrame {
 		setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
+		// --- Header Principal ---
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(1000, 80));
@@ -86,6 +87,7 @@ public class Clientes extends JFrame {
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 		add(headerPanel, BorderLayout.NORTH);
 
+		// --- Contenido Central ---
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BorderLayout(0, 15));
 		centerPanel.setBackground(new Color(245, 247, 250));
@@ -98,7 +100,7 @@ public class Clientes extends JFrame {
 		panelTitulo.setLayout(new BoxLayout(panelTitulo, BoxLayout.Y_AXIS));
 		panelTitulo.setBackground(new Color(245, 247, 250));
 
-		JLabel lblTituloPrincipal = new JLabel("👥 Listado de Clientes Activos");
+		JLabel lblTituloPrincipal = new JLabel("Listado de Clientes Activos");
 		lblTituloPrincipal.setFont(new Font("Arial", Font.BOLD, 32));
 		lblTituloPrincipal.setForeground(new Color(10, 10, 10));
 		lblTituloPrincipal.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -112,6 +114,7 @@ public class Clientes extends JFrame {
 		panelTitulo.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTitulo.add(lblSubtitulo);
 
+		// --- Panel de Filtros ---
 		JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
 		filterPanel.setBackground(Color.WHITE);
 		filterPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -158,7 +161,7 @@ public class Clientes extends JFrame {
 
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
-
+		// --- Tabla ---
 		String[] columnas = {"ID", "Tipo", "Cédula / RNC", "Nombre o Empresa", "Teléfono", "Estado", "Plan Contratado", "Fecha Asignación"};
 		modeloTabla = new DefaultTableModel(null, columnas) {
 			@Override
@@ -239,8 +242,8 @@ public class Clientes extends JFrame {
 		JPanel crudPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanel.setBackground(new Color(245, 247, 250));
 
-		// Botón de Volver con un Gris metálico diferente
-		RoundedButton btnVolver = crearBotonCRUD("\u25C0 Volver al Inicio", new Color(108, 117, 125), new Color(130, 140, 150));
+		// Botón de Volver con un color vibrante y llamativo (Turquesa / Teal oscuro)
+		RoundedButton btnVolver = crearBotonCRUD("Volver al Inicio", new Color(0, 150, 136), new Color(0, 120, 110));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Principal principal = new Principal(empleadoLogueado);
@@ -333,7 +336,8 @@ public class Clientes extends JFrame {
 		footerPanel.add(lblFooter);
 
 		add(footerPanel, BorderLayout.SOUTH);
-		
+
+		// Eventos de Filtro
 		txtBuscar.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) { cargarClientes(); }
