@@ -342,13 +342,45 @@ public class RegEmpleado extends JDialog {
 						String direccion = txtDireccion.getText();
 						String departamento = cbxDepartamento.getSelectedItem().toString();
 						float salario = Float.parseFloat(txtSalario.getText());
-						
 						String username = txtUsername.getText();
 						String password = new String(txtPassword.getPassword());
 						Rol rol = (Rol) cbxRol.getSelectedItem();
-						
-						// El estado por defecto al crear es Activo
 						String estado = (empleadoActual == null) ? "Activo" : empleadoActual.getEstado();
+
+						// --- VALIDACIONES DE LONGITUD ---
+						String cedulaRaw = cedula.replaceAll("-", "");
+						if (cedulaRaw.length() != 11) {
+							JOptionPane.showMessageDialog(null, "La cédula debe contener exactamente 11 dígitos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+
+						String telefonoRaw = telefono.replaceAll("-", "");
+						if (telefonoRaw.length() != 10) {
+							JOptionPane.showMessageDialog(null, "El teléfono debe contener exactamente 10 dígitos.", "Error de Validación", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+
+						// --- VALIDACIONES DE UNICIDAD ---
+						for (Empleado emp : Altice.getInstance().getEmpleados()) {
+							if (empleadoActual != null && emp.getIdEmpleado().equals(empleadoActual.getIdEmpleado())) {
+								continue; // Saltar el empleado actual si estamos modificando
+							}
+
+							if (emp.getCedula().equals(cedula)) {
+								JOptionPane.showMessageDialog(null, "Ya existe un empleado registrado con la cédula: " + cedula, "Dato Duplicado", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+
+							if (emp.getTelefono().equals(telefono)) {
+								JOptionPane.showMessageDialog(null, "Ya existe un empleado registrado con el teléfono: " + telefono, "Dato Duplicado", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+
+							if (emp.getUsuario() != null && emp.getUsuario().getUsername().equalsIgnoreCase(username)) {
+								JOptionPane.showMessageDialog(null, "El nombre de usuario '" + username + "' ya está en uso. Intente con otro.", "Usuario Duplicado", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+						}
 
 						if (empleadoActual == null) {
 							Usuario nuevoUsuario = new Usuario(username, password, rol);
@@ -435,15 +467,15 @@ public class RegEmpleado extends JDialog {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.BOLD, 14));
-			setBackground(new Color(240, 240, 240)); 
+			setFont(new Font("Arial", Font.PLAIN, 14));
+			setBackground(new Color(240, 240, 240)); // Fondo gris claro
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); 
+					JButton button = new JButton("\u25BC"); // Flecha minimalista
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -456,7 +488,7 @@ public class RegEmpleado extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					
+					// Previene el dibujado del fondo cuadrado por defecto
 				}
 			});
 
@@ -476,7 +508,7 @@ public class RegEmpleado extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); 
+							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
