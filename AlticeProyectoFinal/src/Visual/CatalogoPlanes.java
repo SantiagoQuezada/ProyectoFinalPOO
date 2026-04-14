@@ -75,13 +75,15 @@ public class CatalogoPlanes extends JFrame {
 		rightHeaderPanel.setOpaque(false);
 
 		String nombreUsuario = (empleadoLogueado != null) ? empleadoLogueado.getNombre() : "Usuario";
-		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null) ? empleadoLogueado.getUsuario().getRol().toString() : "Admin";
-		
+		String rolUsuario = (empleadoLogueado != null && empleadoLogueado.getUsuario() != null)
+				? empleadoLogueado.getUsuario().getRol().toString()
+				: "Admin";
+
 		JLabel lblUser = new JLabel(" Hola, " + nombreUsuario + " (" + rolUsuario + ")");
 		lblUser.setIcon(new UserIcon());
 		lblUser.setFont(new Font("Arial", Font.BOLD, 17));
 		lblUser.setForeground(new Color(220, 220, 220));
-		
+
 		rightHeaderPanel.add(lblUser);
 		headerPanel.add(rightHeaderPanel, BorderLayout.EAST);
 
@@ -91,18 +93,19 @@ public class CatalogoPlanes extends JFrame {
 		centerPanel.setLayout(new BorderLayout(0, 15));
 		centerPanel.setBackground(new Color(245, 247, 250));
 		centerPanel.setBorder(new EmptyBorder(40, 60, 40, 60));
-		
+
 		JPanel panelTituloPlanes = new JPanel();
 		panelTituloPlanes.setLayout(new BoxLayout(panelTituloPlanes, BoxLayout.Y_AXIS));
 		panelTituloPlanes.setBackground(new Color(245, 247, 250));
 		panelTituloPlanes.setBorder(new EmptyBorder(0, 0, 10, 0));
-		
+
 		JLabel lblTituloPlanes = new JLabel("Catálogo de Planes");
 		lblTituloPlanes.setFont(new Font("Arial", Font.BOLD, 32));
 		lblTituloPlanes.setForeground(new Color(10, 10, 10));
 		lblTituloPlanes.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
-		JLabel lblSubtituloPlanes = new JLabel("Administración del catálogo completo de planes y servicios disponibles.");
+
+		JLabel lblSubtituloPlanes = new JLabel(
+				"Administración del catálogo completo de planes y servicios disponibles.");
 		lblSubtituloPlanes.setFont(new Font("Arial", Font.PLAIN, 16));
 		lblSubtituloPlanes.setForeground(new Color(100, 100, 100));
 		lblSubtituloPlanes.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -111,10 +114,9 @@ public class CatalogoPlanes extends JFrame {
 		panelTituloPlanes.add(Box.createRigidArea(new Dimension(0, 8)));
 		panelTituloPlanes.add(lblSubtituloPlanes);
 
-		// Contenedor de filtros con BoxLayout para evitar saltos de línea (wrap)
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-		topPanel.setOpaque(false); // Para no tapar bordes redondeados
+		topPanel.setOpaque(false);
 		topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
 
 		JLabel lblCategoria = new JLabel("Categoría:");
@@ -138,7 +140,7 @@ public class CatalogoPlanes extends JFrame {
 		JLabel lblBuscar = new JLabel("Buscar Plan:");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		txtBuscarPlan = new RoundedTextField(15);
-		txtBuscarPlan.setMaximumSize(new Dimension(450, 40)); // Buscador más grande
+		txtBuscarPlan.setMaximumSize(new Dimension(450, 40));
 		txtBuscarPlan.setPreferredSize(new Dimension(450, 40));
 		txtBuscarPlan.setFont(new Font("Arial", Font.PLAIN, 15));
 
@@ -149,9 +151,9 @@ public class CatalogoPlanes extends JFrame {
 		topPanel.add(lblEstado);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbFiltroEstado);
-		
+
 		topPanel.add(Box.createHorizontalGlue()); // Empuja el buscador a la derecha
-		
+
 		topPanel.add(lblBuscar);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(txtBuscarPlan);
@@ -169,13 +171,15 @@ public class CatalogoPlanes extends JFrame {
 
 		centerPanel.add(headerAndFilterPanel, BorderLayout.NORTH);
 
-		String[] columnasPlanes = {"ID Plan", "Categoría", "Nombre del Plan", "Precio (RD$)", "Estado"};
+		String[] columnasPlanes = { "ID Plan", "Categoría", "Nombre del Plan", "Precio (RD$)", "Estado" };
 		modeloTablaPlanes = new DefaultTableModel(null, columnasPlanes) {
 			@Override
-			public boolean isCellEditable(int row, int column) { return false; }
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
 		};
 		tablaPlanes = new JTable(modeloTablaPlanes);
-		tablaPlanes.setFillsViewportHeight(true); 
+		tablaPlanes.setFillsViewportHeight(true);
 		configurarTablaEstiloModerno(tablaPlanes);
 
 		JScrollPane scrollPanePlanes = new JScrollPane(tablaPlanes);
@@ -193,7 +197,6 @@ public class CatalogoPlanes extends JFrame {
 		JPanel crudPanelPlanes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 25));
 		crudPanelPlanes.setBackground(new Color(245, 247, 250));
 
-		// Cambiado al color turquesa/teal para estandarizar con los demás módulos
 		RoundedButton btnVolver = crearBotonCRUD("Volver a Planes", new Color(0, 150, 136), new Color(0, 120, 110));
 		btnVolver.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -222,7 +225,8 @@ public class CatalogoPlanes extends JFrame {
 					RegPlan modalReg = new RegPlan(plan, true);
 					modalReg.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -238,7 +242,8 @@ public class CatalogoPlanes extends JFrame {
 					modalReg.setVisible(true);
 					cargarPlanes();
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -250,24 +255,29 @@ public class CatalogoPlanes extends JFrame {
 				if (filaSeleccionada >= 0) {
 					String idPlan = (String) modeloTablaPlanes.getValueAt(filaSeleccionada, 0);
 					String estado = (String) modeloTablaPlanes.getValueAt(filaSeleccionada, 4);
-					
-					if(estado.equals("Desactivado")) {
-						JOptionPane.showMessageDialog(null, "Este plan ya se encuentra desactivado.", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+					if (estado.equals("Desactivado")) {
+						JOptionPane.showMessageDialog(null, "Este plan ya se encuentra desactivado.", "Información",
+								JOptionPane.INFORMATION_MESSAGE);
 						return;
 					}
 
-					int confirm = JOptionPane.showConfirmDialog(null, "¿Seguro que desea desactivar el plan " + idPlan + "?", "Confirmar", JOptionPane.YES_NO_OPTION);
+					int confirm = JOptionPane.showConfirmDialog(null,
+							"¿Seguro que desea desactivar el plan " + idPlan + "?", "Confirmar",
+							JOptionPane.YES_NO_OPTION);
 					if (confirm == JOptionPane.YES_OPTION) {
 						Altice.getInstance().eliminarPlan(idPlan);
 						cargarPlanes();
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Debe seleccionar un plan de la tabla.", "Atención",
+							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
 
-		RoundedButton btnAsignarPlan = crearBotonCRUD("Asignar a Cliente", new Color(40, 167, 69), new Color(30, 130, 50));
+		RoundedButton btnAsignarPlan = crearBotonCRUD("Asignar a Cliente", new Color(40, 167, 69),
+				new Color(30, 130, 50));
 		btnAsignarPlan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int fila = tablaPlanes.getSelectedRow();
@@ -287,7 +297,7 @@ public class CatalogoPlanes extends JFrame {
 		crudPanelPlanes.add(btnEliminar);
 		crudPanelPlanes.add(Box.createRigidArea(new Dimension(30, 0)));
 		crudPanelPlanes.add(btnAsignarPlan);
-		
+
 		centerPanel.add(crudPanelPlanes, BorderLayout.SOUTH);
 
 		add(centerPanel, BorderLayout.CENTER);
@@ -304,7 +314,9 @@ public class CatalogoPlanes extends JFrame {
 
 		txtBuscarPlan.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) { cargarPlanes(); }
+			public void keyReleased(KeyEvent e) {
+				cargarPlanes();
+			}
 		});
 		cbFiltroCategoria.addActionListener(e -> cargarPlanes());
 		cbFiltroEstado.addActionListener(e -> cargarPlanes());
@@ -318,13 +330,14 @@ public class CatalogoPlanes extends JFrame {
 
 	private void cargarPlanes() {
 		modeloTablaPlanes.setRowCount(0);
-		
+
 		String busq = txtBuscarPlan != null ? txtBuscarPlan.getText().toLowerCase() : "";
 		String fCat = cbFiltroCategoria != null ? cbFiltroCategoria.getSelectedItem().toString() : "Todas";
 		String fEstado = cbFiltroEstado != null ? cbFiltroEstado.getSelectedItem().toString() : "Todos";
 
 		for (Plan p : Altice.getInstance().getPlanes()) {
-			boolean matchBusq = p.getNombre().toLowerCase().contains(busq) || p.getIdPlan().toLowerCase().contains(busq);
+			boolean matchBusq = p.getNombre().toLowerCase().contains(busq)
+					|| p.getIdPlan().toLowerCase().contains(busq);
 			boolean matchCat = fCat.equals("Todas") || p.getCategoria().equalsIgnoreCase(fCat);
 			boolean matchEstado = fEstado.equals("Todos") || p.getEstado().equalsIgnoreCase(fEstado);
 
@@ -342,7 +355,7 @@ public class CatalogoPlanes extends JFrame {
 
 	private void mostrarMenuAsignacion(String planPreseleccionado) {
 		JDialog dialog = new JDialog(this, "Asignación Rápida a Cliente", true);
-		dialog.setSize(1200, 750); // Modal expandido
+		dialog.setSize(1200, 750);
 		dialog.setLocationRelativeTo(this);
 		dialog.setLayout(new BorderLayout());
 		dialog.getContentPane().setBackground(new Color(245, 247, 250));
@@ -355,7 +368,6 @@ public class CatalogoPlanes extends JFrame {
 		headerPanel.add(lblDialogTitle);
 		dialog.add(headerPanel, BorderLayout.NORTH);
 
-		// Layout en X_AXIS para que los elementos nunca salten de línea
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 		topPanel.setOpaque(false);
@@ -369,7 +381,7 @@ public class CatalogoPlanes extends JFrame {
 		cbPlanes.setMaximumSize(new Dimension(350, 40));
 		cbPlanes.setPreferredSize(new Dimension(350, 40));
 		cbPlanes.addItem("<Seleccione un plan>");
-		
+
 		for (Plan p : Altice.getInstance().getPlanes()) {
 			if (p.getEstado().equals("Activo")) {
 				cbPlanes.addItem(p.getNombre() + " - $" + p.getPrecio());
@@ -388,18 +400,18 @@ public class CatalogoPlanes extends JFrame {
 		JLabel lblBuscar = new JLabel("Buscar Cliente: ");
 		lblBuscar.setFont(new Font("Arial", Font.BOLD, 14));
 		lblBuscar.setForeground(new Color(30, 30, 30));
-		
+
 		RoundedTextField txtBuscarCliente = new RoundedTextField(15);
-		txtBuscarCliente.setMaximumSize(new Dimension(450, 40)); // Aumentado significativamente
+		txtBuscarCliente.setMaximumSize(new Dimension(450, 40));
 		txtBuscarCliente.setPreferredSize(new Dimension(450, 40));
 		txtBuscarCliente.setFont(new Font("Arial", Font.PLAIN, 15));
 
 		topPanel.add(lblSeleccionarPlan);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(cbPlanes);
-		
-		topPanel.add(Box.createHorizontalGlue()); // Empuja hacia la derecha el buscador
-		
+
+		topPanel.add(Box.createHorizontalGlue());
+
 		topPanel.add(lblBuscar);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		topPanel.add(txtBuscarCliente);
@@ -410,12 +422,14 @@ public class CatalogoPlanes extends JFrame {
 		topWrapper.setBorder(new EmptyBorder(5, 5, 5, 5));
 		topWrapper.add(topPanel, BorderLayout.CENTER);
 
-		String[] columnasClientes = {"ID", "Cédula/RNC - Nombre", "Teléfono"};
+		String[] columnasClientes = { "ID", "Cédula/RNC - Nombre", "Teléfono" };
 		DefaultTableModel modeloTablaClientes = new DefaultTableModel(null, columnasClientes) {
 			@Override
-			public boolean isCellEditable(int row, int column) { return false; }
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
 		};
-		
+
 		JTable tablaClientes = new JTable(modeloTablaClientes);
 		tablaClientes.setFillsViewportHeight(true);
 		configurarTablaEstiloModerno(tablaClientes);
@@ -428,7 +442,7 @@ public class CatalogoPlanes extends JFrame {
 		scrollPaneClientes.setAlignmentX(Component.LEFT_ALIGNMENT);
 		scrollPaneClientes.setBorder(BorderFactory.createEmptyBorder());
 		scrollPaneClientes.getViewport().setBackground(Color.WHITE);
-		
+
 		RoundedPanel tableWrapper = new RoundedPanel(20);
 		tableWrapper.setLayout(new BorderLayout());
 		tableWrapper.setBackground(Color.WHITE);
@@ -446,12 +460,11 @@ public class CatalogoPlanes extends JFrame {
 		Runnable cargarClientesFiltrados = () -> {
 			modeloTablaClientes.setRowCount(0);
 			String busqueda = txtBuscarCliente.getText().toLowerCase();
-			for(Cliente c : Altice.getInstance().getClientes()) {
+			for (Cliente c : Altice.getInstance().getClientes()) {
 				boolean matchRnc = c.getRnc() != null && c.getRnc().contains(busqueda);
-				if (c.getNombre().toLowerCase().contains(busqueda) || 
-					c.getCedula().contains(busqueda) || 
-					c.getTelefono().contains(busqueda) || matchRnc) {
-					
+				if (c.getNombre().toLowerCase().contains(busqueda) || c.getCedula().contains(busqueda)
+						|| c.getTelefono().contains(busqueda) || matchRnc) {
+
 					String ident = c.getTipoCliente().equals("Empresarial") ? c.getRnc() : c.getCedula();
 					Object[] fila = new Object[3];
 					fila[0] = c.getIdCliente();
@@ -464,7 +477,9 @@ public class CatalogoPlanes extends JFrame {
 
 		txtBuscarCliente.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) { cargarClientesFiltrados.run(); }
+			public void keyReleased(KeyEvent e) {
+				cargarClientesFiltrados.run();
+			}
 		});
 
 		cargarClientesFiltrados.run();
@@ -481,9 +496,14 @@ public class CatalogoPlanes extends JFrame {
 		btnCancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		btnCancelar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { btnCancelar.setBackground(new Color(180, 40, 50)); }
+			public void mouseEntered(MouseEvent e) {
+				btnCancelar.setBackground(new Color(180, 40, 50));
+			}
+
 			@Override
-			public void mouseExited(MouseEvent e) { btnCancelar.setBackground(new Color(220, 53, 69)); }
+			public void mouseExited(MouseEvent e) {
+				btnCancelar.setBackground(new Color(220, 53, 69));
+			}
 		});
 		btnCancelar.addActionListener(e -> dialog.dispose());
 
@@ -496,22 +516,26 @@ public class CatalogoPlanes extends JFrame {
 		btnGuardar.addActionListener(e -> {
 			int indexPlan = cbPlanes.getSelectedIndex();
 			int filaCliente = tablaClientes.getSelectedRow();
-			
-			if(indexPlan <= 0) {
-				JOptionPane.showMessageDialog(dialog, "Debe seleccionar un plan del desplegable.", "Atención", JOptionPane.WARNING_MESSAGE);
+
+			if (indexPlan <= 0) {
+				JOptionPane.showMessageDialog(dialog, "Debe seleccionar un plan del desplegable.", "Atención",
+						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			
-			if(filaCliente < 0) {
-				JOptionPane.showMessageDialog(dialog, "Debe seleccionar un cliente de la tabla.", "Atención", JOptionPane.WARNING_MESSAGE);
+
+			if (filaCliente < 0) {
+				JOptionPane.showMessageDialog(dialog, "Debe seleccionar un cliente de la tabla.", "Atención",
+						JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			
+
 			String nombrePlan = ((String) cbPlanes.getSelectedItem()).split(" - \\$")[0];
 			String idCliente = (String) modeloTablaClientes.getValueAt(filaCliente, 0);
-			
+
 			Altice.getInstance().asignarPlanACliente(idCliente, nombrePlan);
-			JOptionPane.showMessageDialog(dialog, "El plan '" + nombrePlan + "' ha sido asignado exitosamente al cliente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(dialog,
+					"El plan '" + nombrePlan + "' ha sido asignado exitosamente al cliente.", "Éxito",
+					JOptionPane.INFORMATION_MESSAGE);
 			dialog.dispose();
 		});
 
@@ -537,8 +561,10 @@ public class CatalogoPlanes extends JFrame {
 		JTableHeader header = tabla.getTableHeader();
 		header.setDefaultRenderer(new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
+						column);
 				label.setBackground(new Color(15, 15, 15));
 				label.setForeground(Color.WHITE);
 				label.setFont(new Font("Arial", Font.BOLD, 13));
@@ -552,14 +578,17 @@ public class CatalogoPlanes extends JFrame {
 
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
 			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+					boolean hasFocus, int row, int column) {
 				Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
 				((JLabel) c).setBorder(new EmptyBorder(0, 10, 0, 10));
-				
+
 				if (!isSelected) {
-					if (row % 2 == 0) c.setBackground(new Color(250, 250, 250));
-					else c.setBackground(new Color(240, 240, 240));
+					if (row % 2 == 0)
+						c.setBackground(new Color(250, 250, 250));
+					else
+						c.setBackground(new Color(240, 240, 240));
 					c.setForeground(new Color(15, 15, 15));
 				}
 				return c;
@@ -575,7 +604,7 @@ public class CatalogoPlanes extends JFrame {
 		RoundedButton boton = new RoundedButton(texto, 25);
 		boton.setBackground(bgDefault);
 		boton.setForeground(Color.WHITE);
-		
+
 		boton.setFont(new Font("Arial", Font.BOLD, 14));
 		boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		boton.setPreferredSize(new Dimension(190, 45));
@@ -585,6 +614,7 @@ public class CatalogoPlanes extends JFrame {
 			public void mouseEntered(MouseEvent e) {
 				boton.setBackground(bgHover);
 			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				boton.setBackground(bgDefault);
@@ -604,10 +634,16 @@ public class CatalogoPlanes extends JFrame {
 			g2.fillArc(x, y + 15, 24, 18, 0, 180);
 			g2.dispose();
 		}
+
 		@Override
-		public int getIconWidth() { return 24; }
+		public int getIconWidth() {
+			return 24;
+		}
+
 		@Override
-		public int getIconHeight() { return 24; }
+		public int getIconHeight() {
+			return 24;
+		}
 	}
 
 	class RoundedComboBox<E> extends JComboBox<E> {
@@ -635,20 +671,26 @@ public class CatalogoPlanes extends JFrame {
 					button.setOpaque(false);
 					return button;
 				}
+
 				@Override
-				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {}
+				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
+				}
 			});
 
 			setRenderer(new DefaultListCellRenderer() {
 				@Override
-				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+						boolean isSelected, boolean cellHasFocus) {
+					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+							cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
 					label.setFont(new Font("Arial", Font.BOLD, 14));
 					if (index == -1) {
 						label.setOpaque(false);
-						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
-						else label.setForeground(new Color(150, 150, 150));
+						if (RoundedComboBox.this.isEnabled())
+							label.setForeground(new Color(50, 50, 50));
+						else
+							label.setForeground(new Color(150, 150, 150));
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
@@ -687,10 +729,12 @@ public class CatalogoPlanes extends JFrame {
 
 	class RoundedPanel extends JPanel {
 		private int radius;
+
 		public RoundedPanel(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -706,11 +750,13 @@ public class CatalogoPlanes extends JFrame {
 
 	class RoundedTextField extends JTextField {
 		private int radius;
+
 		public RoundedTextField(int radius) {
 			this.radius = radius;
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -721,6 +767,7 @@ public class CatalogoPlanes extends JFrame {
 			super.paintComponent(g2);
 			g2.dispose();
 		}
+
 		@Override
 		protected void paintBorder(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
@@ -733,6 +780,7 @@ public class CatalogoPlanes extends JFrame {
 
 	class RoundedButton extends JButton {
 		private int radius;
+
 		public RoundedButton(String text, int radius) {
 			super(text);
 			this.radius = radius;
@@ -740,6 +788,7 @@ public class CatalogoPlanes extends JFrame {
 			setFocusPainted(false);
 			setBorderPainted(false);
 		}
+
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g.create();
