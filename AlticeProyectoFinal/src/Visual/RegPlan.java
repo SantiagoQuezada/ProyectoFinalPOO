@@ -50,7 +50,7 @@ public class RegPlan extends JDialog {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().setBackground(new Color(245, 247, 250));
 
-		// --- Header Panel ---
+	
 		JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 20));
 		headerPanel.setBackground(new Color(10, 10, 10));
 		headerPanel.setPreferredSize(new Dimension(500, 70));
@@ -66,7 +66,7 @@ public class RegPlan extends JDialog {
 		headerPanel.add(lblDialogTitle);
 		getContentPane().add(headerPanel, BorderLayout.NORTH);
 
-		// --- Main Content ---
+		
 		JPanel centerContainer = new JPanel(new BorderLayout());
 		centerContainer.setBackground(new Color(245, 247, 250));
 		centerContainer.setBorder(new EmptyBorder(20, 25, 10, 25));
@@ -132,7 +132,7 @@ public class RegPlan extends JDialog {
 		txtPrecio = new RoundedTextField(15);
 		txtPrecio.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtPrecio.setBounds(160, 180, 250, 35);
-		// Filtro para aceptar solo números enteros
+		
 		txtPrecio.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -159,7 +159,7 @@ public class RegPlan extends JDialog {
 			cbxCategoria.setBackground(new Color(245, 245, 245));
 		}
 
-		// --- Footer Buttons ---
+		
 		JPanel buttonPane = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
 		buttonPane.setBackground(new Color(245, 247, 250));
 		buttonPane.setBorder(new EmptyBorder(0, 10, 10, 10));
@@ -242,7 +242,7 @@ public class RegPlan extends JDialog {
 		});
 	}
 
-	// --- Componentes Personalizados ---
+	
 	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
@@ -251,15 +251,15 @@ public class RegPlan extends JDialog {
 			super();
 			this.radius = radius;
 			setOpaque(false);
-			setFont(new Font("Arial", Font.BOLD, 14)); // Cambiado a BOLD
-			setBackground(new Color(240, 240, 240)); // Fondo gris claro
+			setFont(new Font("Arial", Font.BOLD, 14)); 
+			setBackground(new Color(240, 240, 240)); 
 			setForeground(new Color(50, 50, 50));
 			setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
 
 			setUI(new BasicComboBoxUI() {
 				@Override
 				protected JButton createArrowButton() {
-					JButton button = new JButton("\u25BC"); // Flecha minimalista
+					JButton button = new JButton("\u25BC"); 
 					button.setFont(new Font("Arial", Font.PLAIN, 10));
 					button.setForeground(new Color(150, 150, 150));
 					button.setContentAreaFilled(false);
@@ -272,7 +272,7 @@ public class RegPlan extends JDialog {
 				
 				@Override
 				public void paintCurrentValueBackground(Graphics g, Rectangle bounds, boolean hasFocus) {
-					// Previene el dibujado del fondo cuadrado por defecto
+					
 				}
 			});
 
@@ -281,7 +281,7 @@ public class RegPlan extends JDialog {
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					label.setFont(new Font("Arial", Font.BOLD, 14)); // Letras en BOLD
+					label.setFont(new Font("Arial", Font.BOLD, 14));
 					
 					if (index == -1) {
 						label.setOpaque(false);
@@ -293,7 +293,7 @@ public class RegPlan extends JDialog {
 					} else {
 						label.setOpaque(true);
 						if (isSelected) {
-							label.setBackground(new Color(0, 60, 130)); // Azul más oscuro
+							label.setBackground(new Color(0, 60, 130)); 
 							label.setForeground(Color.WHITE);
 						} else {
 							label.setBackground(Color.WHITE);
