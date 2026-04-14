@@ -420,7 +420,7 @@ public class RegCliente extends JDialog {
 		});
 	}
 
-	// --- Componentes Personalizados ---
+	
 	
 	class RoundedComboBox<E> extends JComboBox<E> {
 		private int radius;
