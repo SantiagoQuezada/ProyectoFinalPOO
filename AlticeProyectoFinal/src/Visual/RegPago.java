@@ -218,6 +218,7 @@ public class RegPago extends JDialog {
 		txtRncPersonal.setFont(new Font("Arial", Font.PLAIN, 14));
 		txtRncPersonal.setBounds(180, 395, 350, 35);
 		txtRncPersonal.setEnabled(false);
+		aplicarFormatoRNC(txtRncPersonal); // Aplicando formato de guiones automáticamente
 		contentPanel.add(txtRncPersonal);
 
 		cbxComprobante.addActionListener(e -> {
@@ -360,6 +361,34 @@ public class RegPago extends JDialog {
 		buttonPane.add(btnCancelar);
 		buttonPane.add(btnRegistrar);
 		getRootPane().setDefaultButton(btnRegistrar);
+	}
+
+	private void aplicarFormatoRNC(JTextField textField) {
+		textField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE || 
+					e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					return;
+				}
+				String text = textField.getText().replaceAll("[^0-9]", "");
+				String formatted = "";
+				
+				if (text.length() > 1 && text.length() <= 3) {
+					formatted = text.substring(0, 1) + "-" + text.substring(1);
+				} else if (text.length() > 3 && text.length() <= 8) {
+					formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3);
+				} else if (text.length() > 8) {
+					formatted = text.substring(0, 1) + "-" + text.substring(1, 3) + "-" + text.substring(3, 8) + "-" + text.substring(8, Math.min(text.length(), 9));
+				} else {
+					formatted = text;
+				}
+				
+				if (!formatted.equals(textField.getText())) {
+					textField.setText(formatted);
+				}
+			}
+		});
 	}
 
 	private void actualizarMonto() {
@@ -629,7 +658,7 @@ public class RegPago extends JDialog {
 				public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 					JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 					label.setBorder(new EmptyBorder(8, 10, 8, 10));
-					label.setFont(new Font("Arial", Font.BOLD, 14));
+					label.setFont(new Font("Arial", Font.BOLD, 14)); 
 					if (index == -1) {
 						label.setOpaque(false);
 						if (RoundedComboBox.this.isEnabled()) label.setForeground(new Color(50, 50, 50));
