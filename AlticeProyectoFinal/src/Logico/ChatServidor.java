@@ -30,7 +30,7 @@ public class ChatServidor {
         }).start();
     }
 
-    // Hilo que maneja a un cliente de forma individual
+    
     private static class ManejadorCliente extends Thread {
         private Socket socket;
         private PrintWriter out;
@@ -45,15 +45,15 @@ public class ChatServidor {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
                 
-                // Agrega este cliente a la lista global
+                
                 synchronized (escritores) {
                     escritores.add(out);
                 }
 
                 String mensaje;
-                // Escucha los mensajes entrantes de este cliente
+               
                 while ((mensaje = in.readLine()) != null) {
-                    // Y los retransmite a todos los clientes conectados
+                  
                     synchronized (escritores) {
                         for (PrintWriter writer : escritores) {
                             writer.println(mensaje);
@@ -63,7 +63,7 @@ public class ChatServidor {
             } catch (IOException e) {
                 System.out.println("Un empleado se ha desconectado del chat.");
             } finally {
-                // Cuando el cliente cierra la ventana, lo sacamos de la lista
+                
                 if (out != null) {
                     synchronized (escritores) {
                         escritores.remove(out);
